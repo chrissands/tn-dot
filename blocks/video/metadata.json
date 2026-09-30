@@ -1,0 +1,17 @@
+{
+  "variantName": "video",
+  "baseBlock": "video",
+  "version": "1.0.0",
+  "created": "2026-09-30T18:46:50.693Z",
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "minimal",
+    "purpose": "video",
+    "imagePattern": "single"
+  },
+  "contentPattern": {
+    "structure": "single cell: optional poster picture + YouTube / Vimeo / .mp4 link",
+    "buttonCount": 0,
+    "imageCount": 1
+  }
+}

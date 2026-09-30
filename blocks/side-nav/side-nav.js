@@ -14,6 +14,7 @@
  */
 
 import { fetchContent, isLocalPreview } from '../../scripts/content-fetch.js';
+import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 /**
  * Loads a fragment's side-nav content.
@@ -54,7 +55,7 @@ function pageKey(url) {
 
 function buildSidenav(content) {
   const nav = document.createElement('nav');
-  nav.setAttribute('aria-label', 'Secondary navigation');
+  nav.setAttribute('aria-label', t('secondary-navigation', 'Secondary navigation'));
 
   const headingLink = content.querySelector(':scope > p a');
   if (headingLink) {
@@ -119,7 +120,7 @@ function buildSidenav(content) {
       toggle.type = 'button';
       toggle.className = 'side-nav-subtoggle';
       toggle.setAttribute('aria-controls', sub.id);
-      toggle.setAttribute('aria-label', `${a.textContent} submenu`);
+      toggle.setAttribute('aria-label', t('submenu', '{label} submenu', { label: a.textContent }));
       const setOpen = (open) => {
         toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
         sub.hidden = !open;
@@ -141,6 +142,7 @@ function buildSidenav(content) {
 }
 
 export default async function decorate(block) {
+  await loadPlaceholders();
   let content = block.firstElementChild?.firstElementChild || block;
   const links = content.querySelectorAll('a');
   const onlyLink = links.length === 1 && content.textContent.trim() === links[0].textContent.trim();

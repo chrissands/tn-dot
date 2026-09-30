@@ -16,6 +16,7 @@
 
 import { getMetadata, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchContent } from '../../scripts/content-fetch.js';
+import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 const DESKTOP = window.matchMedia('(width >= 900px)');
 let idCounter = 0;
@@ -110,7 +111,7 @@ function buildSearch(link) {
   const button = document.createElement('button');
   button.className = 'header-search-button';
   button.type = 'submit';
-  button.setAttribute('aria-label', 'Search');
+  button.setAttribute('aria-label', t('search', 'Search'));
   button.append(createIcon('search'));
 
   form.append(label, input, button);
@@ -235,7 +236,7 @@ function buildNavList(section) {
       toggle.className = 'header-nav-toggle';
       toggle.setAttribute('aria-expanded', 'false');
       toggle.setAttribute('aria-controls', id);
-      toggle.setAttribute('aria-label', `${link.textContent} submenu`);
+      toggle.setAttribute('aria-label', t('submenu', '{label} submenu', { label: link.textContent }));
       // caret on desktop, chevron on mobile (switched in CSS)
       const caret = createIcon('arrow_drop_down');
       caret.classList.add('header-icon-caret');
@@ -314,7 +315,7 @@ function decorateNav(block, fragment) {
   // Row 2: primary nav (mobile: menu toggle + collapsible list)
   const nav = document.createElement('nav');
   nav.className = 'header-nav';
-  nav.setAttribute('aria-label', 'Primary navigation');
+  nav.setAttribute('aria-label', t('primary-navigation', 'Primary navigation'));
   const navInner = document.createElement('div');
   navInner.className = 'header-nav-inner';
   const navList = buildNavList(navSection);
@@ -427,6 +428,7 @@ function decorateNav(block, fragment) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
+  await loadPlaceholders();
   // The USWDS federal "official website" banner is opt-in (page metadata `usa-banner: true`)
   if (getMetadata('usa-banner') === 'true') {
     const headerElement = block.parentElement;

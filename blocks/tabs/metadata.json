@@ -1,0 +1,23 @@
+{
+  "variantName": "tabs",
+  "baseBlock": "tabs",
+  "version": "1.0.0",
+  "created": "2026-09-30T18:46:50.693Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "tabbed-panels"
+  },
+  "contentPattern": {
+    "structure": "repeating rows: tab label | rich content (paragraphs, images, poster + video link, H3 + link list)",
+    "buttonCount": 0,
+    "imageCount": 2
+  },
+  "usage": {
+    "pagesUsing": [
+      "traffic-operations-division/yellow-dot-program"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-30T18:46:50.693Z"
+  }
+}

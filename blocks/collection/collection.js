@@ -6,6 +6,7 @@
  */
 
 import { readBlockConfig } from '../../scripts/aem.js';
+import { loadPlaceholders, t as placeholderText } from '../../scripts/placeholders.js';
 import {
   fetchNewsIndex, categoryId, formatNewsDate, newsHref,
 } from '../../scripts/news.js';
@@ -28,7 +29,7 @@ function pagerIcon(name) {
 function buildPagination(page, pages, hrefFor) {
   const nav = document.createElement('nav');
   nav.className = 'usa-pagination news-pager';
-  nav.setAttribute('aria-label', 'Pagination');
+  nav.setAttribute('aria-label', placeholderText('pagination', 'Pagination'));
   const list = document.createElement('ul');
   list.className = 'usa-pagination__list';
 
@@ -51,8 +52,8 @@ function buildPagination(page, pages, hrefFor) {
 
   addItem(
     'usa-pagination__arrow news-pager-back',
-    control(1, page > 1, 'navigate_far_before', 'First page'),
-    control(page - 1, page > 1, 'navigate_before', 'Previous page'),
+    control(1, page > 1, 'navigate_far_before', placeholderText('first-page', 'First page')),
+    control(page - 1, page > 1, 'navigate_before', placeholderText('previous-page', 'Previous page')),
   );
   // up to three consecutive pages around the current one, plus the last page
   const start = Math.max(1, Math.min(page - 1, pages - 2));
@@ -71,12 +72,14 @@ function buildPagination(page, pages, hrefFor) {
       const a = document.createElement('a');
       a.className = 'usa-pagination__button';
       a.href = hrefFor(n);
-      a.setAttribute('aria-label', n === pages ? `Last page, page ${n}` : `Page ${n}`);
+      a.setAttribute('aria-label', n === pages
+        ? placeholderText('last-page-number', 'Last page, page {page}', { page: n })
+        : placeholderText('page-number', 'Page {page}', { page: n }));
       a.textContent = n;
       addItem('usa-pagination__page-no', a);
     }
   });
-  addItem('usa-pagination__arrow', control(page + 1, page < pages, 'navigate_next', 'Next page'));
+  addItem('usa-pagination__arrow', control(page + 1, page < pages, 'navigate_next', placeholderText('next-page', 'Next page')));
   nav.append(list);
   return nav;
 }
@@ -87,6 +90,7 @@ function buildPagination(page, pages, hrefFor) {
  * @param {HTMLElement} block
  */
 async function decorateNews(block) {
+  await loadPlaceholders();
   const config = readBlockConfig(block);
   const pageSize = Math.max(1, parseInt(config['page-size'], 10) || 15);
   const linkText = config['link-text'] || '';
@@ -125,7 +129,7 @@ async function decorateNews(block) {
     if (date) {
       const meta = document.createElement('ul');
       meta.className = 'usa-collection__meta';
-      meta.setAttribute('aria-label', 'Published');
+      meta.setAttribute('aria-label', placeholderText('published', 'Published'));
       const metaItem = document.createElement('li');
       metaItem.className = 'usa-collection__meta-item';
       const t = document.createElement('time');

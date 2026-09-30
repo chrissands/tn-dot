@@ -4,6 +4,8 @@
  * https://www.hlx.live/developer/block-collection/video
  */
 
+import { loadPlaceholders, t } from '../../scripts/placeholders.js';
+
 const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
 function embedYoutube(url, autoplay, background) {
@@ -107,6 +109,7 @@ const loadVideoEmbed = (block, link, autoplay, background) => {
 };
 
 export default async function decorate(block) {
+  await loadPlaceholders();
   const placeholder = block.querySelector('picture');
   const anchor = block.querySelector('a');
   const link = anchor.href;
@@ -127,9 +130,9 @@ export default async function decorate(block) {
         'beforeend',
         '<div class="video-placeholder-play"><button type="button" title="Play"></button></div>',
       );
+      const button = wrapper.querySelector('.video-placeholder-play button');
+      button.title = label || t('play-video', 'Play');
       if (label) {
-        const button = wrapper.querySelector('.video-placeholder-play button');
-        button.title = label;
         const text = document.createElement('span');
         text.className = 'video-placeholder-label';
         text.textContent = label;

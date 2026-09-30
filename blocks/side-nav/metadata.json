@@ -1,0 +1,26 @@
+{
+  "variantName": "side-nav",
+  "baseBlock": "side-nav",
+  "version": "1.0.0",
+  "created": "2026-09-30T18:46:50.693Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "section-navigation"
+  },
+  "contentPattern": {
+    "structure": "single cell: heading link paragraph, toggle label paragraph, nested list of links (sub-lists collapse); or a single link to a /fragments/ document",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "usage": {
+    "pagesUsing": [
+      "fragments/news-sidebar",
+      "local-programs-community-investments/community-investments-office/highway-beautification-office/beautification-national-scenic-byways",
+      "maintenance/maintenance-request",
+      "traffic-operations-division/yellow-dot-program"
+    ],
+    "reuseCount": 4,
+    "lastUsed": "2026-09-30T18:46:50.693Z"
+  }
+}

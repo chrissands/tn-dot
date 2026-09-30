@@ -16,6 +16,7 @@ import {
   toClassName,
   toCamelCase,
 } from './aem.js';
+import { replacePlaceholderTokens } from './placeholders.js';
 import { formatNewsDate } from './news.js';
 
 /**
@@ -474,6 +475,7 @@ async function loadEager(doc) {
   }
   const main = doc.querySelector('main');
   if (main) {
+    await replacePlaceholderTokens(main);
     decorateMain(main);
     doc.body.classList.add('appear');
     await loadSection(main.querySelector('.section'), waitForFirstImage);

@@ -28,6 +28,7 @@
  */
 
 import { loadScript, toClassName } from '../../scripts/aem.js';
+import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 const RECAPTCHA_API = 'https://www.google.com/recaptcha/api.js';
 let recaptchaReady;
@@ -147,7 +148,7 @@ function readRows(block) {
 function requiredMarker() {
   const marker = document.createElement('abbr');
   marker.className = 'usa-hint usa-hint--required';
-  marker.title = 'required';
+  marker.title = t('required', 'required');
   marker.textContent = '*';
   return marker;
 }
@@ -312,7 +313,7 @@ function validate(form) {
           const targetLabel = form.querySelector(`label[for="${target.id}"]`);
           const ownLabel = wrapper.querySelector('.usa-label');
           const clean = (label) => text(label).replace(/\s*\*$/, '');
-          el.setCustomValidity(`${clean(ownLabel)} must match ${clean(targetLabel)}.`);
+          el.setCustomValidity(t('field-must-match', '{field} must match {other}.', { field: clean(ownLabel), other: clean(targetLabel) }));
         }
       }
       if (!el.checkValidity()) {
@@ -356,7 +357,8 @@ function showMessage(form, message, type) {
   return box;
 }
 
-export default function decorate(block) {
+export default async function decorate(block) {
+  await loadPlaceholders();
   if (block.children.length < 2) return;
   const defs = readRows(block);
   const form = document.createElement('form');

@@ -1,0 +1,24 @@
+{
+  "variantName": "form",
+  "baseBlock": "form",
+  "version": "1.0.0",
+  "created": "2026-09-30T18:46:50.693Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "spacious",
+    "purpose": "form",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "header row (Type | Name | Label | Options | Required | Show If | Style) then one row per field, plus action / captcha / success / error settings rows",
+    "buttonCount": 1,
+    "imageCount": 0
+  },
+  "usage": {
+    "pagesUsing": [
+      "maintenance/maintenance-request"
+    ],
+    "reuseCount": 1,
+    "lastUsed": "2026-09-30T18:46:50.693Z"
+  }
+}

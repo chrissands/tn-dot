@@ -1,0 +1,11 @@
+{
+  "variantName": "fragment",
+  "baseBlock": "fragment",
+  "version": "1.0.0",
+  "created": "2026-09-30T18:46:50.693Z",
+  "contentPattern": {
+    "structure": "single cell: link to a /fragments/ document",
+    "buttonCount": 0,
+    "imageCount": 0
+  }
+}

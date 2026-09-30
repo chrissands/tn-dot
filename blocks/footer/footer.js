@@ -19,6 +19,7 @@
  */
 
 import { fetchContent } from '../../scripts/content-fetch.js';
+import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 const FONT_SIZES = ['small', 'normal', 'large'];
 const FONT_SIZE_KEY = 'footer-font-size';
@@ -149,7 +150,7 @@ function buildColumn(headingP) {
   toggle.className = 'footer-col-toggle';
   toggle.setAttribute('aria-expanded', 'false');
   toggle.setAttribute('aria-controls', list.id);
-  toggle.setAttribute('aria-label', `${heading.textContent} links`);
+  toggle.setAttribute('aria-label', t('footer-links', '{label} links', { label: heading.textContent }));
   toggle.append(maskIcon(`${window.hlx.codeBasePath}/icons/usa-icons/expand_more.svg`));
   toggle.addEventListener('click', () => {
     const open = toggle.getAttribute('aria-expanded') !== 'true';
@@ -414,6 +415,7 @@ function buildBackToTop(section, footerEl) {
  * @param {Element} block The footer block element
  */
 export default async function decorate(block) {
+  await loadPlaceholders();
   const fragment = await fetchFooter();
   if (!fragment) return;
   const [social, links, contact, utility, bottom, backToTop] = fragment

@@ -1,0 +1,25 @@
+{
+  "variantName": "summary-box",
+  "baseBlock": "summary-box",
+  "version": "1.0.0",
+  "created": "2026-09-30T18:46:50.693Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "notice-panel",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "single cell: optional leading heading, paragraphs, lists",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "usage": {
+    "pagesUsing": [
+      "driver-how-do-i/find-traveler-information",
+      "maintenance/maintenance-request"
+    ],
+    "reuseCount": 2,
+    "lastUsed": "2026-09-30T18:46:50.693Z"
+  }
+}
