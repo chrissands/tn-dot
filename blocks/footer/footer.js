@@ -24,6 +24,29 @@ const SHOW_BACK_TO_TOP_AFTER = 150;
 let idCounter = 0;
 
 /**
+ * Publishing splits a link holding an image and text into two links (image link +
+ * text link, each in its own paragraph). Rejoin links with the same href inside a
+ * list item so icon + label stay one link, as authored.
+ * @param {Element} root fragment content
+ */
+function mergeSplitLinks(root) {
+  root.querySelectorAll('li').forEach((li) => {
+    const links = [...li.querySelectorAll(':scope > a, :scope > p > a')];
+    if (links.length < 2) return;
+    const [first, ...rest] = links;
+    if (!rest.every((a) => a.getAttribute('href') === first.getAttribute('href'))) return;
+    rest.forEach((a) => {
+      const parent = a.parentElement;
+      first.append(' ', ...a.childNodes);
+      a.remove();
+      if (parent !== li && !parent.textContent.trim() && !parent.children.length) parent.remove();
+    });
+    const wrapper = first.parentElement;
+    if (wrapper !== li && wrapper.tagName === 'P' && wrapper.children.length === 1) wrapper.replaceWith(first);
+  });
+}
+
+/**
  * Fetches the footer fragment. Metadata-independent dual fetch:
  * /content/footer.plain.html (local preview) then /footer.plain.html (DA/EDS).
  * @returns {Promise<Element|null>}
@@ -37,6 +60,7 @@ async function fetchFooter() {
   container.querySelectorAll('img[src]').forEach((img) => {
     img.src = new URL(img.getAttribute('src'), resp.url).href;
   });
+  mergeSplitLinks(container);
   return container;
 }
 
