@@ -15,12 +15,17 @@
  */
 
 import { getMetadata, decorateBlock, loadBlock } from '../../scripts/aem.js';
-import { fetchContent } from '../../scripts/content-fetch.js';
+import { fetchContent, isLocalPreview } from '../../scripts/content-fetch.js';
 import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 const DESKTOP = window.matchMedia('(width >= 900px)');
 let idCounter = 0;
 
+/** Local preview has no access to content.da.live: use the /content copy of DA images. */
+function localImage(src) {
+  const m = isLocalPreview() && src.match(/^https:\/\/content\.da\.live\/[^/]+\/[^/]+(\/.*)$/);
+  return m ? `/content${m[1]}` : src;
+}
 /**
  * Fetches the nav fragment. Metadata-independent dual fetch (fetchContent):
  * /nav.plain.html on the published site, /content/nav.plain.html in local preview,
@@ -35,8 +40,8 @@ async function fetchNav() {
   container.innerHTML = html;
   // resolve relative media paths against the fragment location
   container.querySelectorAll('img[src], source[srcset]').forEach((el) => {
-    if (el.hasAttribute('src')) el.src = new URL(el.getAttribute('src'), resp.url).href;
-    if (el.hasAttribute('srcset')) el.srcset = new URL(el.getAttribute('srcset').split(' ')[0], resp.url).href;
+    if (el.hasAttribute('src')) el.src = localImage(new URL(el.getAttribute('src'), resp.url).href);
+    if (el.hasAttribute('srcset')) el.srcset = localImage(new URL(el.getAttribute('srcset').split(' ')[0], resp.url).href);
   });
   return container;
 }

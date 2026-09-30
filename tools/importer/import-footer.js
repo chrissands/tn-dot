@@ -15,26 +15,28 @@ import { mapSitePath } from './lib/tn-common.js';
  *   5. Bottom:   left and right lists of TN.gov links
  *   6. Back to top: link whose text is the button's accessible label
  *
- * Images reference local copies in content/images/ (downloaded separately).
+ * Images reference the copies uploaded to Document Authoring /images/ by absolute
+ * content.da.live URL (content/images/ locally; header/footer.js map it in local preview).
  */
 
 const ORIGIN = 'https://www.tn.gov';
+const DA_IMAGES = 'https://content.da.live/chrissands/tn-dot/images';
 const SOCIAL_ICONS = {
-  facebook: 'images/icon-facebook.svg',
-  twitter: 'images/icon-twitter.svg',
-  youtube: 'images/icon-youtube.svg',
-  instagram: 'images/icon-instagram.svg',
-  linkedin: 'images/icon-linkedin.svg',
+  facebook: `${DA_IMAGES}/icon-facebook.svg`,
+  twitter: `${DA_IMAGES}/icon-twitter.svg`,
+  youtube: `${DA_IMAGES}/icon-youtube.svg`,
+  instagram: `${DA_IMAGES}/icon-instagram.svg`,
+  linkedin: `${DA_IMAGES}/icon-linkedin.svg`,
 };
 const UTILITY_ICONS = {
-  'icon-flag': 'images/icon-flag.svg',
-  'icon-chat': 'images/icon-chat.svg',
-  'icon-help-circled': 'images/icon-help.svg',
-  'icon-book': 'images/icon-translate.svg',
+  'icon-flag': `${DA_IMAGES}/icon-flag.svg`,
+  'icon-chat': `${DA_IMAGES}/icon-chat.svg`,
+  'icon-help-circled': `${DA_IMAGES}/icon-help.svg`,
+  'icon-book': `${DA_IMAGES}/icon-translate.svg`,
 };
-const FONT_SIZE_ICON = 'images/icon-font-size.svg';
-const SEAL = 'images/tn-seal.png';
-const EMBLEM = 'images/footer-starball.png';
+const FONT_SIZE_ICON = `${DA_IMAGES}/icon-font-size.svg`;
+const SEAL = `${DA_IMAGES}/tn-seal.png`;
+const EMBLEM = `${DA_IMAGES}/footer-starball.png`;
 const CHAT_URL = 'https://help.tn.gov/sn_customerservice_tn_chat_selector.do';
 
 const clean = (t) => (t || '').replace(/\s+/g, ' ').trim();

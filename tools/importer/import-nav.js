@@ -12,16 +12,18 @@ import { mapSitePath } from './lib/tn-common.js';
  *   3. Tools:  "Go to TN.gov" link, search placeholder + results link,
  *              mobile menu labels (plain text: open, close), print link
  *
- * Images reference the local copies in content/images/ (downloaded separately).
+ * Images reference the copies uploaded to Document Authoring /images/ by absolute
+ * content.da.live URL (content/images/ locally; header/footer.js map it in local preview).
  */
 
 const ORIGIN = 'https://www.tn.gov';
+const DA_IMAGES = 'https://content.da.live/chrissands/tn-dot/images';
 const IMAGES = {
-  tnLogo: 'images/tn-logo.png',
-  logo: 'images/tdot-logo.png',
-  background: 'images/header-background.jpg',
-  home: 'images/home.svg',
-  print: 'images/print.svg',
+  tnLogo: `${DA_IMAGES}/tn-logo.png`,
+  logo: `${DA_IMAGES}/tdot-logo.png`,
+  background: `${DA_IMAGES}/header-background.jpg`,
+  home: `${DA_IMAGES}/home.svg`,
+  print: `${DA_IMAGES}/print.svg`,
 };
 
 function toSite(href) {

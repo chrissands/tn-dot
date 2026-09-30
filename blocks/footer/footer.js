@@ -18,7 +18,7 @@
  * @see https://designsystem.digital.gov/components/footer/
  */
 
-import { fetchContent } from '../../scripts/content-fetch.js';
+import { fetchContent, isLocalPreview } from '../../scripts/content-fetch.js';
 import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 const FONT_SIZES = ['small', 'normal', 'large'];
@@ -26,6 +26,11 @@ const FONT_SIZE_KEY = 'footer-font-size';
 const SHOW_BACK_TO_TOP_AFTER = 150;
 let idCounter = 0;
 
+/** Local preview has no access to content.da.live: use the /content copy of DA images. */
+function localImage(src) {
+  const m = isLocalPreview() && src.match(/^https:\/\/content\.da\.live\/[^/]+\/[^/]+(\/.*)$/);
+  return m ? `/content${m[1]}` : src;
+}
 /**
  * Publishing splits a link holding an image and text into two links (image link +
  * text link, each in its own paragraph). Rejoin links with the same href inside a
@@ -61,7 +66,7 @@ async function fetchFooter() {
   const container = document.createElement('div');
   container.innerHTML = await resp.text();
   container.querySelectorAll('img[src]').forEach((img) => {
-    img.src = new URL(img.getAttribute('src'), resp.url).href;
+    img.src = localImage(new URL(img.getAttribute('src'), resp.url).href);
   });
   mergeSplitLinks(container);
   return container;
