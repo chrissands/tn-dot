@@ -10,37 +10,15 @@
  * governing permissions and limitations under the License.
  */
 
+@import url('brand.css');
+
+/* colors, fonts, body and heading sizes are defined in brand.css */
 :root {
-  /* colors */
-  --background-color: white;
-  --light-color: #f8f8f8;
-  --dark-color: #505050;
-  --text-color: #131313;
-  --link-color: #3b63fb;
-  --link-hover-color: #1d3ecf;
-
-  /* fonts - USWDS Typography with size-adjusted fallbacks */
-  --body-font-family: "Source Sans Pro Web", "Source Sans Pro Fallback", "Helvetica Neue", Helvetica, Roboto, Arial, sans-serif;
-  --heading-font-family: "Merriweather Web", "Merriweather Fallback", Georgia, Cambria, "Times New Roman", Times, serif;
-
-  /* body sizes */
-  --body-font-size-m: 22px;
-  --body-font-size-s: 19px;
-  --body-font-size-xs: 17px;
-
-  /* heading sizes */
-  --heading-font-size-xxl: 55px;
-  --heading-font-size-xl: 44px;
-  --heading-font-size-l: 34px;
-  --heading-font-size-m: 27px;
-  --heading-font-size-s: 24px;
-  --heading-font-size-xs: 22px;
-
-  /* nav heights - measured values for banner + header combined */
-  --banner-height: 46px; /* Mobile banner height */
-  --nav-height: 48px; /* Mobile header height */
+  /* header heights (TDOT header: agency bar + nav row); USWDS banner is opt-in, so 0 by default */
+  --banner-height: 0px;
+  --nav-height: 207px; /* Mobile: 162px agency bar + 45px nav row */
   --breadcrumbs-height: 34px;
-  --header-height: calc(var(--banner-height) + var(--nav-height)); /* 94px total */
+  --header-height: calc(var(--banner-height) + var(--nav-height));
 }
 
 /**
@@ -69,44 +47,10 @@
   size-adjust: 91.34%;
 }
 
-/* Tablet: banner collapses to single line */
-@media (width >= 640px) {
-  :root {
-    --banner-height: 18px; /* Tablet: single line banner */
-    --nav-height: 48px; /* Header stays same */
-    --header-height: calc(var(--banner-height) + var(--nav-height)); /* 66px total */
-  }
-}
-
+/* Desktop: 115px agency bar + 48px nav row */
 @media (width >= 900px) {
   :root {
-    /* body sizes */
-    --body-font-size-m: 18px;
-    --body-font-size-s: 16px;
-    --body-font-size-xs: 14px;
-
-    /* heading sizes */
-    --heading-font-size-xxl: 45px;
-    --heading-font-size-xl: 36px;
-    --heading-font-size-l: 28px;
-    --heading-font-size-m: 22px;
-    --heading-font-size-s: 20px;
-    --heading-font-size-xs: 18px;
-  }
-}
-
-/* Desktop: full header with nav items */
-@media (width >= 1025px) {
-  :root {
-    --banner-height: 42px; /* Desktop banner */
-    --nav-height: 120px; /* Extended header nav height */
-    --header-height: calc(var(--banner-height) + var(--nav-height)); /* 162px total */
-  }
-
-  /* Basic header variant is shorter */
-  body[data-header-variant="basic"] {
-    --nav-height: 98px; /* Basic header is shorter */
-    --header-height: calc(var(--banner-height) + var(--nav-height)); /* 140px total */
+    --nav-height: 163px;
   }
 }
 
@@ -117,7 +61,8 @@ body {
   color: var(--text-color);
   font-family: var(--body-font-family);
   font-size: var(--body-font-size-m);
-  line-height: 1.6;
+  line-height: 1.5;
+  letter-spacing: var(--body-letter-spacing);
 }
 
 body.appear {
@@ -158,12 +103,85 @@ h3,
 h4,
 h5,
 h6 {
-  margin-top: 0.8em;
-  margin-bottom: 0.25em;
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--heading-color);
   font-family: var(--heading-font-family);
-  font-weight: 600;
-  line-height: 1.25;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: var(--heading-letter-spacing);
   scroll-margin: 40px;
+}
+
+/* Source section headings are bold (authored as <h2><strong>) */
+h2 {
+  font-weight: 700;
+  line-height: 0.94;
+}
+
+/* USWDS prose (default content) uses its own font stack; align it with the brand */
+main .usa-prose,
+main .usa-prose > p,
+main .usa-prose > ul,
+main .usa-prose > ol {
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-m);
+  line-height: 1.5;
+}
+
+main .usa-prose > p,
+main .usa-prose > ul,
+main .usa-prose > ol {
+  max-width: none;
+}
+
+main .usa-prose > h1,
+main .usa-prose > h2,
+main .usa-prose > h3,
+main .usa-prose > h4,
+main .usa-prose > h5,
+main .usa-prose > h6 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: var(--heading-color);
+  font-family: var(--heading-font-family);
+  font-weight: 400;
+  letter-spacing: var(--heading-letter-spacing);
+}
+
+main .usa-prose > h1 {
+  font-size: var(--heading-font-size-xxl);
+  line-height: 1.2;
+}
+main .usa-prose > h2 {
+  font-weight: 700;
+  font-size: var(--heading-font-size-xl);
+  line-height: 0.94;
+}
+main .usa-prose > h3 {
+  font-size: var(--heading-font-size-l);
+  line-height: 1.17;
+}
+main .usa-prose > h4 {
+  font-size: var(--heading-font-size-m);
+  line-height: 1.2;
+}
+main .usa-prose > h5 {
+  font-size: var(--heading-font-size-s);
+  line-height: 1.2;
+}
+main .usa-prose > h6 {
+  font-size: var(--heading-font-size-xs);
+  line-height: 1.2;
+}
+
+/* Section intro headings (H2 + optional H4 subheading + small link) are centered */
+main .default-content-wrapper:has(> h2) {
+  text-align: center;
+}
+
+main .default-content-wrapper > p:has(> a:only-child) {
+  font-size: var(--body-font-size-s);
 }
 
 h1 { font-size: var(--heading-font-size-xxl); }
@@ -200,6 +218,11 @@ main > div {
   margin: 40px 0; /* Remove side margins, let sections control their own padding */
 }
 
+/* Source leaves a 40px gap between the header and the page content */
+body > main {
+  margin-top: 40px;
+}
+
 input,
 textarea,
 select,
@@ -210,13 +233,23 @@ button {
 /* links */
 a:any-link {
   color: var(--link-color);
-  text-decoration: none;
+  text-decoration: underline;
   word-break: break-word;
+  transition: color 0.2s ease;
 }
 
-a:hover {
+a:hover,
+a:focus {
   color: var(--link-hover-color);
   text-decoration: underline;
+}
+
+main .usa-prose a:any-link {
+  color: var(--link-color);
+}
+
+main .usa-prose a:hover {
+  color: var(--link-hover-color);
 }
 
 /* buttons */
@@ -240,6 +273,75 @@ a.usa-button--outline:focus,
 a.usa-button--outline:active {
   color: inherit !important;
   text-decoration: none !important;
+}
+
+/* TDOT brand treatment for the primary USWDS button */
+main .usa-button:not(.usa-button--outline, .usa-button--unstyled) {
+  padding: 8px 12px;
+  border-radius: 2px;
+  background-color: var(--tdot-blue);
+  color: #fff;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-m);
+  font-weight: 400; /* source declares 300 but only loads 400/700, so it renders at 400 */
+  letter-spacing: -0.05em;
+  line-height: 1.5;
+}
+
+main .usa-button:not(.usa-button--outline, .usa-button--unstyled):hover {
+  background-color: var(--tdot-navy);
+}
+
+/* Beat the generic `color: inherit !important` link reset above */
+main a.usa-button:not(.usa-button--outline, .usa-button--unstyled):any-link,
+main a.usa-button:not(.usa-button--outline, .usa-button--unstyled):hover {
+  color: #fff !important;
+}
+
+/* Gray button (strikethrough link) used for the employee story buttons */
+main .usa-button.usa-button--base {
+  background-color: #666;
+}
+
+main .usa-button.usa-button--base:hover {
+  background-color: #4d4d4d;
+}
+
+/* Orange accent button (source "button orange") */
+main .usa-button.usa-button--accent-warm {
+  background-color: #ed9924;
+}
+
+main a.usa-button.usa-button--accent-warm:any-link,
+main a.usa-button.usa-button--accent-warm:hover {
+  color: #000 !important;
+}
+
+/* Section intro links (e.g. "See More Stories in the Newsroom") are text links on the source */
+main .default-content-wrapper:has(> h2) .button-container {
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+main .default-content-wrapper:has(> h2) a.usa-button:any-link {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  color: var(--link-color) !important;
+  font-size: var(--body-font-size-s);
+  font-weight: 400;
+  letter-spacing: var(--body-letter-spacing);
+  text-decoration: underline !important;
+}
+
+main .default-content-wrapper:has(> h2) a.usa-button:hover {
+  background: none;
+  color: var(--link-hover-color) !important;
+}
+
+main .usa-button:focus-visible {
+  outline: 2px solid var(--text-color);
+  outline-offset: 2px;
 }
 
 /* Button containers provide proper spacing */
@@ -275,7 +377,7 @@ main img {
 
 /* sections */
 main > .section {
-  margin: 40px 0;
+  margin: 20px 0; /* source uses a 20px gap between sections */
 }
 
 /* Default content container - constrained to USWDS grid max-width 
@@ -296,10 +398,69 @@ main > .section:first-of-type {
   }
 }
 
+/* Content width matches the source 1100px container */
+main > .section > div:not(.hero):not(.alert):not(.banner) {
+  max-width: var(--content-max-width);
+}
+
 /* section metadata */
 main .section.light,
 main .section.highlight {
   background-color: var(--light-color);
   margin: 0;
-  padding: 40px 0;
+  padding: var(--section-padding) 0;
+}
+
+main .section.light-gray {
+  margin: 0;
+  padding: var(--section-padding) 0;
+  background-color: var(--background-color);
+}
+
+/* Dark navy sections (quick links, priorities, callouts) */
+main .section.dark {
+  margin: 0;
+  padding: var(--section-padding) 0;
+  background-color: var(--tdot-navy);
+  color: #fff;
+}
+
+/* Source renders section photos at natural size, anchored top-left, tiled */
+main .section.dark.has-background {
+  background-position: 0 0;
+  background-size: auto;
+  background-repeat: repeat;
+}
+
+main .section.dark h1,
+main .section.dark h2,
+main .section.dark h3,
+main .section.dark h4,
+main .section.dark h5,
+main .section.dark h6,
+main .section.dark p,
+main .section.dark li,
+main .section.dark a:any-link {
+  color: #fff;
+}
+
+/* source: white links on dark sections fade to a warm off-white on hover */
+main .section.dark a:hover,
+main .section.dark a:focus {
+  color: #fff3f0;
+}
+
+/* White panel with soft shadow ("For All The Ways That Move You") */
+main > .section.panel {
+  box-sizing: border-box;
+  max-width: var(--content-max-width);
+  margin: 20px auto;
+  padding: 25px;
+  background-color: #fff;
+  box-shadow: 1px 1px 4px rgb(0 0 0 / 20%);
+}
+
+main > .section.panel > div:not(.hero):not(.alert):not(.banner) {
+  max-width: none;
+  padding: 0;
 }

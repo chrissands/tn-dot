@@ -23,3 +23,8 @@ blocks/hero/hero.css
 blocks/banner/banner.css
 blocks/footer/footer.css
 blocks/summary-box/summary-box.css
+blocks/cards/cards.css
+blocks/side-nav/side-nav.css
+blocks/form/form.css
+blocks/tabs/tabs.css
+blocks/columns/columns.css

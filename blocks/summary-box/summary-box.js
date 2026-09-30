@@ -50,12 +50,13 @@ export default function decorate(block) {
   textContainer.className = 'usa-summary-box__text';
 
   // Process content
-  // First heading becomes the summary box heading
+  // A leading heading becomes the summary box heading; headings further down
+  // (e.g. a phone number called out mid-panel) stay in place in the text.
   let headingFound = false;
   const headingId = generateId();
 
-  children.forEach((child) => {
-    if (child.matches('h1, h2, h3, h4, h5, h6') && !headingFound) {
+  children.forEach((child, index) => {
+    if (index === 0 && child.matches('h1, h2, h3, h4, h5, h6')) {
       // First heading becomes usa-summary-box__heading
       const heading = child.cloneNode(true);
       heading.className = 'usa-summary-box__heading';

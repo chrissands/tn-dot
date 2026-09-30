@@ -1,0 +1,39 @@
+{
+  "id": "columns",
+  "name": "columns",
+  "variantName": "columns",
+  "type": "columns",
+  "baseBlock": "columns",
+  "canonicalModel": "standalone",
+  "version": "1.1.0",
+  "created": "2026-09-29T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.tn.gov/tdot.html",
+    "discoveredDuring": "site-migration",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "mixed",
+    "density": "moderate",
+    "imagePattern": "single",
+    "purpose": "columns-multi-layout",
+    "structure": "links: 1 row x 4 cells of label + link list | feature: 1 row x 3 cells, intro (50%) + 2 cells of H3/text/button pairs | stats: 2 rows x 4 cells of number + label link | callout: 1 row x 2 cells of H3/paragraph/link | media: 1 row x 2 cells, linked image + H3 beside paragraph",
+    "hasBgImage": false,
+    "position": "middle",
+    "isFullWidth": false,
+    "hasGrid": true
+  },
+  "contentPattern": {
+    "structure": "one or more rows, each with 2-4 cells; cells hold headings, paragraphs, link lists, buttons, or a picture",
+    "buttonCount": 4,
+    "imageCount": 1
+  },
+  "options": [
+    { "class": "links", "label": "Links" },
+    { "class": "feature", "label": "Feature" },
+    { "class": "stats", "label": "Stats" },
+    { "class": "callout", "label": "Callout" },
+    { "class": "media", "label": "Media" }
+  ],
+  "memberVariantIds": ["columns-links", "columns-feature", "columns-stats", "columns-callout", "columns-media"]
+}

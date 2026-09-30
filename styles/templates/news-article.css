@@ -1,0 +1,57 @@
+/*
+ * News article template (/news/{yyyy}/{m}/{d}/{slug}).
+ * Shares the newsroom layout (sidebar + content column); article typography from
+ * https://www.tn.gov/tdot/news/... article pages.
+ */
+@import url('newsroom.css');
+
+body.news-article main .default-content-wrapper > h1 {
+  margin-bottom: 0;
+}
+
+/* subtitle */
+body.news-article main .default-content-wrapper > h1 + h2 {
+  margin: 20px 0 0;
+  color: #1b365d;
+  font-size: 14.775px;
+  font-style: italic;
+  font-weight: 700;
+  line-height: 20.625px;
+  letter-spacing: -0.025em;
+}
+
+/* publication date line (rendered from metadata) */
+body.news-article main .default-content-wrapper > .news-article-date {
+  margin: 20px 0 0;
+  padding: 0 3px 3px 0;
+  color: #414042;
+  font-size: 13.125px;
+  font-weight: 500;
+  line-height: 19.6875px;
+  letter-spacing: -0.025em;
+}
+
+body.news-article main .default-content-wrapper > h2 + .news-article-date {
+  margin-top: 42px;
+}
+
+body.news-article main .news-article-date small {
+  font-size: 11.4844px;
+}
+
+
+body.news-article main .default-content-wrapper > .news-article-date + p {
+  margin-top: 10px;
+}
+
+body.news-article main .default-content-wrapper > p picture,
+body.news-article main .default-content-wrapper > p img {
+  display: block;
+  max-width: calc(100% - 15px);
+  height: auto;
+}
+
+body.news-article main .default-content-wrapper > p:has(> picture:only-child),
+body.news-article main .default-content-wrapper > p:has(> img:only-child) {
+  margin: 5px 0 20px;
+}

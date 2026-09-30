@@ -1,0 +1,35 @@
+{
+  "id": "hero",
+  "name": "hero",
+  "variantName": "hero",
+  "type": "hero",
+  "baseBlock": "hero",
+  "canonicalModel": "standalone",
+  "version": "1.1.0",
+  "created": "2026-09-29T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.tn.gov/tdot.html",
+    "discoveredDuring": "site-migration",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "dark",
+    "density": "minimal",
+    "imagePattern": "background",
+    "purpose": "hero-video",
+    "structure": "Single cell: [poster image or video link to .mp4] + logo image + H1 + tagline paragraph (video variant); heading + paragraph + CTA link + background picture (default USWDS hero)",
+    "hasBgImage": true,
+    "position": "top",
+    "isFullWidth": true,
+    "hasGrid": false
+  },
+  "contentPattern": {
+    "structure": "single cell with optional background picture or .mp4 video link, optional logo picture, heading (H1), tagline paragraph, optional CTA link",
+    "buttonCount": 0,
+    "imageCount": 2
+  },
+  "options": [
+    { "class": "video", "label": "Video" }
+  ],
+  "memberVariantIds": ["hero", "hero-video"]
+}

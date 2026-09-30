@@ -1,58 +1,253 @@
+/*
+ * tabs block – tn.gov tab box (e.g. Yellow DOT Program).
+ * Desktop (>= 600px): gray tabs, the active tab white and joined to a white bordered
+ * panel. Mobile: gray accordion headers with a chevron, all collapsed.
+ * Values from computed styles on https://www.tn.gov/tdot/traffic-operations-division/yellow-dot-program.html.
+ */
+.tabs {
+  margin: 0 0 20px;
+  color: #131e29;
+  font-family: var(--body-font-family);
+}
+
+/* ---------- mobile: accordion ---------- */
 .tabs .tabs-list {
+  display: none;
+}
+
+.tabs .tabs-accordion-toggle {
   display: flex;
-  gap: 0.5ch;
-  max-width: 100%;
-  font-size: var(--body-font-size-xs);
-  overflow-x: auto;
-}
-
-@media (width >= 600px) {
-  .tabs .tabs-list {
-    font-size: var(--body-font-size-s);
-  }
-}
-
-@media (width >= 900px) {
-  .tabs .tabs-list {
-    font-size: var(--body-font-size-m);
-  }
-}
-
-.tabs .tabs-list button {
-  flex: 0 0 max-content;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
   margin: 0;
-  border: 1px solid #dadada;
+  padding: 15px 18.75px;
+  border: 0;
+  border-bottom: 1px solid #c8c8c8;
   border-radius: 0;
-  padding: 0.5em;
-  background-color: var(--light-color);
-  color: initial;
-  font-weight: bold;
-  line-height: unset;
-  text-align: initial;
-  text-overflow: unset;
-  overflow: unset;
-  white-space: unset;
-  transition: background-color 0.2s;
+  background-color: #e0e0e0;
+  color: #131e29;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 21px;
+  line-height: 25px;
+  letter-spacing: -0.05em;
+  text-align: left;
 }
 
-.tabs .tabs-list button p {
-  margin: 0;
+.tabs .tabs-accordion-toggle:first-of-type {
+  border-radius: 4px 4px 0 0;
 }
 
-
-.tabs .tabs-list button[aria-selected='true'] {
-  border-bottom: 1px solid var(--background-color);
-  background-color: var(--background-color);
-  cursor: initial;
+.tabs .tabs-panel + .tabs-accordion-toggle:last-of-type,
+.tabs > .tabs-accordion-toggle:nth-last-child(2)[aria-expanded="false"] {
+  border-bottom: 0;
+  border-radius: 0 0 4px 4px;
 }
 
+.tabs .tabs-accordion-toggle::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 14px;
+  height: 14px;
+  background-color: currentcolor;
+  mask: url("/icons/usa-icons/navigate_next.svg") center / 22px no-repeat;
+  transition: transform 0.2s;
+}
+
+.tabs .tabs-accordion-toggle[aria-expanded="true"]::before {
+  transform: rotate(90deg);
+}
+
+.tabs .tabs-accordion-toggle:hover,
+.tabs .tabs-accordion-toggle:focus-visible {
+  background-color: #d1d3d4;
+}
+
+/* ---------- panels ---------- */
 .tabs .tabs-panel {
-  margin-top: -1px;
-  padding: 24px;
-  border: 1px solid #dadada;
+  padding: 10px 18.75px 5px;
+  border: 1px solid #d1d3d4;
+  background-color: #fff;
   overflow: auto;
 }
 
-.tabs .tabs-panel[aria-hidden='true'] {
+.tabs .tabs-panel[aria-hidden="true"] {
   display: none;
+}
+
+.tabs .tabs-panel p,
+.tabs .tabs-panel ul,
+.tabs .tabs-panel ol {
+  margin: 10px 0 20px;
+  font-size: 13.125px;
+  line-height: 19.6875px;
+  letter-spacing: -0.025em;
+}
+
+.tabs .tabs-panel ul,
+.tabs .tabs-panel ol {
+  padding-left: 30px;
+}
+
+.tabs .tabs-panel li {
+  margin: 0;
+}
+
+.tabs .tabs-panel a:any-link {
+  color: #174a7c;
+  text-decoration: underline;
+}
+
+.tabs .tabs-panel a:hover,
+.tabs .tabs-panel a:focus {
+  color: #a7190c;
+}
+
+/* images: centered at natural size */
+.tabs .tabs-panel p:has(> picture:only-child) {
+  margin: 0 0 20px;
+  text-align: center;
+}
+
+.tabs .tabs-panel p > picture:only-child img {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* ---------- video: poster with a centered "Watch video" label ---------- */
+.tabs .video {
+  max-width: 640px;
+  margin: 0 auto 20px;
+}
+
+.tabs .video .video-placeholder-play button {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  outline: 0;
+  background: none;
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--body-font-family);
+  font-size: 30px;
+  line-height: 45px;
+  letter-spacing: -0.075em;
+  text-shadow: 0 0 8px rgb(0 0 0 / 60%);
+}
+
+.tabs .video .video-placeholder-play button::before {
+  position: static;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 36 36'%3E%3Ccircle cx='18' cy='18' r='16' fill='none' stroke='%23fff' stroke-width='3'/%3E%3Cpath fill='%23fff' d='M14 11v14l11-7z'/%3E%3C/svg%3E") center / contain no-repeat;
+  transform: none;
+}
+
+.tabs .video .video-placeholder-play button:hover .video-placeholder-label,
+.tabs .video .video-placeholder-play button:focus-visible .video-placeholder-label {
+  text-decoration: underline;
+}
+
+/* ---------- links panel (Related Links) ---------- */
+.tabs .tabs-links {
+  margin: 0 0 20px;
+  background-color: #fff;
+  box-shadow: 1px 1px 4px rgb(0 0 0 / 20%);
+}
+
+.tabs .tabs-links .tabs-links-title {
+  margin: 0;
+  padding: 10px 15px;
+  background-color: #d1d3d4;
+  color: #131e29;
+  font-family: var(--body-font-family);
+  font-size: 19.6875px;
+  font-weight: 400;
+  line-height: 29.5312px;
+  letter-spacing: -0.075em;
+}
+
+.tabs .tabs-panel .tabs-links ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.tabs .tabs-panel .tabs-links li {
+  border-bottom: 1px solid #d1d3d4;
+  font-size: 13.125px;
+  line-height: 15px;
+}
+
+.tabs .tabs-panel .tabs-links li:last-child {
+  border-bottom: 0;
+}
+
+.tabs .tabs-panel .tabs-links a:any-link {
+  display: block;
+  padding: 12px 15px;
+  color: #131e29;
+  text-decoration: none;
+}
+
+.tabs .tabs-panel .tabs-links a:hover,
+.tabs .tabs-panel .tabs-links a:focus {
+  color: #a7190c;
+}
+
+/* ---------- desktop: tabs ---------- */
+@media (width >= 600px) {
+  .tabs .tabs-accordion-toggle {
+    display: none;
+  }
+
+  .tabs .tabs-list {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 0 0 -1px;
+  }
+
+  .tabs .tabs-list button {
+    position: relative;
+    z-index: 1;
+    margin: 0 -1px -1px 0;
+    padding: 6px 15px;
+    border: 1px solid #d1d3d4;
+    border-radius: 0;
+    background-color: #e0e0e0;
+    color: #131e29;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 13.125px;
+    font-weight: 400;
+    line-height: 22.5px;
+  }
+
+  .tabs .tabs-list button p {
+    margin: 0;
+  }
+
+  .tabs .tabs-list button[aria-selected="true"] {
+    z-index: 2;
+    border-bottom-color: #fff;
+    background-color: #fff;
+  }
+
+  .tabs .tabs-list button:hover,
+  .tabs .tabs-list button:focus-visible {
+    background-color: #fff;
+  }
+
+  .tabs .tabs-panel {
+    margin: 0 0 0 -1px;
+    padding: 10px 20px 5px;
+  }
 }

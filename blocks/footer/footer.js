@@ -1,507 +1,386 @@
 /**
  * footer block
- * Based on USWDS usa-footer component
+ * Based on the USWDS usa-footer component, styled after the TN.gov / TDOT footer:
+ *   band 1 – social media bar
+ *   band 2 – link columns (accordions on mobile) + contact info + seal
+ *   band 3 – utility bar (flag status, chat, help, translate, font size) + center emblem
+ *   band 4 – bottom links
+ *
+ * Content comes from the footer fragment (content/footer.plain.html), sections in order:
+ *   1 social  – label paragraph + list of links (icon image + network name)
+ *   2 links   – repeated bold heading paragraph + list
+ *   3 contact – paragraphs (name, address, email) + image (seal)
+ *   4 utility – lists of links (icon + label; "#translate" and "#font-size" become panels,
+ *               a nested list under "#font-size" holds its option labels) + emblem image
+ *   5 bottom  – lists of links
+ *   6 back to top – link whose text is the floating button's accessible label
  *
  * @see https://designsystem.digital.gov/components/footer/
  */
 
-import { getMetadata } from '../../scripts/aem.js';
-import { loadFragment } from '../fragment/fragment.js';
+const FONT_SIZES = ['small', 'normal', 'large'];
+const FONT_SIZE_KEY = 'footer-font-size';
+const SHOW_BACK_TO_TOP_AFTER = 150;
+let idCounter = 0;
 
 /**
- * Decorates the secondary section (logo, social, contact)
- * @param {Element} footer The footer element
- * @param {Element} logoSection Logo content section
- * @param {Element} socialSection Social links section
- * @param {Element} contactSection Contact info section
- * @param {boolean} isSlim Whether this is a slim footer
+ * Fetches the footer fragment. Metadata-independent dual fetch:
+ * /content/footer.plain.html (local preview) then /footer.plain.html (DA/EDS).
+ * @returns {Promise<Element|null>}
  */
-function decorateSecondarySection(footer, logoSection, socialSection, contactSection, isSlim) {
-  const secondarySection = document.createElement('div');
-  secondarySection.className = 'usa-footer__secondary-section';
-
+async function fetchFooter() {
+  let resp = await fetch('/content/footer.plain.html');
+  if (!resp.ok) resp = await fetch('/footer.plain.html');
+  if (!resp.ok) return null;
   const container = document.createElement('div');
-  container.className = 'grid-container';
-
-  const row = document.createElement('div');
-  row.className = isSlim ? 'usa-footer__logo grid-row grid-gap-2' : 'grid-row grid-gap';
-
-  if (!isSlim) {
-    // Logo section (6 columns)
-    const logoCol = document.createElement('div');
-    logoCol.className = 'usa-footer__logo grid-row mobile-lg:grid-col-6 mobile-lg:grid-gap-2';
-
-    if (logoSection) {
-      const img = logoSection.querySelector('img');
-      if (img) {
-        const imgCol = document.createElement('div');
-        imgCol.className = 'mobile-lg:grid-col-auto';
-        const logoImg = document.createElement('img');
-        logoImg.className = 'usa-footer__logo-img';
-        logoImg.src = img.src;
-        logoImg.alt = img.alt || '';
-        imgCol.appendChild(logoImg);
-        logoCol.appendChild(imgCol);
-      }
-
-      // Look for text - prioritize headings, skip empty paragraphs with images
-      let textContent = '';
-      // Try headings first
-      const headingEl = logoSection.querySelector('h1, h2, h3, h4, h5, h6');
-      if (headingEl) {
-        textContent = headingEl.textContent.trim();
-      } else {
-        // Try other text elements, but filter out ones that only contain images
-        const textElements = Array.from(logoSection.querySelectorAll('p, strong, em, span'));
-        const validTextEl = textElements.find((el) => {
-          const text = el.textContent.trim();
-          // Skip elements that are empty or only contain an image
-          return text && !el.querySelector('img, picture');
-        });
-
-        if (validTextEl) {
-          textContent = validTextEl.textContent.trim();
-        } else {
-          // Final fallback: get text directly from the section, excluding images
-          const clone = logoSection.cloneNode(true);
-          const cloneImgs = clone.querySelectorAll('img, picture');
-          cloneImgs.forEach((imgEl) => imgEl.remove());
-          textContent = clone.textContent.trim();
-        }
-      }
-
-      if (textContent) {
-        const textCol = document.createElement('div');
-        textCol.className = 'mobile-lg:grid-col-auto';
-        const heading = document.createElement('p');
-        heading.className = 'usa-footer__logo-heading';
-        heading.textContent = textContent;
-        textCol.appendChild(heading);
-        logoCol.appendChild(textCol);
-      }
-    }
-
-    row.appendChild(logoCol);
-
-    // Contact links section (6 columns)
-    const contactCol = document.createElement('div');
-    contactCol.className = 'usa-footer__contact-links mobile-lg:grid-col-6';
-
-    // Social links
-    if (socialSection) {
-      const socialDiv = document.createElement('div');
-      socialDiv.className = 'usa-footer__social-links grid-row grid-gap-1';
-
-      socialSection.querySelectorAll('a').forEach((link) => {
-        const col = document.createElement('div');
-        col.className = 'grid-col-auto';
-
-        const a = document.createElement('a');
-        a.className = 'usa-social-link';
-        a.href = link.href;
-
-        const img = document.createElement('img');
-        img.className = 'usa-social-link__icon';
-        // Extract social network from link text or use generic icon
-        const network = link.textContent.trim().toLowerCase();
-        img.src = `/icons/usa-icons/${network}.svg`;
-        img.alt = link.textContent;
-
-        a.appendChild(img);
-        col.appendChild(a);
-        socialDiv.appendChild(col);
-      });
-
-      contactCol.appendChild(socialDiv);
-    }
-
-    // Contact heading and info
-    if (contactSection) {
-      const contactHeading = contactSection.querySelector('h3, h4, p, strong');
-      if (contactHeading) {
-        const heading = document.createElement('p');
-        heading.className = 'usa-footer__contact-heading';
-        heading.textContent = contactHeading.textContent;
-        contactCol.appendChild(heading);
-      }
-
-      const address = document.createElement('address');
-      address.className = 'usa-footer__address';
-
-      const contactRow = document.createElement('div');
-      contactRow.className = 'usa-footer__contact-info grid-row grid-gap';
-
-      contactSection.querySelectorAll('a').forEach((link) => {
-        const col = document.createElement('div');
-        col.className = 'grid-col-auto';
-
-        const a = document.createElement('a');
-        a.href = link.href;
-        a.textContent = link.textContent;
-
-        col.appendChild(a);
-        contactRow.appendChild(col);
-      });
-
-      address.appendChild(contactRow);
-      contactCol.appendChild(address);
-    }
-
-    row.appendChild(contactCol);
-  } else if (logoSection) {
-    // Slim footer: just logo
-    const logoCol = document.createElement('div');
-    logoCol.className = 'mobile-lg:grid-col-auto';
-
-    const img = logoSection.querySelector('img');
-    if (img) {
-      const logoImg = document.createElement('img');
-      logoImg.className = 'usa-footer__logo-img';
-      logoImg.src = img.src;
-      logoImg.alt = img.alt || '';
-      logoCol.appendChild(logoImg);
-    }
-
-    // Look for text - prioritize headings, skip empty paragraphs with images
-    let textContent = '';
-    // Try headings first
-    const headingEl = logoSection.querySelector('h1, h2, h3, h4, h5, h6');
-    if (headingEl) {
-      textContent = headingEl.textContent.trim();
-    } else {
-      // Try other text elements, but filter out ones that only contain images
-      const textElements = Array.from(logoSection.querySelectorAll('p, strong, em, span'));
-      const validTextEl = textElements.find((el) => {
-        const text = el.textContent.trim();
-        // Skip elements that are empty or only contain an image
-        return text && !el.querySelector('img, picture');
-      });
-
-      if (validTextEl) {
-        textContent = validTextEl.textContent.trim();
-      } else {
-        // Final fallback: get text directly from the section, excluding images
-        const clone = logoSection.cloneNode(true);
-        const cloneImgs = clone.querySelectorAll('img, picture');
-        cloneImgs.forEach((imgEl) => imgEl.remove());
-        textContent = clone.textContent.trim();
-      }
-    }
-
-    if (textContent) {
-      const heading = document.createElement('p');
-      heading.className = 'usa-footer__logo-heading';
-      heading.textContent = textContent;
-      logoCol.appendChild(heading);
-    }
-
-    row.appendChild(logoCol);
-  }
-
-  container.appendChild(row);
-  secondarySection.appendChild(container);
-  footer.appendChild(secondarySection);
+  container.innerHTML = await resp.text();
+  container.querySelectorAll('img[src]').forEach((img) => {
+    img.src = new URL(img.getAttribute('src'), resp.url).href;
+  });
+  return container;
 }
 
-/**
- * Decorates big footer variant
- * @param {Element} footer The footer element
- * @param {NodeList} sections The content sections
- */
-async function decorateBigFooter(footer, sections) {
-  // Section 0: Multi-column navigation (topics with secondary links)
-  // Section 1: Newsletter signup content
-  // Section 2: Logo/Agency info
-  // Section 3: Social links
-  // Section 4: Contact info
-
-  const [navSection, signupSection, logoSection, socialSection, contactSection] = sections;
-
-  // Primary section (navigation + newsletter)
-  const primarySection = document.createElement('div');
-  primarySection.className = 'usa-footer__primary-section';
-
-  const primaryContainer = document.createElement('div');
-  primaryContainer.className = 'grid-container';
-
-  const primaryRow = document.createElement('div');
-  primaryRow.className = 'grid-row grid-gap';
-
-  // Navigation (8 columns)
-  const navCol = document.createElement('div');
-  navCol.className = 'tablet:grid-col-8';
-
-  const nav = document.createElement('nav');
-  nav.className = 'usa-footer__nav';
-  nav.setAttribute('aria-label', 'Footer navigation');
-
-  const navRow = document.createElement('div');
-  navRow.className = 'grid-row grid-gap-4';
-
-  // Process navigation topics
-  if (navSection) {
-    const topics = navSection.querySelectorAll(':scope > ul > li');
-    topics.forEach((topic) => {
-      const topicCol = document.createElement('div');
-      topicCol.className = 'mobile-lg:grid-col-6 desktop:grid-col-3';
-
-      const section = document.createElement('section');
-      section.className = 'usa-footer__primary-content usa-footer__primary-content--collapsible';
-
-      // Topic heading
-      const heading = topic.querySelector('p, strong');
-      if (heading) {
-        const h4 = document.createElement('h4');
-        h4.className = 'usa-footer__primary-link';
-        h4.textContent = heading.textContent;
-        section.appendChild(h4);
-      }
-
-      // Secondary links
-      const linksList = topic.querySelector('ul');
-      if (linksList) {
-        const ul = document.createElement('ul');
-        ul.className = 'usa-list usa-list--unstyled';
-
-        linksList.querySelectorAll('a').forEach((link) => {
-          const li = document.createElement('li');
-          li.className = 'usa-footer__secondary-link';
-          const a = document.createElement('a');
-          a.href = link.href;
-          a.textContent = link.textContent;
-          li.appendChild(a);
-          ul.appendChild(li);
-        });
-
-        section.appendChild(ul);
-      }
-
-      topicCol.appendChild(section);
-      navRow.appendChild(topicCol);
-    });
-  }
-
-  nav.appendChild(navRow);
-  navCol.appendChild(nav);
-  primaryRow.appendChild(navCol);
-
-  // Newsletter signup (4 columns)
-  if (signupSection) {
-    const signupCol = document.createElement('div');
-    signupCol.className = 'tablet:grid-col-4';
-
-    const signupDiv = document.createElement('div');
-    signupDiv.className = 'usa-sign-up';
-
-    const heading = document.createElement('h3');
-    heading.className = 'usa-sign-up__heading';
-    heading.textContent = signupSection.querySelector('h3, h4, p')?.textContent || 'Sign up';
-
-    const form = document.createElement('form');
-    form.className = 'usa-form';
-
-    const label = document.createElement('label');
-    label.className = 'usa-label';
-    label.htmlFor = 'footer-email';
-    label.textContent = 'Your email address';
-
-    const input = document.createElement('input');
-    input.className = 'usa-input';
-    input.id = 'footer-email';
-    input.name = 'email';
-    input.type = 'email';
-    input.setAttribute('autocomplete', 'email');
-
-    const button = document.createElement('button');
-    button.className = 'usa-button';
-    button.type = 'submit';
-    button.textContent = 'Sign up';
-
-    form.appendChild(label);
-    form.appendChild(input);
-    form.appendChild(button);
-
-    signupDiv.appendChild(heading);
-    signupDiv.appendChild(form);
-    signupCol.appendChild(signupDiv);
-    primaryRow.appendChild(signupCol);
-  }
-
-  primaryContainer.appendChild(primaryRow);
-  primarySection.appendChild(primaryContainer);
-  footer.appendChild(primarySection);
-
-  // Secondary section (logo + social + contact)
-  decorateSecondarySection(footer, logoSection, socialSection, contactSection, false);
+function srOnly(text) {
+  const span = document.createElement('span');
+  span.className = 'usa-sr-only';
+  span.textContent = text;
+  return span;
 }
 
-/**
- * Decorates medium footer variant
- * @param {Element} footer The footer element
- * @param {NodeList} sections The content sections
- */
-function decorateMediumFooter(footer, sections) {
-  // Section 0: Primary links
-  // Section 1: Logo/Agency info
-  // Section 2: Social links
-  // Section 3: Contact info
-
-  const [navSection, logoSection, socialSection, contactSection] = sections;
-
-  // Primary section (simple navigation)
-  const primarySection = document.createElement('div');
-  primarySection.className = 'usa-footer__primary-section';
-
-  const nav = document.createElement('nav');
-  nav.className = 'usa-footer__nav';
-  nav.setAttribute('aria-label', 'Footer navigation');
-
-  const ul = document.createElement('ul');
-  ul.className = 'grid-row grid-gap';
-
-  if (navSection) {
-    navSection.querySelectorAll('a').forEach((link) => {
-      const li = document.createElement('li');
-      li.className = 'mobile-lg:grid-col-4 desktop:grid-col-auto usa-footer__primary-content';
-      const a = document.createElement('a');
-      a.className = 'usa-footer__primary-link';
-      a.href = link.href;
-      a.textContent = link.textContent;
-      li.appendChild(a);
-      ul.appendChild(li);
-    });
-  }
-
-  nav.appendChild(ul);
-  primarySection.appendChild(nav);
-  footer.appendChild(primarySection);
-
-  // Secondary section (logo + social + contact)
-  decorateSecondarySection(footer, logoSection, socialSection, contactSection, false);
+function wrap(className, ...children) {
+  const band = document.createElement('div');
+  band.className = className;
+  const inner = document.createElement('div');
+  inner.className = 'footer-inner';
+  inner.append(...children);
+  band.append(inner);
+  return band;
 }
 
-/**
- * Decorates slim footer variant
- * @param {Element} footer The footer element
- * @param {NodeList} sections The content sections
- */
-function decorateSlimFooter(footer, sections) {
-  // Section 0: Primary links
-  // Section 1: Contact info
-
-  const [navSection, contactSection] = sections;
-
-  // Primary section with container
-  const primarySection = document.createElement('div');
-  primarySection.className = 'usa-footer__primary-section';
-
-  const primaryContainer = document.createElement('div');
-  primaryContainer.className = 'usa-footer__primary-container grid-row';
-
-  const navCol = document.createElement('div');
-  navCol.className = 'mobile-lg:grid-col-8';
-
-  const nav = document.createElement('nav');
-  nav.className = 'usa-footer__nav';
-  nav.setAttribute('aria-label', 'Footer navigation');
-
-  const ul = document.createElement('ul');
-  ul.className = 'grid-row grid-gap';
-
-  if (navSection) {
-    navSection.querySelectorAll('a').forEach((link) => {
-      const li = document.createElement('li');
-      li.className = 'mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content';
-      const a = document.createElement('a');
-      a.className = 'usa-footer__primary-link';
-      a.href = link.href;
-      a.textContent = link.textContent;
-      li.appendChild(a);
-      ul.appendChild(li);
-    });
-  }
-
-  nav.appendChild(ul);
-  navCol.appendChild(nav);
-  primaryContainer.appendChild(navCol);
-
-  // Contact info (4 columns)
-  if (contactSection) {
-    const contactCol = document.createElement('div');
-    contactCol.className = 'mobile-lg:grid-col-4';
-
-    const address = document.createElement('address');
-    address.className = 'usa-footer__address';
-
-    const contactRow = document.createElement('div');
-    contactRow.className = 'grid-row grid-gap';
-
-    const links = contactSection.querySelectorAll('a');
-    links.forEach((link) => {
-      const col = document.createElement('div');
-      col.className = 'grid-col-auto mobile-lg:grid-col-12 desktop:grid-col-auto';
-
-      const info = document.createElement('div');
-      info.className = 'usa-footer__contact-info';
-
-      const a = document.createElement('a');
-      a.href = link.href;
-      a.textContent = link.textContent;
-
-      info.appendChild(a);
-      col.appendChild(info);
-      contactRow.appendChild(col);
-    });
-
-    address.appendChild(contactRow);
-    contactCol.appendChild(address);
-    primaryContainer.appendChild(contactCol);
-  }
-
-  primarySection.appendChild(primaryContainer);
-  footer.appendChild(primarySection);
-
-  // Slim footer secondary section (logo only, no social links)
-  decorateSecondarySection(footer, contactSection, null, null, true);
+/** Icon rendered as a CSS mask so it takes the text color (like the source icon font). */
+function maskIcon(src) {
+  const span = document.createElement('span');
+  span.className = 'footer-icon';
+  span.setAttribute('aria-hidden', 'true');
+  span.style.setProperty('--footer-icon', `url("${src}")`);
+  return span;
 }
 
-/**
- * Decorates the footer content into USWDS structure
- * @param {Element} footer The footer block element
- * @param {Element} fragment The loaded fragment
- */
-async function decorateFooter(footer, fragment) {
-  const sections = fragment.querySelectorAll(':scope > div');
+function copyImg(img, className, alt = img.alt) {
+  const copy = document.createElement('img');
+  copy.src = img.src;
+  copy.alt = alt;
+  copy.loading = 'lazy';
+  if (className) copy.className = className;
+  return copy;
+}
 
-  // Apply footer variant from metadata (big, medium, slim - default to medium)
-  const variant = getMetadata('footer') || getMetadata('footer-variant') || 'medium';
+/** Social bar: label + icon links (network name kept for screen readers). */
+function buildSocial(section) {
+  const label = section.querySelector('p');
+  const title = document.createElement('p');
+  title.className = 'footer-social-title';
+  title.textContent = label ? label.textContent.trim() : '';
+  const list = document.createElement('ul');
+  list.className = 'footer-social-list';
+  section.querySelectorAll('li > a').forEach((a) => {
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = a.href;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    const img = a.querySelector('img');
+    if (img) link.append(maskIcon(img.src));
+    link.append(srOnly(a.textContent.trim()));
+    li.append(link);
+    list.append(li);
+  });
+  return wrap('footer-social', title, list);
+}
 
-  // Use the parent <footer> element and add USWDS classes
-  const usaFooter = footer.parentElement;
-  usaFooter.className = `usa-footer${variant !== 'medium' ? ` usa-footer--${variant}` : ''}`;
-
-  // Clear the block content
-  footer.textContent = '';
-
-  // Build return to top link (all variants)
-  const returnToTop = document.createElement('div');
-  returnToTop.className = 'grid-container usa-footer__return-to-top';
-  const topLink = document.createElement('a');
-  topLink.href = '#';
-  topLink.textContent = 'Return to top';
-  returnToTop.appendChild(topLink);
-  footer.appendChild(returnToTop);
-
-  if (variant === 'big') {
-    // Big footer: multi-column nav + newsletter
-    await decorateBigFooter(footer, sections);
-  } else if (variant === 'slim') {
-    // Slim footer: simple nav + minimal contact
-    decorateSlimFooter(footer, sections);
+/** Link columns: each bold heading paragraph + following list; accordion toggle on mobile. */
+function buildColumn(headingP) {
+  const col = document.createElement('div');
+  col.className = 'footer-col';
+  const heading = document.createElement('p');
+  heading.className = 'footer-col-title';
+  const a = headingP.querySelector('a');
+  if (a) {
+    const link = document.createElement('a');
+    link.href = a.href;
+    link.textContent = a.textContent.trim();
+    heading.append(link);
   } else {
-    // Medium footer (default): simple nav + full contact
-    decorateMediumFooter(footer, sections);
+    heading.textContent = headingP.textContent.trim();
   }
+
+  const list = document.createElement('ul');
+  list.className = 'footer-col-list';
+  list.id = `footer-col-list-${idCounter += 1}`;
+
+  const toggle = document.createElement('button');
+  toggle.type = 'button';
+  toggle.className = 'footer-col-toggle';
+  toggle.setAttribute('aria-expanded', 'false');
+  toggle.setAttribute('aria-controls', list.id);
+  toggle.setAttribute('aria-label', `${heading.textContent} links`);
+  toggle.append(maskIcon(`${window.hlx.codeBasePath}/icons/usa-icons/expand_more.svg`));
+  toggle.addEventListener('click', () => {
+    const open = toggle.getAttribute('aria-expanded') !== 'true';
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    col.classList.toggle('footer-col-open', open);
+  });
+  heading.append(toggle);
+  col.append(heading, list);
+  return { col, list };
+}
+
+function buildColumns(section) {
+  const cols = [];
+  let current = null;
+  [...section.children].forEach((el) => {
+    if (el.tagName === 'P' && el.querySelector('strong')) {
+      current = buildColumn(el);
+      cols.push(current.col);
+    } else if (el.tagName === 'UL' && current) {
+      el.querySelectorAll(':scope > li > a').forEach((a) => {
+        const li = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = a.href;
+        link.textContent = a.textContent.trim();
+        li.append(link);
+        current.list.append(li);
+      });
+    }
+  });
+  return cols;
+}
+
+/** Contact block: paragraphs as authored + seal image. */
+function buildContact(section) {
+  const contact = document.createElement('div');
+  contact.className = 'footer-contact';
+  if (!section) return contact;
+  [...section.children].forEach((el) => {
+    const img = el.querySelector('img');
+    if (img && !el.textContent.trim()) {
+      const seal = document.createElement('p');
+      seal.className = 'footer-seal';
+      seal.append(copyImg(img));
+      contact.append(seal);
+    } else {
+      const p = el.cloneNode(true);
+      p.querySelectorAll('picture').forEach((pic) => pic.replaceWith(...pic.childNodes));
+      contact.append(p);
+    }
+  });
+  return contact;
+}
+
+function closePanels(scope, except) {
+  scope.querySelectorAll('.footer-utility-item[aria-expanded="true"]').forEach((item) => {
+    if (item === except) return;
+    item.setAttribute('aria-expanded', 'false');
+    item.querySelector(':scope > a').setAttribute('aria-expanded', 'false');
+  });
+}
+
+/** Loads the Google Translate element into the given container (once). */
+function loadTranslate(container) {
+  if (container.dataset.loaded) return;
+  container.dataset.loaded = 'true';
+  const target = document.createElement('div');
+  target.id = `footer-translate-${idCounter += 1}`;
+  container.append(target);
+  window.footerTranslateInit = () => {
+    // eslint-disable-next-line no-new
+    new window.google.translate.TranslateElement({ pageLanguage: 'en' }, target.id);
+  };
+  const script = document.createElement('script');
+  script.src = 'https://translate.google.com/translate_a/element.js?cb=footerTranslateInit';
+  script.async = true;
+  document.head.append(script);
+}
+
+function applyFontSize(size, buttons) {
+  if (size === 'normal') delete document.documentElement.dataset.fontSize;
+  else document.documentElement.dataset.fontSize = size;
+  buttons.forEach((btn) => {
+    const active = btn.dataset.size === size;
+    btn.classList.toggle('footer-font-active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+  try {
+    localStorage.setItem(FONT_SIZE_KEY, size);
+  } catch (e) { /* storage unavailable */ }
+}
+
+/** Builds a panel (translate widget or font-size options) attached to a utility item. */
+function buildPanel(item, link, kind, options) {
+  const panel = document.createElement('div');
+  panel.className = `footer-panel footer-panel-${kind}`;
+  panel.id = `footer-panel-${idCounter += 1}`;
+  link.setAttribute('role', 'button');
+  link.setAttribute('aria-expanded', 'false');
+  link.setAttribute('aria-controls', panel.id);
+
+  if (kind === 'font-size') {
+    const list = document.createElement('ul');
+    const buttons = options.map((label, i) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'footer-font-btn';
+      btn.dataset.size = FONT_SIZES[i] || 'normal';
+      btn.textContent = label;
+      btn.addEventListener('click', () => applyFontSize(btn.dataset.size, buttons));
+      const li = document.createElement('li');
+      li.append(btn);
+      list.append(li);
+      return btn;
+    });
+    panel.append(list);
+    let saved = 'normal';
+    try {
+      saved = localStorage.getItem(FONT_SIZE_KEY) || 'normal';
+    } catch (e) { /* storage unavailable */ }
+    applyFontSize(FONT_SIZES.includes(saved) ? saved : 'normal', buttons);
+  }
+
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const open = item.getAttribute('aria-expanded') !== 'true';
+    closePanels(item.closest('.footer-utility'), item);
+    item.setAttribute('aria-expanded', open ? 'true' : 'false');
+    link.setAttribute('aria-expanded', open ? 'true' : 'false');
+    if (open && kind === 'translate') loadTranslate(panel);
+  });
+  item.append(panel);
+}
+
+/** Utility bar: icon links; special hrefs become panels, chat opens a popup window. */
+function buildUtility(section) {
+  const lists = [];
+  let emblem = null;
+  [...section.children].forEach((el) => {
+    if (el.tagName === 'UL') {
+      const list = document.createElement('ul');
+      list.className = 'footer-utility-list';
+      el.querySelectorAll(':scope > li').forEach((srcLi) => {
+        const a = srcLi.querySelector('a');
+        if (!a) return;
+        const item = document.createElement('li');
+        item.className = 'footer-utility-item';
+        const link = document.createElement('a');
+        link.href = a.href;
+        const img = a.querySelector('img');
+        if (img) link.append(maskIcon(img.src));
+        link.append(document.createTextNode(a.textContent.trim()));
+        item.append(link);
+        const href = a.getAttribute('href') || '';
+        if (href === '#translate') {
+          buildPanel(item, link, 'translate', []);
+        } else if (href === '#font-size') {
+          const options = [...srcLi.querySelectorAll('ul > li')].map((li) => li.textContent.trim());
+          buildPanel(item, link, 'font-size', options);
+        } else if (/chat/i.test(href)) {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            window.open(link.href, 'popup', 'width=900, height=600');
+          });
+        }
+        list.append(item);
+      });
+      lists.push(list);
+    } else if (el.querySelector('img')) {
+      emblem = document.createElement('span');
+      emblem.className = 'footer-emblem';
+      emblem.append(copyImg(el.querySelector('img'), '', ''));
+    }
+  });
+  const inner = [];
+  if (lists[0]) inner.push(lists[0]);
+  if (emblem) inner.push(emblem);
+  inner.push(...lists.slice(1));
+  const band = wrap('footer-utility', ...inner);
+  document.addEventListener('click', (e) => {
+    if (!band.contains(e.target)) closePanels(band);
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePanels(band);
+  });
+  return band;
+}
+
+/** Bottom bar: link lists. */
+function buildBottom(section) {
+  const lists = [...section.querySelectorAll(':scope > ul')].map((ul) => {
+    const list = document.createElement('ul');
+    list.className = 'footer-bottom-list';
+    ul.querySelectorAll(':scope > li > a').forEach((a) => {
+      const li = document.createElement('li');
+      const link = document.createElement('a');
+      link.href = a.href;
+      link.textContent = a.textContent.trim();
+      li.append(link);
+      list.append(li);
+    });
+    return list;
+  });
+  return wrap('footer-bottom', ...lists);
+}
+
+/**
+ * Floating back-to-top button: shows after scrolling, docks above the footer on
+ * desktop, scrolls smoothly to the top and moves focus to the header logo.
+ * @param {Element} section back-to-top section
+ * @param {Element} footerEl the page footer (docking reference)
+ */
+function buildBackToTop(section, footerEl) {
+  const src = section.querySelector('a');
+  if (!src) return null;
+  const button = document.createElement('a');
+  button.href = '#top';
+  button.className = 'footer-back-to-top';
+  button.setAttribute('aria-label', src.textContent.trim());
+  button.append(maskIcon(`${window.hlx.codeBasePath}/icons/usa-icons/arrow_upward.svg`));
+
+  const desktop = window.matchMedia('(width >= 900px)');
+  let ticking = false;
+  const update = () => {
+    ticking = false;
+    button.classList.toggle('footer-back-to-top-visible', window.scrollY > SHOW_BACK_TO_TOP_AFTER);
+    // desktop: keep the button above the footer once the footer scrolls into view
+    let bottom = 20;
+    if (desktop.matches && footerEl) {
+      const footerTop = footerEl.getBoundingClientRect().top;
+      if (footerTop < window.innerHeight) {
+        bottom = Math.max(20, window.innerHeight - footerTop + 46);
+      }
+    }
+    button.style.bottom = `${bottom}px`;
+  };
+  const schedule = () => {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(update);
+    }
+  };
+  window.addEventListener('scroll', schedule, { passive: true });
+  window.addEventListener('resize', schedule);
+  update();
+
+  button.addEventListener('click', (e) => {
+    e.preventDefault();
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+    const focusTarget = () => {
+      const target = document.querySelector('header .header-brand a, header a');
+      if (target) target.focus({ preventScroll: true });
+    };
+    if (reduce || !('onscrollend' in window)) focusTarget();
+    else window.addEventListener('scrollend', focusTarget, { once: true });
+  });
+  return button;
 }
 
 /**
@@ -509,10 +388,23 @@ async function decorateFooter(footer, fragment) {
  * @param {Element} block The footer block element
  */
 export default async function decorate(block) {
-  // Load the footer content from fragment
-  const footerPath = getMetadata('footer-nav') || '/nav/footer';
-  const fragment = await loadFragment(footerPath);
+  const fragment = await fetchFooter();
+  if (!fragment) return;
+  const [social, links, contact, utility, bottom, backToTop] = fragment
+    .querySelectorAll(':scope > div');
 
-  // Decorate the fragment into USWDS structure
-  await decorateFooter(block, fragment);
+  const footerEl = block.closest('footer');
+  if (footerEl) footerEl.classList.add('footer-tdot');
+
+  const bands = [];
+  if (social) bands.push(buildSocial(social));
+  const agency = wrap('footer-agency', ...(links ? buildColumns(links) : []), buildContact(contact));
+  bands.push(agency);
+  if (utility) bands.push(buildUtility(utility));
+  if (bottom) bands.push(buildBottom(bottom));
+
+  block.textContent = '';
+  block.append(...bands);
+  const topButton = backToTop && buildBackToTop(backToTop, footerEl);
+  if (topButton) block.append(topButton);
 }

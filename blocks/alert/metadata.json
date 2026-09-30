@@ -1,0 +1,41 @@
+{
+  "id": "alert",
+  "name": "alert",
+  "variantName": "alert",
+  "type": "alert",
+  "baseBlock": "alert",
+  "canonicalModel": "standalone",
+  "version": "1.1.0",
+  "created": "2026-09-29T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.tn.gov/tdot.html",
+    "discoveredDuring": "site-migration",
+    "blockPosition": "top"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "minimal",
+    "imagePattern": "noimg",
+    "purpose": "alert-announcement-strip",
+    "structure": "One row: paragraph with bold label, announcement text and inline 'Learn more' link (slim, no-icon, info); optional heading + body paragraphs for standard alerts",
+    "hasBgImage": false,
+    "position": "top",
+    "isFullWidth": true,
+    "hasGrid": false
+  },
+  "contentPattern": {
+    "structure": "single cell: optional heading followed by one or more paragraphs/lists; slim variant has no heading",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "options": [
+    { "class": "info", "label": "Info" },
+    { "class": "slim", "label": "Slim" },
+    { "class": "no-icon", "label": "No Icon" },
+    { "class": "warning", "label": "Warning" },
+    { "class": "success", "label": "Success" },
+    { "class": "error", "label": "Error" },
+    { "class": "emergency", "label": "Emergency" }
+  ],
+  "memberVariantIds": ["alert", "alert-slim-no-icon"]
+}

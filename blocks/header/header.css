@@ -1,3 +1,735 @@
+/* ==========================================================================
+ * TDOT header (custom overrides — keep at top; header.css is in .buildignore)
+ * Two rows: agency bar (logos, utility link, search) + primary nav.
+ * Mobile-first; desktop enhancements at 900px.
+ * ========================================================================== */
+
+header.header-tdot {
+  height: auto;
+  font-family: var(--body-font-family);
+  letter-spacing: normal;
+}
+
+header.header-tdot .header.block {
+  display: block;
+}
+
+.header-tdot .header-icon {
+  display: block;
+  width: 1em;
+  height: 1em;
+}
+
+/* ---- Row 1: agency bar ---- */
+.header-tdot .header-agency {
+  position: relative;
+  overflow: hidden;
+  background-color: #445c7c;
+  color: #fff;
+}
+
+.header-tdot .header-agency::before,
+.header-tdot .header-agency::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.header-tdot .header-agency::before {
+  background: var(--header-photo) 50% 0 / cover no-repeat;
+  opacity: 0.15;
+}
+
+.header-tdot .header-agency::after {
+  background-color: rgb(23 74 124 / 50%);
+}
+
+.header-tdot .header-agency-inner {
+  position: relative;
+  z-index: 1;
+  box-sizing: border-box;
+  max-width: 1100px;
+  min-height: 162px;
+  margin: 0 auto;
+  padding: 12px 15px 20px;
+}
+
+.header-tdot .header-brand {
+  position: relative;
+  height: 76px;
+  padding-left: 70px;
+}
+
+.header-tdot .header-brand a {
+  display: block;
+  text-decoration: none;
+}
+
+.header-tdot .header-brand-mark {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  width: 60px;
+  height: 70px;
+}
+
+.header-tdot .header-brand-mark img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+}
+
+.header-tdot .header-brand-wordmark img {
+  display: block;
+  width: auto;
+  max-width: none;
+  height: 76px;
+}
+
+.header-tdot .header-tools {
+  margin-top: 20px;
+}
+
+.header-tdot .header-utility-link:any-link {
+  position: absolute;
+  top: 0;
+  right: 9px;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  padding: 5px 0;
+  color: #fff;
+  font-size: 11.25px;
+  line-height: 1.5;
+  letter-spacing: -0.05em;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.header-tdot .header-utility-link:hover,
+.header-tdot .header-utility-link:focus {
+  color: #fff;
+  text-decoration: underline;
+}
+
+.header-tdot .header-utility-link .header-icon {
+  width: 13px;
+  height: 13px;
+  filter: invert(1);
+}
+
+/* Search (source: Coveo search box) */
+.header-tdot .header-search {
+  display: flex;
+  box-sizing: border-box;
+  width: 100%;
+  height: 34px;
+  margin: 0;
+  border: 1px solid #e5e8e8;
+  border-radius: 7.5px;
+  background-color: #f9f9f9;
+  overflow: hidden;
+}
+
+.header-tdot .header-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  margin: 0;
+  padding: 0 15px;
+  border: 0;
+  background: transparent;
+  color: #3d3e40;
+  font-family: var(--body-font-family);
+  font-size: 14.7px;
+}
+
+.header-tdot .header-search-input::placeholder {
+  color: #3d3e40;
+  opacity: 1;
+}
+
+.header-tdot .header-search-input:focus {
+  outline: 2px solid #1b365d;
+  outline-offset: -2px;
+}
+
+.header-tdot .header-search-button {
+  display: flex;
+  flex: 0 0 45px;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% + 2px);
+  margin: -1px -1px -1px 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0 7.5px 7.5px 0;
+  background-color: #1b365d;
+  cursor: pointer;
+}
+
+.header-tdot .header-search-button:hover {
+  background-color: #152c70;
+}
+
+.header-tdot .header-search-button .header-icon {
+  width: 18px;
+  height: 18px;
+  filter: invert(1);
+}
+
+/* ---- Row 2: primary nav ---- */
+.header-tdot .header-nav {
+  position: relative;
+  background-color: #fff;
+  border-bottom: 2px solid #eee;
+  color: #131e29;
+}
+
+.header-tdot .header-nav-inner {
+  position: relative;
+  box-sizing: border-box;
+  max-width: 1100px;
+  min-height: 43px;
+  margin: 0 auto;
+}
+
+.header-tdot .header-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  height: 43px;
+  padding: 0 15px 0 11px;
+  border: 0;
+  background: none;
+  color: #131e29;
+  font-family: var(--body-font-family);
+  font-size: 15px;
+  letter-spacing: -0.05em;
+  cursor: pointer;
+}
+
+.header-tdot .header-menu-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 14px;
+  height: 12px;
+}
+
+.header-tdot .header-menu-icon > span {
+  display: block;
+  height: 2px;
+  background-color: currentcolor;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.header-tdot .header-menu-btn[aria-expanded="true"] {
+  color: #6e7073;
+}
+
+.header-tdot .header-menu-btn[aria-expanded="true"] .header-menu-icon > span:nth-child(1) {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.header-tdot .header-menu-btn[aria-expanded="true"] .header-menu-icon > span:nth-child(2) {
+  opacity: 0;
+}
+
+.header-tdot .header-menu-btn[aria-expanded="true"] .header-menu-icon > span:nth-child(3) {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+.header-tdot .header-print {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  display: flex;
+  padding: 2px;
+  border: 0;
+  background: none;
+  color: #174a7c;
+  cursor: pointer;
+  font-size: 18px;
+  letter-spacing: -0.025em;
+}
+
+.header-tdot .header-print .header-icon {
+  opacity: 0.35;
+}
+
+.header-tdot .header-print:hover .header-icon {
+  opacity: 0.6;
+}
+
+.header-tdot .header-nav-list {
+  display: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.header-tdot .header.block.header-menu-open .header-nav-list {
+  display: block;
+  padding: 0 30px 0 4px;
+}
+
+.header-tdot .header-nav-item {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin: 0;
+  border-top: 4px solid transparent;
+}
+
+.header-tdot .header-nav-link:any-link {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  padding: 8px 7px 12px;
+  color: #131e29;
+  font-size: 15px;
+  line-height: 22.5px;
+  letter-spacing: -0.05em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header-tdot .header-nav-item[aria-expanded="true"] > .header-nav-link {
+  color: #6e7073;
+}
+
+.header-tdot .header-nav-link:hover,
+.header-tdot .header-nav-link:focus {
+  color: #6e7073;
+  text-decoration: none;
+}
+
+.header-tdot .header-nav-link .header-icon {
+  width: 15px;
+  height: 15px;
+  opacity: 0.35;
+}
+
+/* icon-only item keeps the text row height */
+.header-tdot .header-nav-item-icon > .header-nav-link:any-link {
+  min-height: 43px;
+  box-sizing: border-box;
+}
+
+.header-tdot .header-menu-btn:focus:not(:focus-visible),
+.header-tdot .header-nav-toggle:focus:not(:focus-visible),
+.header-tdot .header-print:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.header-tdot .header-nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 29px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.header-tdot .header-nav-toggle .header-icon {
+  opacity: 0.55;
+  transition: transform 0.2s;
+}
+
+.header-tdot .header-nav-toggle .header-icon-caret {
+  display: none;
+}
+
+.header-tdot .header-nav-item[aria-expanded="true"] > .header-nav-toggle .header-icon-chevron {
+  transform: rotate(180deg);
+}
+
+.header-tdot .header-submenu {
+  display: none;
+  flex-basis: calc(100% - 15px);
+  margin: 0 0 0 15px;
+  padding: 0;
+  list-style: none;
+}
+
+.header-tdot .header-nav-item[aria-expanded="true"] > .header-submenu {
+  display: block;
+}
+
+.header-tdot .header-submenu-item {
+  margin: 0;
+}
+
+.header-tdot .header-submenu-item a:any-link {
+  display: block;
+  padding: 5px 15px;
+  color: #1c3146;
+  font-size: 13.125px;
+  line-height: 20.625px;
+  letter-spacing: -0.05em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.header-tdot .header-submenu-item a:hover,
+.header-tdot .header-submenu-item a:focus {
+  color: #ee3524;
+  text-decoration: none;
+}
+
+/* ---- Mobile sticky nav bar + menu overlay (source: #nav.fixed on scroll) ---- */
+header.header-tdot {
+  position: relative;
+  z-index: 100;
+}
+
+.header-tdot .header-agency,
+.header-tdot .header-nav {
+  z-index: 2;
+}
+
+.header-tdot .header-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: none;
+  background-color: rgb(0 0 0 / 40%);
+}
+
+.header-tdot .header.block.header-menu-open .header-overlay {
+  display: block;
+}
+
+.header-tdot .header-nav-mark,
+.header-tdot .header-search-jump {
+  display: none;
+}
+
+/* keep the nav row's space in the flow so content doesn't jump when it pins */
+.header-tdot .header.block.header-sticky {
+  padding-bottom: var(--header-nav-height, 45px);
+}
+
+.header-tdot .header.block.header-sticky .header-nav {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+}
+
+.header-tdot .header.block.header-sticky .header-nav-mark {
+  position: absolute;
+  top: 0;
+  left: 23px;
+  display: block;
+  width: 38px;
+  height: 40px;
+}
+
+.header-tdot .header.block.header-sticky .header-nav-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: 50% 100%;
+}
+
+.header-tdot .header.block.header-sticky .header-menu-btn {
+  margin: 0 55px 0 auto;
+  padding-right: 0;
+}
+
+.header-tdot .header.block.header-sticky .header-print {
+  display: none;
+}
+
+.header-tdot .header.block.header-sticky.header-menu-open .header-nav-list {
+  max-height: calc(100vh - 45px);
+  padding-right: 40px;
+  overflow-y: auto;
+}
+
+.header-tdot .header.block.header-sticky .header-nav-link:any-link {
+  padding: 4px 6px 8px;
+  font-size: 13.125px;
+  line-height: 20.625px;
+}
+
+body.header-scroll-lock {
+  overflow: hidden;
+}
+
+@media (width >= 900px) {
+  /* Row 1 */
+  .header-tdot .header-agency-inner {
+    display: flex;
+    justify-content: space-between;
+    height: 115px;
+    min-height: 0;
+    padding: 20px 0 10px;
+  }
+
+  .header-tdot .header-brand {
+    height: 85px;
+    margin-left: 15px;
+    padding-left: 90px;
+  }
+
+  .header-tdot .header-brand-mark {
+    top: -10px;
+    width: 80px;
+    height: 90px;
+  }
+
+  .header-tdot .header-brand-wordmark img {
+    max-width: 300px;
+    height: 75px;
+    margin-top: 10px;
+  }
+
+  .header-tdot .header-tools {
+    position: static;
+    width: 344px;
+    margin: 28px 11.25px 0 0;
+  }
+
+  .header-tdot .header-utility-link:any-link {
+    top: 5px;
+    right: 23.4px;
+    padding: 10px 0;
+    font-size: 13.125px;
+  }
+
+  .header-tdot .header-utility-link .header-icon {
+    width: 15.75px;
+    height: 15.75px;
+  }
+
+  /* Row 2 */
+  .header-tdot .header-nav {
+    border-bottom: 0;
+  }
+
+  .header-tdot .header-nav-inner {
+    display: flex;
+    align-items: flex-start;
+    min-height: 48px;
+    padding-left: 4px;
+  }
+
+  .header-tdot .header-menu-btn {
+    display: none;
+  }
+
+  .header-tdot .header-nav-list,
+  .header-tdot .header.block.header-menu-open .header-nav-list {
+    display: flex;
+    gap: 3px;
+    border-top: 0;
+  }
+
+  .header-tdot .header-nav-link .header-icon {
+    margin: 0 3px;
+  }
+
+  .header-tdot .header-nav-item {
+    flex-wrap: nowrap;
+    border-top: 4px solid transparent;
+    border-bottom: 0;
+    transition: border-color 0.2s;
+  }
+
+  .header-tdot .header-nav-item:hover,
+  .header-tdot .header-nav-item:focus-within,
+  .header-tdot .header-nav-item[aria-expanded="true"] {
+    border-top-color: #ee3524;
+  }
+
+  .header-tdot .header-nav-link:any-link {
+    padding: 8px 7px 12px;
+    font-size: 15px;
+    line-height: 22.5px;
+  }
+
+  .header-tdot .header-nav-item:hover > .header-nav-link,
+  .header-tdot .header-nav-item[aria-expanded="true"] > .header-nav-link {
+    color: #6e7073;
+  }
+
+  .header-tdot .header-nav-item-dropdown > .header-nav-link:any-link {
+    padding-right: 0;
+  }
+
+  .header-tdot .header-nav-toggle {
+    width: auto;
+    height: auto;
+    padding: 8px 7px 12px 2px;
+    font-size: 20px;
+  }
+
+  .header-tdot .header-nav-toggle .header-icon {
+    opacity: 1;
+  }
+
+  .header-tdot .header-nav-toggle .header-icon-caret {
+    display: block;
+  }
+
+  .header-tdot .header-nav-toggle .header-icon-chevron {
+    display: none;
+  }
+
+  .header-tdot .header-nav-item {
+    align-items: stretch;
+  }
+
+  .header-tdot .header-submenu {
+    flex-basis: auto;
+  }
+
+  .header-tdot .header-nav-item:hover > .header-nav-toggle .header-icon,
+  .header-tdot .header-nav-item[aria-expanded="true"] > .header-nav-toggle .header-icon {
+    opacity: 0.55;
+  }
+
+  .header-tdot .header-nav-item[aria-expanded="true"] > .header-nav-toggle .header-icon {
+    transform: none;
+  }
+
+  .header-tdot .header.block.header-menu-open .header-nav-list {
+    padding: 0;
+  }
+
+  /* Dropdown panel */
+  .header-tdot .header-submenu,
+  .header-tdot .header-nav-item[aria-expanded="true"] > .header-submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 9000;
+    min-width: 100%;
+    margin: -1px 0 0;
+    border: 2px solid #eee;
+    border-top: 0;
+    background-color: #fff;
+    white-space: nowrap;
+    animation: none;
+  }
+
+  .header-tdot .header-submenu {
+    display: none;
+  }
+
+  .header-tdot .header-nav-item[aria-expanded="true"] > .header-submenu {
+    display: block;
+  }
+
+  .header-tdot .header-submenu-item {
+    border-top: 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .header-tdot .header-submenu-item:last-child {
+    border-bottom: 0;
+  }
+
+  .header-tdot .header-submenu-item a:any-link {
+    padding: 5px 15px;
+  }
+
+  /* no menu overlay on desktop */
+  .header-tdot .header.block.header-menu-open .header-overlay {
+    display: none;
+  }
+
+  /* desktop sticky bar (source: compact 37px #nav.fixed) */
+  .header-tdot .header.block.header-sticky .header-nav {
+    border-bottom: 2px solid #eee;
+  }
+
+  .header-tdot .header.block.header-sticky .header-nav-inner {
+    position: relative;
+    min-height: 35px;
+    padding-left: 64px;
+  }
+
+  .header-tdot .header.block.header-sticky .header-nav-mark {
+    left: 23px;
+  }
+
+  .header-tdot .header.block.header-sticky .header-nav-link:any-link {
+    padding: 4px 6px 8px;
+    font-size: 13.125px;
+    line-height: 19.6875px;
+  }
+
+  .header-tdot .header.block.header-sticky .header-nav-item-dropdown > .header-nav-link:any-link {
+    padding-right: 0;
+  }
+
+  .header-tdot .header.block.header-sticky .header-nav-item-icon > .header-nav-link:any-link {
+    min-height: 0;
+  }
+
+  .header-tdot .header.block.header-sticky .header-nav-link .header-icon {
+    margin: 0 1.5px;
+  }
+
+  .header-tdot .header.block.header-sticky .header-nav-toggle {
+    padding: 4px 6px 8px 2px;
+    font-size: 16px;
+  }
+
+  .header-tdot .header.block.header-sticky .header-print,
+  .header-tdot .header.block.header-sticky .header-search-jump {
+    position: absolute;
+    top: 5px;
+    display: flex;
+    padding: 2px;
+    border: 0;
+    background: none;
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  .header-tdot .header.block.header-sticky .header-print {
+    right: 40px;
+  }
+
+  .header-tdot .header.block.header-sticky .header-search-jump {
+    right: 10px;
+  }
+
+  .header-tdot .header-search-jump .header-icon {
+    opacity: 0.35;
+  }
+
+  .header-tdot .header-search-jump:hover .header-icon {
+    opacity: 0.6;
+  }
+
+  /* source anchors print to the full-width bar, not the content container */
+  .header-tdot .header-nav-inner {
+    position: static;
+  }
+
+  .header-tdot .header-print {
+    top: 9px;
+    right: 51px;
+    font-size: 15px;
+  }
+}
+
+/* ======================= end TDOT header overrides ======================= */
+
 /**
  * EDS Override styles for USWDS Header
  * These styles override default EDS header behavior to work with USWDS

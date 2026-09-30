@@ -1,3 +1,301 @@
+/**
+ * EDS Override styles for USWDS Card group - cards block options
+ * news / people / tiles: rows decorated into ul.usa-card-group > li.usa-card.
+ * Values measured from the source (https://www.tn.gov/tdot.html) computed
+ * styles at 1440px and 375px; the source stacks columns below 768px.
+ * Selectors include .cards.block / .cards.<option> to outrank the compiled
+ * USWDS rules below.
+ */
+
+/* ---------- shared: grid + USWDS card chrome reset ---------- */
+.cards.block .usa-card-group {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+
+  /* source column gutter: 22px right + 5px left column padding */
+  gap: 0 27px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cards.block .usa-card-group .usa-card {
+  margin: 0;
+  padding: 0;
+}
+
+/* source cards have no border, radius or background */
+.cards.block .usa-card__container {
+  margin: 0;
+  border: 0;
+  border-radius: 0;
+  background-color: transparent;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-m);
+  line-height: 1.5;
+}
+
+.cards.block .usa-card__img {
+  border-radius: 0;
+  background-color: transparent;
+  text-align: center;
+}
+
+/* decorateMain wraps linked pictures (tiles) in a paragraph */
+.cards.block .usa-card__img p {
+  margin: 0;
+}
+
+/* images render at natural size, capped to the column, centered */
+.cards.block .usa-card__img img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+.cards.block .usa-card__header,
+.cards.block .usa-card__body,
+.cards.block .usa-card__footer {
+  padding: 0;
+}
+
+/* body keeps its content height so the CTA follows the text (not bottom-aligned) */
+.cards.block .usa-card__body {
+  flex: 0 0 auto;
+}
+
+/* source H4 treatment (authored as H3) */
+.cards.block .usa-card__heading {
+  margin: 0;
+  color: var(--heading-color);
+  font-family: var(--heading-font-family);
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: var(--heading-letter-spacing);
+}
+
+.cards.block .usa-card__body p {
+  margin: 10px 0 20px;
+  font-size: var(--body-font-size-s);
+  line-height: 1.5;
+}
+
+.cards.block .usa-card__body > p:first-child {
+  margin-top: 0;
+}
+
+.cards.block .usa-card__footer {
+  padding-bottom: 20px;
+}
+
+.cards.block .usa-card__footer .button-container {
+  margin: 0;
+}
+
+/* ---------- news + people: image, spacer, heading, text ---------- */
+
+/* source empty spacer paragraph: 10px margin + 19.69px line + 20px margin */
+.cards.news .usa-card__header,
+.cards.people .usa-card__header {
+  padding: 49.69px 0 20px;
+}
+
+/* index-driven (latest) images vary in size: crop to the source card ratio (327x167) */
+.cards.news.latest .usa-card__img img {
+  width: 100%;
+  aspect-ratio: 327 / 167;
+  object-fit: cover;
+}
+
+/* ---------- news: gray "Read more" text link with circled arrow ---------- */
+main .cards.news a.usa-button:any-link,
+main .cards.news a.usa-button:hover,
+main .cards.news a.usa-button:focus {
+  display: inline-block;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: #6d7074 !important;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.75px;
+  text-align: left;
+  text-decoration: none !important;
+}
+
+main .cards.news a.usa-button:hover,
+main .cards.news a.usa-button:focus {
+  color: var(--link-hover-color) !important;
+}
+
+main .cards.news a.usa-button:hover::before,
+main .cards.news a.usa-button:focus::before {
+  border-color: var(--link-hover-color);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23a7190c' d='M8 1.8 6.2 3.6l3.1 3.1H1.8v2.6h7.5l-3.1 3.1L8 14.2 14.2 8z'/%3E%3C/svg%3E");
+}
+
+main .cards.news a.usa-button::before {
+  content: "";
+  display: inline-block;
+  box-sizing: border-box;
+  width: 24px;
+  height: 24px;
+  margin: 0 2.625px;
+  border: 2px solid #6d7074;
+  border-radius: 40px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%236d7074' d='M8 1.8 6.2 3.6l3.1 3.1H1.8v2.6h7.5l-3.1 3.1L8 14.2 14.2 8z'/%3E%3C/svg%3E") center / 13px no-repeat;
+  vertical-align: middle;
+}
+
+/* ---------- people: portraits + gray story buttons + careers panel ---------- */
+main .cards.people .usa-card__footer a.usa-button {
+  width: auto;
+  margin: 0 0 3px;
+}
+
+/* careers panel (image-less card): white box with soft shadow, content height */
+.cards.people .usa-card--no-media {
+  align-self: start;
+}
+
+.cards.people .usa-card--no-media .usa-card__container {
+  height: auto;
+  margin: 0 0 20px;
+  padding: 25px;
+  background-color: #fff;
+  box-shadow: rgb(0 0 0 / 20%) 1px 1px 4px 0;
+}
+
+.cards.people .usa-card--no-media .usa-card__header {
+  padding-top: 0;
+}
+
+/* ---------- tiles: linked icon image + centered linked caption ---------- */
+.cards.tiles .usa-card__container {
+  text-align: center;
+}
+
+.cards.tiles .usa-card__img a {
+  display: inline-block;
+  vertical-align: top;
+}
+
+/* 19.6px image-to-caption gap; 20px caption margin below */
+.cards.tiles .usa-card__header {
+  padding: 20px 0;
+}
+
+.cards.tiles .usa-card__heading a:any-link {
+  color: var(--heading-color);
+  text-decoration: underline;
+}
+
+.cards.tiles .usa-card__heading a:hover,
+.cards.tiles .usa-card__heading a:focus {
+  color: var(--link-hover-color);
+}
+
+@media (width >= 768px) {
+  /* news: three equal stories */
+  .cards.news .usa-card-group {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* people: 25% / 25% / 50% columns (source column widths include the gutter) */
+  .cards.people .usa-card-group {
+    grid-template-columns: calc(25% - 20.25px) calc(25% - 20.25px) minmax(0, 1fr);
+  }
+
+  /* source buttons sit 15px in from the text edge on desktop */
+  main .cards.people .usa-card__footer a.usa-button {
+    margin-left: 15px;
+  }
+
+  /* tiles: five equal tiles */
+  .cards.tiles .usa-card-group {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+
+/* ---------- media: image, heading, text (tn.gov text-and-image, e.g. Scenic Roadways) ---------- */
+.cards.media .usa-card-group {
+  gap: 0 27px;
+}
+
+.cards.media .usa-card-group .usa-card {
+  margin: 0 0 20px;
+}
+
+.cards.media .usa-card__media {
+  margin: 5px 0 0;
+  padding: 0 15px 5px 0;
+}
+
+.cards.media .usa-card__img {
+  text-align: left;
+}
+
+.cards.media .usa-card__img img {
+  width: 100%;
+  margin: 0;
+}
+
+.cards.media .usa-card__header {
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.cards.media .usa-card__heading {
+  color: #1b365d;
+  font-size: 18.75px;
+  line-height: 22.5px;
+  letter-spacing: -0.075em;
+}
+
+.cards.media .usa-card__body p {
+  margin: 10px 0 20px;
+  color: #131e29;
+  font-size: 13.125px;
+  line-height: 19.6875px;
+  letter-spacing: -0.025em;
+}
+
+/* flex column: the header's 20px margin doesn't collapse with the first paragraph */
+.cards.media .usa-card__body > p:first-child {
+  margin-top: 0;
+}
+
+.cards.media .usa-card__body > p:last-child {
+  margin-bottom: 0;
+}
+
+.cards.media .usa-card__body a:any-link {
+  color: #174a7c;
+  text-decoration: underline;
+}
+
+.cards.media .usa-card__body a:hover,
+.cards.media .usa-card__body a:focus {
+  color: #a7190c;
+}
+
+@media (width >= 600px) {
+  .cards.media .usa-card-group {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 0 23px 0 15px;
+  }
+}
+
 /*
 * * * * * ==============================
 * * * * * ==============================

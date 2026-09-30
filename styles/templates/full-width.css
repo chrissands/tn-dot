@@ -1,0 +1,87 @@
+/*
+ * Full-width template: tn.gov page without a left nav (e.g. Traveling in Tennessee).
+ * Content in the 1100px container (15px side padding on mobile); a Hero (banner)
+ * section runs full bleed. Values from computed styles at 1440px / 375px.
+ */
+body.full-width > main {
+  box-sizing: border-box;
+  padding-top: 20px;
+}
+
+body.full-width main > .section {
+  box-sizing: border-box;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+body.full-width main > .section > div:not(.hero):not(.alert):not(.banner) {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+body.full-width main > .section.hero-container {
+  max-width: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+body.full-width main > .section.hero-container > .hero-wrapper {
+  max-width: none;
+  padding: 0;
+}
+
+body.full-width main .default-content-wrapper {
+  text-align: left;
+}
+
+body.full-width main .default-content-wrapper > h1 {
+  margin: 0;
+  color: #1b365d;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 37.5px;
+  letter-spacing: -0.075em;
+}
+
+body.full-width main .default-content-wrapper > p {
+  margin: 10px 0 20px;
+  color: #131e29;
+  font-size: 13.125px;
+  line-height: 19.6875px;
+  letter-spacing: -0.025em;
+}
+
+body.full-width main .default-content-wrapper a:any-link {
+  color: #174a7c;
+}
+
+body.full-width main .default-content-wrapper a:hover,
+body.full-width main .default-content-wrapper a:focus {
+  color: #a7190c;
+}
+
+/* Section Metadata style "rule": the source's horizontal rule above the section */
+body.full-width main > .section.rule > div:first-child:not(.hero) {
+  margin-top: 10px;
+  padding-top: 45px;
+  border-top: 1px solid #d1d3d4;
+}
+
+@media (width >= 900px) {
+  body.full-width > main {
+    margin-top: 40px;
+    padding-top: 0;
+  }
+
+  body.full-width main > .section {
+    padding: 0;
+  }
+
+  body.full-width main .default-content-wrapper > h1 {
+    margin-bottom: 30px;
+    font-size: 42.375px;
+    line-height: 45px;
+  }
+}

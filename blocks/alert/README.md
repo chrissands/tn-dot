@@ -231,3 +231,31 @@ The block transforms your content into the USWDS alert structure:
 ---
 
 **Note**: This README contains authoring guidelines. The alert CSS and JavaScript files are protected by `.buildignore` to preserve EDS-specific enhancements.
+
+<!-- excat-authoring-guide:start -->
+## Migration authoring guide
+
+Custom **alert** block. Purpose: alert-announcement-strip.
+
+### Authoring (Document Authoring)
+
+Model: `standalone`
+
+Single block table. Content: single cell: optional heading followed by one or more paragraphs/lists; slim variant has no heading.
+
+### Supported variations
+
+| Variation | Option class |
+| --- | --- |
+| Info | `info` |
+| Slim | `slim` |
+| No Icon | `no-icon` |
+| Warning | `warning` |
+| Success | `success` |
+| Error | `error` |
+| Emergency | `emergency` |
+
+### Universal Editor fields
+
+N/A (Document Authoring project)
+<!-- excat-authoring-guide:end -->

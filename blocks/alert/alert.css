@@ -16,6 +16,72 @@
   margin-right: calc(50% - 50vw) !important;
 }
 
+/* ==========================================================================
+ * CUSTOM OVERRIDE: TDOT "Project Update" strip (alert info slim no-icon)
+ * Values from https://www.tn.gov/tdot.html (see migration-work/alert-extracted.css)
+ * Scoped to .alert.slim.no-icon so other alert uses keep USWDS defaults.
+ * ========================================================================== */
+
+/* 20px gap above and below the strip (source spacing) */
+main > .section:has(+ .section .alert.slim.no-icon) {
+  margin-bottom: 20px;
+}
+
+main > .section:has(.alert.slim.no-icon) {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Solid lime strip (source background image is a flat rgb(210, 215, 85)) */
+.alert.slim.no-icon .usa-alert {
+  background-color: rgb(210 215 85);
+  border-left: 0;
+  color: var(--text-color);
+}
+
+.alert.slim.no-icon .usa-alert .usa-alert__body {
+  box-sizing: border-box;
+  max-width: var(--content-max-width);
+  margin-inline: auto;
+  padding: 25px 52px 20px 45px;
+  background-color: transparent;
+  color: var(--text-color);
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+  line-height: 1.5;
+  text-align: center;
+}
+
+.alert.slim.no-icon .usa-alert .usa-alert__body > .usa-alert__text {
+  margin: 0;
+  font-size: var(--body-font-size-s);
+  line-height: 1.5;
+}
+
+.alert.slim.no-icon .usa-alert__text strong {
+  font-weight: 700;
+}
+
+.alert.slim.no-icon .usa-alert__text a:any-link,
+.alert.slim.no-icon .usa-alert__text a:hover {
+  color: var(--link-color);
+  font-weight: 400;
+  text-decoration: underline;
+}
+
+.alert.slim.no-icon .usa-alert__text a:hover,
+.alert.slim.no-icon .usa-alert__text a:focus {
+  color: var(--link-hover-color);
+}
+
+@media (width >= 900px) {
+  .alert.slim.no-icon .usa-alert .usa-alert__body {
+    padding-inline: 15px 22px;
+  }
+}
+
+/* END CUSTOM OVERRIDE ===================================================== */
+
 /*
 * * * * * ==============================
 * * * * * ==============================

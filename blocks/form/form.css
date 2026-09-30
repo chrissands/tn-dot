@@ -1,3 +1,293 @@
+/* ==========================================================================
+ * Form: authored-definition form (custom overrides — keep at top; form.css is in
+ * .buildignore). Styled after the TDOT Maintenance Request Formstack form on
+ * tn.gov: 19px gray labels, square 39px fields, small native radios/checkboxes,
+ * centered navy submit. Two columns (Style "half") from 600px.
+ * ========================================================================== */
+
+.form.block .form-definition {
+  max-width: none;
+  margin: 20px 0;
+  padding: 20px;
+  color: #1b365d;
+  font-family: var(--body-font-family);
+  font-size: 15px;
+  line-height: 22.5px;
+  letter-spacing: -0.025em;
+}
+
+/* USWDS gives labels, legends and controls its own font; the source form uses the site font */
+.form.block .form-definition :is(label, legend, input, select, textarea, button) {
+  font-family: var(--body-font-family);
+}
+
+.form.block .form-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  column-gap: 20px;
+}
+
+.form.block .form-field {
+  max-width: none;
+  margin: 0 0 20px;
+}
+
+.form.block .form-field[hidden] {
+  display: none;
+}
+
+.form.block .usa-fieldset {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* labels and group legends */
+.form.block .usa-label,
+.form.block .usa-legend {
+  display: block;
+  max-width: none;
+  margin: 0 0 10px;
+  padding: 0;
+  color: #414141;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 28.5px;
+}
+
+.form.block .usa-hint--required {
+  color: #d63246;
+  font-size: inherit;
+  text-decoration: none;
+}
+
+/* text fields, drop-downs, text areas */
+.form.block .usa-input,
+.form.block .usa-select,
+.form.block .usa-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: none;
+  height: 39px;
+  margin: 0;
+  padding: 6.5px;
+  border: 1px solid #949494;
+  border-radius: 0;
+  background-color: #fff;
+  color: #1b365d;
+  font-family: inherit;
+  font-size: 13px;
+  line-height: normal;
+}
+
+.form.block .usa-select {
+  padding-right: 26px;
+}
+
+.form.block .usa-textarea {
+  height: 80px;
+  border-color: #d3dde1;
+}
+
+.form.block .form-field-tall .usa-textarea {
+  height: 106px;
+}
+
+.form.block .usa-input:focus,
+.form.block .usa-select:focus,
+.form.block .usa-textarea:focus {
+  outline: 2px solid #174a7c;
+  outline-offset: 0;
+}
+
+/* first / last name */
+.form.block .form-name {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+}
+
+.form.block .form-name .usa-legend {
+  margin-bottom: 10px;
+}
+
+.form.block .form-sublabel {
+  display: block;
+  margin-top: 2px;
+  color: #65707b;
+  font-size: 13px;
+  line-height: 13px;
+}
+
+/* radios and checkboxes: small native controls, as on the source form */
+.form.block .form-option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: #414141;
+  font-size: 13px;
+  line-height: 26px;
+}
+
+.form.block .form-option input {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  accent-color: #1b365d;
+}
+
+.form.block .form-field-inline .form-option-list {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 20px;
+}
+
+/* rich text rows */
+.form.block .form-heading,
+.form.block .form-note,
+.form.block .form-callout {
+  color: #1b365d;
+}
+
+.form.block :is(.form-heading, .form-note, .form-callout) > * {
+  margin: 0;
+}
+
+.form.block .form-heading {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.form.block .form-note {
+  font-size: 16px;
+  line-height: 24px;
+}
+
+.form.block .form-callout {
+  font-size: 18px;
+  line-height: 27px;
+}
+
+.form.block .form-note a:any-link,
+.form.block .form-callout a:any-link {
+  color: #1b365d;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.form.block .form-note a:hover,
+.form.block .form-callout a:hover,
+.form.block .form-note a:focus,
+.form.block .form-callout a:focus {
+  color: #a7190c;
+}
+
+/* "Call 911" / "Call *847" style short callouts are bold */
+.form.block .form-callout strong {
+  font-weight: 700;
+}
+
+/* submit */
+.form.block .form-field-submit {
+  margin: 59px 0 0;
+  text-align: center;
+}
+
+.form.block .form-field-submit .usa-button {
+  width: auto;
+  margin: 0;
+  min-width: 140px;
+  padding: 15px 25px;
+  border-radius: 3px;
+  background-color: #1b365d;
+  color: #fff;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 13px;
+  letter-spacing: -0.025em;
+}
+
+.form.block .form-field-submit .usa-button:hover,
+.form.block .form-field-submit .usa-button:focus {
+  background-color: #174a7c;
+}
+
+.form.block .form-field-submit .usa-button:disabled {
+  opacity: 0.6;
+}
+
+/* validation and send status */
+.form.block .usa-form-group--error {
+  margin-left: 0;
+  padding-left: 12px;
+  border-left: 4px solid #d63246;
+}
+
+.form.block .usa-error-message {
+  display: block;
+  margin: 0 0 8px;
+  padding: 0;
+  color: #d63246;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 19.5px;
+}
+
+.form.block .usa-input--error {
+  border: 2px solid #d63246;
+}
+
+/* reCAPTCHA badge (inline, centered under the submit button) */
+.form.block .form-captcha {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 0;
+}
+
+.form.block .form-captcha:empty {
+  display: none;
+}
+
+.form.block .form-message {
+  margin: 0 0 20px;
+}
+
+.form.block .form-message .usa-alert__text > * {
+  margin: 0;
+}
+
+@media (width >= 600px) {
+  .form.block .form-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .form.block .form-field {
+    grid-column: 1 / -1;
+  }
+
+  .form.block .form-field-half {
+    grid-column: auto / span 1;
+  }
+
+  .form.block .form-field-half-right {
+    grid-column: 2 / span 1;
+  }
+
+  .form.block .form-name {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 900px) {
+  .form.block .form-definition {
+    margin: 20px;
+  }
+}
+
+/* ============================ end Form overrides ============================ */
+
 /*
 * * * * * ==============================
 * * * * * ==============================

@@ -1,3 +1,219 @@
+/**
+ * EDS Override styles for USWDS Hero - "video" variant
+ * Full-bleed background <video> (from an authored .mp4 link) with a centered
+ * logo, heading, and tagline, matched to the tn.gov/tdot .tn-video-hero.
+ * Selectors include .hero.video to outrank the compiled USWDS rules below.
+ *
+ * Source geometry: the in-flow <video> (854x480 intrinsic) sets the hero
+ * height; the content is an absolutely positioned, flex-centred overlay.
+ * Source breakpoints: <=1024px the video is inset 15px per side (tn.gov
+ * container padding); <768px the logo and tagline are hidden and the
+ * heading shrinks to 37.5px.
+ */
+/*
+ * "banner" variant: tn.gov basic slider (single slide) – full-bleed 380px photo with a
+ * bottom gradient carrying a white heading and tagline (e.g. Traveling in Tennessee).
+ * Source: heading 37.5px (26.25px mobile), tagline 13.125px max 600px, text column
+ * starts 65px inside the 1100px container (42px from the edge on mobile).
+ */
+.hero.banner.usa-hero {
+  position: relative;
+  display: block;
+  height: 380px;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #1b365d;
+
+  /* drop the USWDS default background (/icons/hero.jpg is not shipped) */
+  background-image: none;
+  color: #fff;
+  font-family: var(--body-font-family);
+}
+
+.hero.banner .usa-hero__image,
+.hero.banner .usa-hero__image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero.banner .usa-hero__image {
+  position: absolute;
+  inset: 0;
+}
+
+.hero.banner .grid-container {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  max-width: none;
+  margin: 0;
+  padding: 0 10px 45px 42px;
+  background: linear-gradient(to bottom, rgb(0 0 0 / 0%), rgb(0 0 0 / 75%));
+}
+
+.hero.banner .usa-hero__callout {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+.hero.banner .usa-hero__heading {
+  margin: 0;
+  color: #fff;
+  font-family: var(--body-font-family);
+  font-size: 26.25px;
+  font-weight: 400;
+  line-height: 52.5px;
+  letter-spacing: -0.075em;
+}
+
+.hero.banner .usa-hero__callout p {
+  max-width: 600px;
+  margin: 10px 0 15px;
+  color: #fff;
+  font-size: 13.125px;
+  line-height: 15px;
+  letter-spacing: -0.025em;
+}
+
+@media (width >= 900px) {
+  .hero.banner .grid-container {
+    padding-left: max(42px, calc((100% - 1100px) / 2 + 65px));
+  }
+
+  .hero.banner .usa-hero__heading {
+    font-size: 37.5px;
+  }
+}
+
+.hero.video.usa-hero {
+  --hero-video-inset: 15px;
+  --hero-video-shadow: rgb(0 0 0) 2px 2px 8px;
+
+  display: block;
+  min-height: 0;
+  font-family: var(--body-font-family);
+
+  /* Drop the USWDS default background (/icons/hero.jpg is not shipped). */
+  background-image: none;
+}
+
+/* Poster fallback sits exactly behind the video box. */
+.hero.video .usa-hero__image {
+  inset: 0 var(--hero-video-inset);
+  width: auto;
+}
+
+.hero.video .usa-hero__video {
+  position: static;
+  z-index: auto;
+  display: block;
+  width: calc(100% - (2 * var(--hero-video-inset)));
+  height: auto;
+  margin: 0 var(--hero-video-inset);
+  aspect-ratio: 854 / 480;
+  object-fit: cover;
+  background-color: #000;
+}
+
+/* Overlay: covers the video box and centres the content column. */
+.hero.video.usa-hero > .grid-container {
+  position: absolute;
+  inset: 0 var(--hero-video-inset);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+
+  /* Let clicks reach the native video controls, as on the source. */
+  pointer-events: none;
+}
+
+.hero.video .usa-hero__callout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: transparent;
+  text-align: center;
+}
+
+.hero.video .usa-hero__callout > * {
+  pointer-events: auto;
+}
+
+/* Logo: rendered at natural size (70x345 transparent canvas, tristar at
+ * the bottom), matching the source .heading-image; hidden below 768px. */
+.hero.video .usa-hero__logo {
+  display: none;
+  justify-content: center;
+  margin: 0;
+}
+
+.hero.video .usa-hero__logo img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: none;
+}
+
+.hero.video .usa-hero__heading {
+  margin: 0 0 20px;
+  padding: 20px 0;
+  font-family: var(--heading-font-family);
+  font-size: 37.5px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: var(--heading-letter-spacing);
+  color: #fff;
+  text-shadow: var(--hero-video-shadow);
+}
+
+.hero.video .usa-hero__callout > p {
+  display: none;
+  margin: 10px 0 20px;
+  padding-bottom: 20px;
+  font-family: var(--body-font-family);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 36px;
+  letter-spacing: -0.375px;
+  color: #fff;
+  text-shadow: var(--hero-video-shadow);
+}
+
+@media (width >= 768px) {
+  .hero.video .usa-hero__logo {
+    display: flex;
+  }
+
+  .hero.video .usa-hero__heading {
+    font-size: 45px;
+  }
+
+  .hero.video .usa-hero__callout > p {
+    display: block;
+  }
+}
+
+@media (width >= 1025px) {
+  .hero.video.usa-hero {
+    --hero-video-inset: 0px;
+  }
+}
+
 /*
 * * * * * ==============================
 * * * * * ==============================

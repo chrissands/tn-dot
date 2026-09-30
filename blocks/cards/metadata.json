@@ -1,0 +1,37 @@
+{
+  "id": "cards",
+  "name": "cards",
+  "variantName": "cards",
+  "type": "cards",
+  "baseBlock": "cards",
+  "canonicalModel": "standalone",
+  "version": "1.1.0",
+  "created": "2026-09-29T00:00:00.000Z",
+  "sourceContext": {
+    "originUrl": "https://www.tn.gov/tdot.html",
+    "discoveredDuring": "site-migration",
+    "blockPosition": "middle"
+  },
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "imagePattern": "multiple",
+    "purpose": "cards-card-group",
+    "structure": "news: 3 rows of image | headline, excerpt, 'Read more' link | people: rows of portrait | name/title, quote, story link, plus an image-less CTA card spanning wider | tiles: 5 rows of linked icon image | linked H3 caption",
+    "hasBgImage": false,
+    "position": "middle",
+    "isFullWidth": false,
+    "hasGrid": true
+  },
+  "contentPattern": {
+    "structure": "image cell (optional) | text cell with heading, paragraph(s), and optional link-only paragraph for the card footer",
+    "buttonCount": 3,
+    "imageCount": 3
+  },
+  "options": [
+    { "class": "news", "label": "News" },
+    { "class": "people", "label": "People" },
+    { "class": "tiles", "label": "Tiles" }
+  ],
+  "memberVariantIds": ["cards-news", "cards-people", "cards-tiles"]
+}

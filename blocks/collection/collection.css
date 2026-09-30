@@ -1,3 +1,215 @@
+/* ==========================================================================
+ * Collection (news): index-driven newsroom list (custom overrides — keep at top;
+ * collection.css is in .buildignore). Styled after https://www.tn.gov/tdot/news.html:
+ * white story cards, first story featured full width, 2 columns from 900px.
+ * ========================================================================== */
+
+.collection.news .news-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 10px;
+  margin: 0;
+  padding: 0 10px 0 0;
+  border: 0;
+  list-style: none;
+}
+
+.collection.news .news-list-item {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: #fff;
+  box-shadow: 1px 1px 4px rgb(0 0 0 / 20%);
+}
+
+.collection.news .news-list-item .usa-collection__body {
+  flex: 1 1 auto;
+  padding: 20px;
+}
+
+.collection.news .news-list-item .usa-collection__heading {
+  margin: 0;
+  font-family: var(--heading-font-family);
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 30px;
+  letter-spacing: -0.075em;
+}
+
+.collection.news .news-list-item-featured .usa-collection__heading {
+  font-size: 45px;
+  line-height: 57px;
+}
+
+.collection.news .news-list-item .usa-collection__heading a:any-link {
+  color: #174a7c;
+  text-decoration: none;
+}
+
+.collection.news .news-list-item .usa-collection__heading a:hover,
+.collection.news .news-list-item .usa-collection__heading a:focus {
+  color: #a7190c;
+}
+
+.collection.news .news-list-item .usa-collection__meta {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.collection.news .news-list-item .usa-collection__meta-item {
+  margin: 0;
+  padding: 0 3px 3px 0;
+  color: #414042;
+  font-size: 13.125px;
+  font-weight: 500;
+  line-height: 20.625px;
+  letter-spacing: -0.025em;
+}
+
+.collection.news .news-list-item .usa-collection__meta-item small {
+  font-size: 11.4844px;
+}
+
+.collection.news .news-list-more:any-link {
+  display: block;
+  margin-bottom: -1px;
+  padding: 5px;
+  background-color: #d1d3d4;
+  color: #131e29;
+  font-size: 13.125px;
+  line-height: 20.625px;
+  letter-spacing: -0.05em;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.collection.news .news-list-more:hover,
+.collection.news .news-list-more:focus {
+  background-color: #a7a9ac;
+  color: #131e29;
+}
+
+.collection.news .news-list-empty {
+  margin: 0;
+  color: #131e29;
+  font-size: 13.125px;
+  line-height: 19.6875px;
+}
+
+/* pager (source ul.pager): plain inline numbers in the body font, no USWDS boxes.
+ * First/previous float to the column's left edge; the remaining items center in the
+ * space left beside them. Arrows show at all widths. */
+.collection.news .news-pager {
+  display: block;
+  margin: 20px 0 10px;
+  background: none;
+  color: #a7a9ac;
+  font-family: var(--body-font-family);
+  font-size: 16.875px;
+  font-weight: 500;
+  line-height: 20.625px;
+}
+
+.collection.news .news-pager .usa-pagination__list {
+  display: block;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+
+.collection.news .news-pager .usa-pagination__item {
+  display: inline-block;
+  flex: none;
+  min-width: 0;
+  height: auto;
+  margin: 0 3.5px 0 0;
+  padding: 5px 10px 5px 0;
+  line-height: 20.625px;
+  vertical-align: middle;
+}
+
+.collection.news .news-pager .news-pager-back {
+  display: block;
+  float: left;
+  margin: 0;
+}
+
+.collection.news .news-pager .usa-pagination__overflow {
+  padding: 5px 10px 5px 0;
+}
+
+.collection.news .news-pager .usa-pagination__button,
+.collection.news .news-pager .usa-pagination__link {
+  display: inline;
+  width: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  color: #a7a9ac;
+  text-decoration: none;
+}
+
+.collection.news .news-pager a.usa-pagination__button:any-link,
+.collection.news .news-pager a.usa-pagination__link:any-link {
+  color: #1b365d;
+}
+
+.collection.news .news-pager a.usa-pagination__button:hover,
+.collection.news .news-pager a.usa-pagination__button:focus,
+.collection.news .news-pager a.usa-pagination__link:hover,
+.collection.news .news-pager a.usa-pagination__link:focus {
+  border: 0;
+  color: #a7190c;
+}
+
+.collection.news .news-pager .usa-current,
+.collection.news .news-pager .usa-current:hover {
+  background: none;
+  color: #a7a9ac;
+}
+
+.collection.news .news-pager .news-pager-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 23px;
+  vertical-align: top;
+}
+
+.collection.news .news-pager-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  background-color: currentcolor;
+  mask: var(--news-pager-icon) center / contain no-repeat;
+}
+
+@media (width >= 900px) {
+  .collection.news .news-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .collection.news .news-list-item-featured {
+    grid-column: 1 / -1;
+  }
+
+  .collection.news .news-list-item .usa-collection__body {
+    padding: 25px;
+  }
+}
+
+/* ======================= end Collection (news) overrides ======================= */
+
 /**
  * EDS Override styles for USWDS Collection
  * Hide the EDS block wrapper to let USWDS structure show through

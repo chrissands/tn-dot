@@ -1,0 +1,392 @@
+{
+  "source": "Formstack form 3533382",
+  "rows": [
+    {
+      "type": "radio",
+      "name": "emergency",
+      "label": "Is this an Emergency that may cause Injury or Loss of Life?",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "required": true,
+      "showIf": "",
+      "style": ""
+    },
+    {
+      "type": "callout",
+      "name": "call-911",
+      "label": "<p><strong>Call 911</strong></p>",
+      "showIf": "emergency = Yes"
+    },
+    {
+      "type": "radio",
+      "name": "hazard",
+      "label": "Is this a hazard that is causing imminent danger for traveling public?",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "required": false,
+      "showIf": "emergency = No",
+      "style": ""
+    },
+    {
+      "type": "callout",
+      "name": "call-847",
+      "label": "<p><strong>Call *847</strong></p>",
+      "showIf": "hazard = Yes"
+    },
+    {
+      "type": "callout",
+      "name": "notice",
+      "label": "<p>Please allow for a minimum of 48 hours for a request to be received if after normal business hours. The below form submittal is for all general maintenance request on TDOT maintained roadways.</p>",
+      "showIf": "emergency = No; hazard = No"
+    },
+    {
+      "type": "heading",
+      "name": "contact-heading",
+      "label": "Contact Info:",
+      "showIf": "emergency = No; hazard = No"
+    },
+    {
+      "type": "name",
+      "name": "name",
+      "label": "Name",
+      "options": [
+        "First Name",
+        "Last Name"
+      ],
+      "required": false,
+      "showIf": "emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "tel",
+      "name": "phone",
+      "label": "Phone",
+      "options": [],
+      "required": false,
+      "showIf": "emergency = No; hazard = No",
+      "style": "half"
+    },
+    {
+      "type": "email",
+      "name": "email",
+      "label": "Email",
+      "options": [],
+      "required": false,
+      "showIf": "emergency = No; hazard = No",
+      "style": "half"
+    },
+    {
+      "type": "confirm",
+      "name": "email-confirm",
+      "label": "Confirm Email",
+      "options": [
+        "email"
+      ],
+      "required": false,
+      "showIf": "emergency = No; hazard = No",
+      "style": "half-right"
+    },
+    {
+      "type": "select",
+      "name": "requestor-type",
+      "label": "Type of Requestor",
+      "options": [
+        "Citizen = 01",
+        "TDOT Employee = 02",
+        "Elected Official = 03",
+        "Commissioner's Office = 04",
+        "Governor's Office = 05",
+        "TN HWY Patrol (THP) = 06",
+        "TDEC = 07",
+        "Other State Agency = 08",
+        "Local Law Enforcement = 09",
+        "City or County Official = 10",
+        "911 Emergency Response = 11"
+      ],
+      "required": false,
+      "showIf": "emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "select",
+      "name": "request-type",
+      "label": "Type of Maintenance Request",
+      "options": [
+        "Drainage - Catch Basin/Drop Inlet - Clogged = 431",
+        "Drainage - Catch Basin/Drop Inlet - Needs Repair = 433",
+        "Drainage - Ditch Clogged = 430",
+        "Drainage - Ditch Needs Repair = 432",
+        "Drainage - Pipe Clogged = :431",
+        "Drainage - Pipe Needs Repair = :432",
+        "Litter - Animal Carcass or Debris in Travel Lane or Shoulder = 495",
+        "Litter - Roadside Litter = 441",
+        "Pavement Repair - Pothole = 401",
+        "Safety - Concrete Barrier Wall - Repair = 476",
+        "Safety - Crash Cushion/Attenuator - Repair = 474",
+        "Safety - Guardrail/Cable Rail - Repair = 475",
+        "Sign Repair - Ground Mounted Sign (Except Stop Signs) = 472",
+        "Sign Repair - Ground Mounted Stop Sign = ;472",
+        "Sign Repair - Overhead Sign (Non-Digital Variable Message) = :472",
+        "Sign Repair - Overhead Sign (Digital Variable Message) = : 472",
+        "Vegetation - Grass Too High = 435",
+        "Vegetation - Tree Limbs Block View = 436",
+        "Vegetation - Tree or Limb In Danger of Falling = 438",
+        "Other - Please Describe"
+      ],
+      "required": true,
+      "showIf": "emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "textarea",
+      "name": "request-other",
+      "label": "Other - Please Describe",
+      "options": [],
+      "required": false,
+      "showIf": "request-type = Other - Please Describe; emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "heading",
+      "name": "location-heading",
+      "label": "Maintenance Request Location:",
+      "showIf": "emergency = No; hazard = No"
+    },
+    {
+      "type": "select",
+      "name": "county",
+      "label": "County",
+      "options": [
+        "Anderson",
+        "Bedford",
+        "Benton",
+        "Bledsoe",
+        "Blount",
+        "Bradley",
+        "Campbell",
+        "Cannon",
+        "Carroll",
+        "Carter",
+        "Cheatham",
+        "Chester",
+        "Claiborne",
+        "Clay",
+        "Cocke",
+        "Coffee",
+        "Crockett",
+        "Cumberland",
+        "Davidson",
+        "Decatur",
+        "Dekalb",
+        "Dickson",
+        "Dyer",
+        "Fayette",
+        "Fentress",
+        "Franklin",
+        "Gibson",
+        "Giles",
+        "Grainger",
+        "Greene",
+        "Grundy",
+        "Hamblen",
+        "Hamilton",
+        "Hancock",
+        "Hardeman",
+        "Hardin",
+        "Hawkins",
+        "Haywood",
+        "Henderson",
+        "Henry",
+        "Hickman",
+        "Houston",
+        "Humphreys",
+        "Jackson",
+        "James",
+        "Jefferson",
+        "Johnson",
+        "Knox",
+        "Lake",
+        "Lauderdale",
+        "Lawrence",
+        "Lewis",
+        "Lincoln",
+        "Loudon",
+        "McMinn",
+        "McNairy",
+        "Macon",
+        "Madison",
+        "Marion",
+        "Marshall",
+        "Maury",
+        "Meigs",
+        "Monroe",
+        "Montgomery",
+        "Moore",
+        "Morgan",
+        "Obion",
+        "Overton",
+        "Perry",
+        "Pickett",
+        "Polk",
+        "Putnam",
+        "Rhea",
+        "Roane",
+        "Robertson",
+        "Rutherford",
+        "Scott",
+        "Sequatchie",
+        "Sevier",
+        "Shelby",
+        "Smith",
+        "Stewart",
+        "Sullivan",
+        "Sumner",
+        "Tipton",
+        "Trousdale",
+        "Unicoi",
+        "Union",
+        "VanBuren",
+        "Warren",
+        "Washington",
+        "Wayne",
+        "Weakley",
+        "White",
+        "Williamson",
+        "Wilson"
+      ],
+      "required": true,
+      "showIf": "emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "select",
+      "name": "route-type",
+      "label": "Route Type",
+      "options": [
+        "Interstate",
+        "State Route"
+      ],
+      "required": true,
+      "showIf": "emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "text",
+      "name": "route-name",
+      "label": "Interstate or State Route Name",
+      "options": [],
+      "required": true,
+      "showIf": "emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "number",
+      "name": "mile-marker",
+      "label": "Mile Marker",
+      "options": [],
+      "required": false,
+      "showIf": "route-type = Interstate; emergency = No; hazard = No",
+      "style": "half"
+    },
+    {
+      "type": "number",
+      "name": "log-mile",
+      "label": "Log Mile",
+      "options": [],
+      "required": false,
+      "showIf": "route-type = State Route; emergency = No; hazard = No",
+      "style": "half"
+    },
+    {
+      "type": "textarea",
+      "name": "location-description",
+      "label": "If the Mile Marker or Log Mile is unknown, please describe the location in the comments below.",
+      "options": [],
+      "required": false,
+      "showIf": "emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "select",
+      "name": "direction",
+      "label": "Direction",
+      "options": [
+        "North",
+        "South",
+        "East",
+        "West"
+      ],
+      "required": true,
+      "showIf": "emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "radio",
+      "name": "multi-lane",
+      "label": "Multi – Lane:",
+      "options": [
+        "Yes",
+        "No"
+      ],
+      "required": true,
+      "showIf": "emergency = No; hazard = No",
+      "style": "inline"
+    },
+    {
+      "type": "text",
+      "name": "lane",
+      "label": "If multi-lane, which lane is the maintenance needed? (The lane closest to the median is always Lane 1).",
+      "options": [],
+      "required": true,
+      "showIf": "multi-lane = Yes; emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "textarea",
+      "name": "comments",
+      "label": "Comments:",
+      "options": [],
+      "required": false,
+      "showIf": "emergency = No; hazard = No",
+      "style": "tall"
+    },
+    {
+      "type": "note",
+      "name": "claim-note",
+      "label": "To file a property damage or personal injury claim use the following link: <a href=\"https://treasury.tn.gov/Services/Claims-and-Risk-Management/TORT-Liability\">https://treasury.tn.gov/Services/Claims-and-Risk-Management/TORT-Liability</a>",
+      "showIf": "emergency = No; hazard = No"
+    },
+    {
+      "type": "checkbox",
+      "name": "follow-up",
+      "label": "Request a follow-up from TDOT",
+      "options": [
+        "Yes, I would like a follow-up from TDOT"
+      ],
+      "required": false,
+      "showIf": "emergency = No; hazard = No",
+      "style": "half"
+    },
+    {
+      "type": "radio",
+      "name": "contact-method",
+      "label": "How would you like to be contacted?",
+      "options": [
+        "Phone",
+        "Email"
+      ],
+      "required": false,
+      "showIf": "follow-up = Yes, I would like a follow-up from TDOT; emergency = No; hazard = No",
+      "style": ""
+    },
+    {
+      "type": "submit",
+      "name": "submit",
+      "label": "Submit Form"
+    }
+  ]
+}

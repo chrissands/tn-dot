@@ -108,7 +108,10 @@ const loadVideoEmbed = (block, link, autoplay, background) => {
 
 export default async function decorate(block) {
   const placeholder = block.querySelector('picture');
-  const link = block.querySelector('a').href;
+  const anchor = block.querySelector('a');
+  const link = anchor.href;
+  // authored link text (e.g. "Watch video") labels the play button
+  const label = anchor.textContent.trim() !== link ? anchor.textContent.trim() : '';
   block.textContent = '';
   block.dataset.embedLoaded = false;
 
@@ -124,6 +127,14 @@ export default async function decorate(block) {
         'beforeend',
         '<div class="video-placeholder-play"><button type="button" title="Play"></button></div>',
       );
+      if (label) {
+        const button = wrapper.querySelector('.video-placeholder-play button');
+        button.title = label;
+        const text = document.createElement('span');
+        text.className = 'video-placeholder-label';
+        text.textContent = label;
+        button.append(text);
+      }
       wrapper.addEventListener('click', () => {
         wrapper.remove();
         loadVideoEmbed(block, link, true, false);

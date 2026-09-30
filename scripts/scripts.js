@@ -16,6 +16,7 @@ import {
   toClassName,
   toCamelCase,
 } from './aem.js';
+import { formatNewsDate } from './news.js';
 
 /**
  * Auto-generates a side nav from page headings and prepends it as the first section.
@@ -88,7 +89,6 @@ function buildSideNavLeft(main) {
     headings.forEach((h) => observer.observe(h));
   });
 }
-
 
 /**
  * Sa11y Accessibility Checker - Sidekick Toggle Plugin
@@ -236,7 +236,6 @@ function initSa11ySidekick() {
 
 initSa11ySidekick();
 
-
 /**
  * Builds hero block and prepends to main in a new section.
  * @param {Element} main The container element
@@ -276,6 +275,46 @@ function autolinkModals(doc) {
 }
 
 /**
+ * Newsroom templates (newsroom listing + news-article): prepend the shared category
+ * sidebar (side-nav block loaded from /fragments/news-sidebar) and, on articles,
+ * render the publication date line below the title.
+ * @param {Element} main The container element
+ */
+function buildNewsroomLayout(main) {
+  const { classList } = document.body;
+  if (!classList.contains('newsroom') && !classList.contains('news-article')) return;
+
+  const link = document.createElement('a');
+  link.href = '/fragments/news-sidebar';
+  link.textContent = link.href;
+  const sidebar = buildBlock('side-nav', [[link]]);
+  sidebar.classList.add('newsroom');
+  const section = document.createElement('div');
+  section.append(sidebar);
+  main.prepend(section);
+
+  const published = getMetadata('publication-date');
+  if (classList.contains('news-article') && published) {
+    const { date, time } = formatNewsDate(published);
+    const p = document.createElement('p');
+    p.className = 'news-article-date';
+    const datetime = document.createElement('time');
+    datetime.dateTime = published;
+    datetime.textContent = date;
+    p.append(datetime);
+    if (time) {
+      const small = document.createElement('small');
+      small.textContent = time;
+      p.append(' | ', small);
+    }
+    const title = main.querySelector('h1');
+    const subtitle = title && title.nextElementSibling && title.nextElementSibling.tagName === 'H2'
+      ? title.nextElementSibling : null;
+    (subtitle || title)?.after(p);
+  }
+}
+
+/**
  * Builds all synthetic blocks in a container element.
  * @param {Element} main The container element
  */
@@ -283,6 +322,7 @@ function buildAutoBlocks(main) {
   try {
     if (!main.querySelector('.hero')) buildHeroBlock(main);
     if (document.body.classList.contains('sidenav-left')) buildSideNavLeft(main);
+    buildNewsroomLayout(main);
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('Auto Blocking failed', error);
@@ -336,8 +376,45 @@ function decorateSections(main) {
           section.dataset[toCamelCase(key)] = meta[key];
         }
       });
+      // Section Metadata "background" image → section background
+      if (meta.background) {
+        const bg = Array.isArray(meta.background) ? meta.background[0] : meta.background;
+        section.style.backgroundImage = `url("${bg}")`;
+        section.classList.add('has-background');
+      }
       sectionMeta.parentNode.remove();
     }
+  });
+}
+
+/**
+ * Converts :icon-name: text notation into icon spans.
+ * The EDS pipeline normally does this server-side; this covers content served
+ * as raw HTML (e.g. local preview of imported pages).
+ * @param {Element} main The container element
+ */
+function convertIconNotation(main) {
+  const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT);
+  const nodes = [];
+  while (walker.nextNode()) {
+    const node = walker.currentNode;
+    if (/:[a-z][a-z0-9-]*:/.test(node.nodeValue) && !node.parentElement.closest('code, pre')) {
+      nodes.push(node);
+    }
+  }
+  nodes.forEach((node) => {
+    const frag = document.createDocumentFragment();
+    node.nodeValue.split(/(:[a-z][a-z0-9-]*:)/).forEach((part) => {
+      const match = part.match(/^:([a-z][a-z0-9-]*):$/);
+      if (match) {
+        const span = document.createElement('span');
+        span.className = `icon icon-${match[1]}`;
+        frag.append(span);
+      } else if (part) {
+        frag.append(part);
+      }
+    });
+    node.replaceWith(frag);
   });
 }
 
@@ -349,6 +426,7 @@ function decorateSections(main) {
 export function decorateMain(main) {
   // hopefully forward compatible button decoration
   decorateButtons(main);
+  convertIconNotation(main);
   decorateIcons(main);
   buildAutoBlocks(main);
   decorateSections(main);

@@ -376,7 +376,17 @@ function decorateButtons(element) {
       const twoup = a.parentElement?.parentElement;
       const threeup = twoup?.parentElement;
 
-      if (!a.querySelector('img')) {
+      // formatting wrappers (strong/em/u/s) only make a button when they hold nothing
+      // but the link: a link inside a bold sentence stays a text link
+      const FORMAT = ['STRONG', 'EM', 'U', 'S', 'DEL', 'STRIKE'];
+      let wrapper = a;
+      let wrappedAlone = true;
+      while (FORMAT.includes(wrapper.parentElement?.tagName)) {
+        wrapper = wrapper.parentElement;
+        if (wrapper.textContent.trim() !== a.textContent.trim()) wrappedAlone = false;
+      }
+
+      if (!a.querySelector('img') && wrappedAlone) {
         // Detect text formatting hierarchy
         const hasStrong = up.tagName === 'STRONG';
         const hasEm = up.tagName === 'EM';

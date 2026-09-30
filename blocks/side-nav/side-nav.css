@@ -1,3 +1,193 @@
+/* ==========================================================================
+ * Side Nav (newsroom) / Side Nav (subnav): tn.gov section sidebar (custom overrides
+ * — keep at top; side-nav.css is in .buildignore). Styled after the tn.gov left nav:
+ * heading with a red rule, divided links, bold current item; collapsible on mobile.
+ * "subnav" adds chevron-toggled sub-menus (e.g. Asset Management Division).
+ * ========================================================================== */
+
+.side-nav:is(.newsroom, .subnav) {
+  margin-bottom: 20px;
+  font-family: var(--body-font-family);
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0 0 20px;
+  padding: 0 0 5px;
+  border-bottom: 5px solid #ee3524;
+  font-size: 16.875px;
+  line-height: 30px;
+  letter-spacing: -0.075em;
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-heading a:any-link {
+  color: #174a7c;
+  text-decoration: none;
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-heading a:hover,
+.side-nav:is(.newsroom, .subnav) .side-nav-heading a:focus {
+  color: #a7190c;
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-toggle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #131e29;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12.375px;
+  letter-spacing: -0.025em;
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-toggle::before {
+  content: "";
+  display: block;
+  width: 14px;
+  height: 14px;
+  background-color: currentcolor;
+  mask: url("/icons/usa-icons/menu.svg") center / contain no-repeat;
+}
+
+.side-nav:is(.newsroom, .subnav) nav.side-nav-open .side-nav-toggle::before {
+  mask-image: url("/icons/usa-icons/close.svg");
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav {
+  display: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: inherit;
+  font-size: 13.125px;
+  line-height: 24px;
+  list-style: none;
+}
+
+.side-nav:is(.newsroom, .subnav) nav.side-nav-open .usa-sidenav {
+  display: block;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav .usa-sidenav__item {
+  border-top: 0;
+  border-bottom: 1px solid #d1d3d4;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav .usa-sidenav__item:last-child {
+  border-bottom: 0;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav a:not(.usa-button) {
+  padding: 7.5px 0;
+  color: #131e29;
+  letter-spacing: -0.025em;
+  text-decoration: none;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav a:not(.usa-button):hover,
+.side-nav:is(.newsroom, .subnav) .usa-sidenav a:not(.usa-button):focus {
+  background: none;
+  color: #a7190c;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav a.usa-current {
+  color: #131e29;
+  font-weight: 700;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav a.usa-current::after {
+  display: none;
+}
+
+/* sub-menus: item link + chevron toggle on one row, indented sub-list below */
+.side-nav:is(.newsroom, .subnav) .usa-sidenav .side-nav-has-sublist {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav .side-nav-has-sublist > a {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-subtoggle {
+  display: flex;
+  flex: 0 0 25px;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #131e29;
+  cursor: pointer;
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-subtoggle::before {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 18px;
+  background-color: currentcolor;
+  mask: url("/icons/usa-icons/expand_more.svg") center / contain no-repeat;
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-subtoggle[aria-expanded="true"]::before {
+  mask-image: url("/icons/usa-icons/expand_less.svg");
+}
+
+.side-nav:is(.newsroom, .subnav) .side-nav-subtoggle:hover,
+.side-nav:is(.newsroom, .subnav) .side-nav-subtoggle:focus {
+  color: #a7190c;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav .usa-sidenav__sublist {
+  flex: 1 0 100%;
+  margin: 0 0 0 15px;
+  padding: 0;
+  font-size: 13.125px;
+  list-style: none;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav .usa-sidenav__sublist[hidden] {
+  display: none;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav .usa-sidenav__sublist .usa-sidenav__item {
+  border: 0;
+}
+
+.side-nav:is(.newsroom, .subnav) .usa-sidenav .usa-sidenav__sublist a:not(.usa-button) {
+  padding: 7.5px 0;
+}
+
+@media (width >= 900px) {
+  .side-nav:is(.newsroom, .subnav) {
+    margin: 0 15.5px 0 0;
+  }
+
+  .side-nav:is(.newsroom, .subnav) .side-nav-heading {
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+  }
+
+  .side-nav:is(.newsroom, .subnav) .side-nav-toggle {
+    display: none;
+  }
+
+  .side-nav:is(.newsroom, .subnav) .usa-sidenav,
+  .side-nav:is(.newsroom, .subnav) nav.side-nav-open .usa-sidenav {
+    display: block;
+  }
+}
+
+/* ======================= end Side Nav (newsroom, subnav) overrides ======================= */
+
 /*
 * * * * * ==============================
 * * * * * ==============================

@@ -1,0 +1,171 @@
+/*
+ * Left-nav template: tn.gov section sidebar (367px) beside the content column (733px)
+ * inside the 1100px container; stacked on mobile. Used directly by pages with a
+ * side-nav section (template: left-nav) and imported by newsroom.css / news-article.css.
+ */
+
+body:is(.left-nav, .newsroom, .news-article) > main {
+  box-sizing: border-box;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding-top: 20px;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main > .section {
+  margin: 0;
+  padding: 0;
+}
+
+/* chained :not() to out-rank the global section wrapper padding in styles.css */
+body:is(.left-nav, .newsroom, .news-article) main > .section > div:not(.hero):not(.alert):not(.banner) {
+  max-width: none;
+  margin: 0;
+  padding: 0 11.25px;
+}
+
+/* sidebar sits above the content on mobile */
+body:is(.left-nav, .newsroom, .news-article) main > .section.side-nav-container {
+  margin-bottom: 0;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h1 {
+  margin: 0 0 15px;
+  color: #1b365d;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 37.5px;
+  letter-spacing: -0.075em;
+}
+
+/* intro text right under the page title: 30px, as on the source (tn-pagetitle margin) */
+body.left-nav main .default-content-wrapper > h1 + p {
+  margin-top: 30px;
+}
+
+/* body copy: left-aligned (overrides the centered section-intro rule in styles.css) */
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper {
+  text-align: left;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > p,
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > ul,
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > ol {
+  margin: 10px 0 20px;
+  color: #131e29;
+  font-size: 13.125px;
+  line-height: 19.6875px;
+  letter-spacing: -0.025em;
+}
+
+/* tn.gov RTE lists: gray bullets, 24px lines, 5px item padding */
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > ul {
+  margin: 0 0 15px;
+  padding: 0;
+  list-style: none;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > ul > li {
+  position: relative;
+  max-width: none;
+  margin: 0 0 0 15px;
+  padding: 5px 0;
+  line-height: 24px;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > ul > li::before {
+  content: "•";
+  margin-right: 8px;
+  color: #6e7073;
+  font-size: 20px;
+  vertical-align: top;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper a:any-link {
+  color: #174a7c;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper a:hover,
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper a:focus {
+  color: #a7190c;
+}
+
+/* tn.gov content tile: title with a 5px navy rule, then a text link */
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h2 {
+  margin: 0 0 5px;
+  padding: 0 0 10px;
+  border-bottom: 5px solid #17417c;
+  color: #1b365d;
+  font-family: var(--body-font-family);
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 31.5px;
+  letter-spacing: -0.075em;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h2 a:any-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h2 a:hover,
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h2 a:focus {
+  color: #a7190c;
+}
+
+/* the tile's link paragraph (decorateButtons made it a button): plain 15px text link */
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h2 + .button-container {
+  margin: 10px 0 20px;
+  text-align: left;
+  font-size: 15px;
+  line-height: 22.5px;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h2 + .button-container a.usa-button:any-link {
+  display: inline;
+  width: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  color: #174a7c;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 22.5px;
+  letter-spacing: -0.025em;
+  text-align: left;
+
+  /* the homepage section-intro rule in styles.css forces an underline */
+  text-decoration: none !important;
+}
+
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h2 + .button-container a.usa-button:hover,
+body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h2 + .button-container a.usa-button:focus {
+  color: #a7190c !important;
+  text-decoration: underline !important;
+}
+
+@media (width >= 900px) {
+  body:is(.left-nav, .newsroom, .news-article) > main {
+    display: grid;
+    grid-template-columns: minmax(0, 367fr) minmax(0, 733fr);
+    align-content: start;
+    margin-top: 40px;
+    padding-top: 0;
+  }
+
+  body:is(.left-nav, .newsroom, .news-article) main > .section {
+    grid-column: 2;
+  }
+
+  body:is(.left-nav, .newsroom, .news-article) main > .section.side-nav-container {
+    grid-row: 1 / span 20;
+    grid-column: 1;
+  }
+
+  body:is(.left-nav, .newsroom, .news-article) main .default-content-wrapper > h1 {
+    font-size: 42.375px;
+    line-height: 45px;
+  }
+}

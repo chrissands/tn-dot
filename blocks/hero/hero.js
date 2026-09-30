@@ -10,9 +10,36 @@
  * @param {Element} block The hero block element
  */
 export default function decorate(block) {
+  // EDS "video" variant: pull the .mp4 link (background video) and the logo
+  // picture out of the content before the standard hero decoration runs.
+  const videoLink = [...block.querySelectorAll('a[href]')]
+    .find((a) => /\.mp4(?:[?#]|$)/i.test(a.href));
+  const isVideo = block.classList.contains('video') || !!videoLink;
+  let videoSrc = null;
+  let logo = null;
+  if (isVideo) {
+    block.classList.add('video');
+    if (videoLink) {
+      videoSrc = videoLink.href;
+      const linkParent = videoLink.parentElement;
+      videoLink.remove();
+      if (linkParent && linkParent.tagName === 'P' && !linkParent.textContent.trim()
+        && !linkParent.children.length) linkParent.remove();
+    }
+    const pictures = [...block.querySelectorAll('picture')];
+    // With a video source, a single picture is the logo; with two, the first is the poster.
+    if (pictures.length > 1 || (videoSrc && pictures.length === 1)) {
+      logo = pictures.pop();
+      logo.remove();
+    }
+  }
+
   // Get the content elements from the block
   const heading = block.querySelector('h1, h2, h3');
-  const paragraph = block.querySelector('p');
+  // first paragraph with text (an image-only paragraph is not the tagline)
+  const paragraph = [...block.querySelectorAll('p')].find((p) => p.textContent.trim());
+  // "banner" heroes sit below the page's own h1 (e.g. tn.gov basic slider)
+  const headingTag = block.classList.contains('banner') ? 'h2' : 'h1';
   const link = block.querySelector('a');
   const picture = block.querySelector('picture');
 
@@ -32,7 +59,7 @@ export default function decorate(block) {
 
   // Process heading with optional "callout" prefix
   if (heading) {
-    const newHeading = document.createElement('h1');
+    const newHeading = document.createElement(headingTag);
     newHeading.className = 'usa-hero__heading';
 
     // Check if heading text has a colon (e.g., "Hero callout:Rest of heading")
@@ -83,5 +110,34 @@ export default function decorate(block) {
     // Position picture as background
     picture.classList.add('usa-hero__image');
     block.insertBefore(picture, block.firstChild);
+  }
+
+  // Video variant: logo above the heading, background <video> behind the callout
+  if (logo) {
+    const logoWrapper = document.createElement('div');
+    logoWrapper.className = 'usa-hero__logo';
+    logoWrapper.appendChild(logo);
+    callout.insertBefore(logoWrapper, callout.firstChild);
+  }
+
+  if (videoSrc) {
+    const video = document.createElement('video');
+    video.className = 'usa-hero__video';
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.controls = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.preload = 'metadata';
+    const posterImg = picture && picture.querySelector('img');
+    if (posterImg) video.poster = posterImg.currentSrc || posterImg.src;
+    const source = document.createElement('source');
+    source.src = videoSrc;
+    source.type = 'video/mp4';
+    video.appendChild(source);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!reduceMotion) video.autoplay = true;
+    block.insertBefore(video, gridContainer);
   }
 }

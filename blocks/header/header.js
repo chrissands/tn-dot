@@ -1,281 +1,424 @@
 /**
  * header block
- * Based on USWDS usa-header component
+ * Based on the USWDS usa-header component, styled after the TDOT (tn.gov) agency header:
+ *   row 1 – agency bar: state mark + agency wordmark, utility link, site search
+ *   row 2 – primary nav: home icon, hover dropdowns, links, print
+ *
+ * Content comes from the nav fragment (content/nav.plain.html):
+ *   section 1 – brand: linked images (first = state mark, second = agency wordmark),
+ *               a standalone image = header background photo
+ *   section 2 – nav: list; an item with a nested list becomes a dropdown
+ *   section 3 – tools: utility link(s), search link (text = placeholder, href = results page),
+ *               "#print" link
  *
  * @see https://designsystem.digital.gov/components/header/
  */
 
 import { getMetadata, decorateBlock, loadBlock } from '../../scripts/aem.js';
-import { loadFragment } from '../fragment/fragment.js';
+
+const DESKTOP = window.matchMedia('(width >= 900px)');
+let idCounter = 0;
 
 /**
- * Decorates the nav content into USWDS structure
- * @param {Element} header The header block element
- * @param {Element} fragment The loaded fragment
+ * Fetches the nav fragment. Metadata-independent dual fetch:
+ * /content/nav.plain.html (local preview) then /nav.plain.html (DA/EDS).
+ * @returns {Promise<Element|null>} container with the fragment sections
  */
-async function decorateNav(header, fragment) {
-  const sections = fragment.querySelectorAll(':scope > div');
-  const [brandSection, navSection, toolsSection] = sections;
+async function fetchNav() {
+  let resp = await fetch('/content/nav.plain.html');
+  if (!resp.ok) resp = await fetch('/nav.plain.html');
+  if (!resp.ok) return null;
+  const html = await resp.text();
+  const container = document.createElement('div');
+  container.innerHTML = html;
+  // resolve relative media paths against the fragment location
+  container.querySelectorAll('img[src], source[srcset]').forEach((el) => {
+    if (el.hasAttribute('src')) el.src = new URL(el.getAttribute('src'), resp.url).href;
+    if (el.hasAttribute('srcset')) el.srcset = new URL(el.getAttribute('srcset').split(' ')[0], resp.url).href;
+  });
+  return container;
+}
 
-  // Apply header variant from metadata (supports both 'header' and 'header-variant')
-  const variant = getMetadata('header') || getMetadata('header-variant') || 'basic';
+function srOnly(text) {
+  const span = document.createElement('span');
+  span.className = 'usa-sr-only';
+  span.textContent = text;
+  return span;
+}
 
-  // Use the parent <header> element instead of creating a new one
-  // EDS auto-blocks create a <header> wrapper, we just add USWDS classes to it
-  const usaHeader = header.parentElement;
-  usaHeader.className = `usa-header usa-header--${variant}`;
+function createIcon(name) {
+  const img = document.createElement('img');
+  img.src = `${window.hlx.codeBasePath}/icons/usa-icons/${name}.svg`;
+  img.alt = '';
+  img.setAttribute('aria-hidden', 'true');
+  img.className = 'header-icon';
+  return img;
+}
 
-  // Create nav-container wrapper (for basic/megamenu variants only)
-  let navContainer;
-  if (variant === 'basic' || variant === 'megamenu') {
-    navContainer = document.createElement('div');
-    navContainer.className = 'usa-nav-container';
-  }
-
-  // Extended variant needs nav__inner wrapper
-  let navInner;
-  if (variant === 'extended') {
-    navInner = document.createElement('div');
-    navInner.className = 'usa-nav__inner';
-  }
-
-  // Create navbar (logo/brand section)
-  const navbar = document.createElement('div');
-  navbar.className = 'usa-navbar';
-
-  if (brandSection) {
-    const logoDiv = document.createElement('div');
-    logoDiv.className = 'usa-logo';
-
-    // Check for image (logo)
-    const img = brandSection.querySelector('img');
-
-    // Check for text (brand name) - prioritize headings, skip image-only paragraphs
-    let textContent = '';
-    const headingEl = brandSection.querySelector('h1, h2, h3, h4, h5, h6');
-    if (headingEl) {
-      textContent = headingEl.textContent.trim();
+/**
+ * Builds the brand area (logos) from the brand section.
+ * @param {Element} section brand section
+ * @param {Element} agency agency bar element (receives the background photo)
+ */
+function buildBrand(section, agency) {
+  const brand = document.createElement('div');
+  brand.className = 'header-brand';
+  if (!section) return brand;
+  section.querySelectorAll('img').forEach((img) => {
+    const a = img.closest('a');
+    if (a) {
+      const link = document.createElement('a');
+      link.href = a.href;
+      const logo = document.createElement('img');
+      logo.src = img.src;
+      logo.alt = img.alt;
+      logo.className = 'header-brand-img';
+      link.append(logo);
+      link.className = brand.children.length ? 'header-brand-wordmark' : 'header-brand-mark';
+      brand.append(link);
     } else {
-      // Try other text elements, but filter out ones that only contain images
-      const textElements = Array.from(brandSection.querySelectorAll('p, strong, em, span, a'));
-      const validTextEl = textElements.find((el) => {
-        const text = el.textContent.trim();
-        // Skip elements that are empty or only contain an image
-        return text && !el.querySelector('img, picture');
-      });
+      agency.style.setProperty('--header-photo', `url("${img.src}")`);
+    }
+  });
+  return brand;
+}
 
-      if (validTextEl) {
-        textContent = validTextEl.textContent.trim();
-      } else {
-        // Final fallback: get text directly from the section, excluding images
-        const clone = brandSection.cloneNode(true);
-        const cloneImgs = clone.querySelectorAll('img, picture');
-        cloneImgs.forEach((imgEl) => imgEl.remove());
-        textContent = clone.textContent.trim();
+/**
+ * Builds the site search form from a tools link (text = placeholder, href = results page).
+ * @param {Element} link search link from the tools section
+ */
+function buildSearch(link) {
+  const form = document.createElement('form');
+  form.className = 'header-search';
+  form.setAttribute('role', 'search');
+  form.action = link.href;
+
+  const id = `header-search-${idCounter += 1}`;
+  const label = document.createElement('label');
+  label.className = 'usa-sr-only';
+  label.htmlFor = id;
+  label.textContent = link.textContent.trim();
+
+  const input = document.createElement('input');
+  input.className = 'header-search-input';
+  input.id = id;
+  input.type = 'search';
+  input.name = 'q';
+  input.placeholder = link.textContent.trim();
+
+  const button = document.createElement('button');
+  button.className = 'header-search-button';
+  button.type = 'submit';
+  button.setAttribute('aria-label', 'Search');
+  button.append(createIcon('search'));
+
+  form.append(label, input, button);
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = input.value.trim();
+    const url = new URL(form.action);
+    if (q) url.hash = `q=${encodeURIComponent(q)}&tab=department`;
+    window.location.href = url.href;
+  });
+  return form;
+}
+
+/**
+ * Builds the tools (utility links, search, print) from the tools section.
+ * @param {Element} section tools section
+ * @returns {{ tools: Element, print: Element|null, menuLabel: { open: string, close: string } }}
+ */
+function buildTools(section) {
+  const tools = document.createElement('div');
+  tools.className = 'header-tools';
+  let print = null;
+  if (!section) return { tools, print, menuLabel: { open: '', close: '' } };
+
+  // plain-text paragraphs are the mobile menu toggle labels (closed, open)
+  const [openLabel = '', closeLabel = ''] = [...section.querySelectorAll('p')]
+    .filter((p) => !p.querySelector('a, img') && p.textContent.trim())
+    .map((p) => p.textContent.trim());
+  const menuLabel = { open: openLabel, close: closeLabel || openLabel };
+
+  section.querySelectorAll('a').forEach((a) => {
+    const href = a.getAttribute('href') || '';
+    const img = a.querySelector('img');
+    if (href === '#print') {
+      // icon link; its text is the screen-reader label
+      const label = a.textContent.trim() || (img && img.alt) || 'Print this page';
+      print = document.createElement('a');
+      print.href = '#print';
+      print.className = 'header-print';
+      print.setAttribute('role', 'button');
+      if (img) {
+        const icon = document.createElement('img');
+        icon.src = img.src;
+        icon.alt = '';
+        icon.className = 'header-icon';
+        print.append(icon);
       }
+      print.append(srOnly(label));
+      print.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.print();
+      });
+    } else if (/search/i.test(href)) {
+      tools.append(buildSearch(a));
+    } else {
+      const link = document.createElement('a');
+      link.href = a.href;
+      link.className = 'header-utility-link';
+      link.append(createIcon('home'), document.createTextNode(a.textContent.trim()));
+      tools.prepend(link);
     }
+  });
+  return { tools, print, menuLabel };
+}
 
-    // Build logo structure with image and/or text
+function closeAll(navList, except) {
+  navList.querySelectorAll(':scope > .header-nav-item[aria-expanded="true"]').forEach((item) => {
+    if (item !== except) {
+      item.setAttribute('aria-expanded', 'false');
+      item.querySelector('.header-nav-toggle').setAttribute('aria-expanded', 'false');
+    }
+  });
+}
+
+function setOpen(item, open) {
+  item.setAttribute('aria-expanded', open ? 'true' : 'false');
+  item.querySelector('.header-nav-toggle').setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+/**
+ * Builds the primary navigation list from the nav section.
+ * Items with a nested list become dropdowns: hover (desktop) or toggle button opens,
+ * the item link still navigates to its landing page.
+ * @param {Element} section nav section
+ */
+function buildNavList(section) {
+  const navList = document.createElement('ul');
+  navList.className = 'header-nav-list';
+  const source = section && section.querySelector('ul');
+  if (!source) return navList;
+
+  [...source.children].forEach((li) => {
+    const a = li.querySelector('a');
+    if (!a) return;
+    const item = document.createElement('li');
+    item.className = 'header-nav-item';
+
+    const link = document.createElement('a');
+    link.href = a.href;
+    link.className = 'header-nav-link';
+    const img = a.querySelector('img');
     if (img) {
-      // Logo with image
-      const imgLink = document.createElement('a');
-      imgLink.href = '/';
-      imgLink.title = textContent || 'Home';
-      const logoImg = document.createElement('img');
-      logoImg.className = 'usa-logo__img';
-      logoImg.src = img.src;
-      logoImg.alt = img.alt || textContent || '';
-      imgLink.appendChild(logoImg);
-      logoDiv.appendChild(imgLink);
+      const icon = document.createElement('img');
+      icon.src = img.src;
+      icon.alt = '';
+      icon.className = 'header-icon';
+      link.append(icon, srOnly(a.textContent.trim() || img.alt));
+      item.classList.add('header-nav-item-icon');
+    } else {
+      link.textContent = a.textContent.trim();
     }
+    item.append(link);
 
-    if (textContent) {
-      // Logo text/brand name
-      const textLink = document.createElement('a');
-      textLink.href = '/';
-      textLink.className = 'usa-logo__text';
-      textLink.textContent = textContent;
-      logoDiv.appendChild(textLink);
+    const sub = li.querySelector('ul');
+    if (sub) {
+      const id = `header-submenu-${idCounter += 1}`;
+      item.classList.add('header-nav-item-dropdown');
+      item.setAttribute('aria-expanded', 'false');
+
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'header-nav-toggle';
+      toggle.setAttribute('aria-expanded', 'false');
+      toggle.setAttribute('aria-controls', id);
+      toggle.setAttribute('aria-label', `${link.textContent} submenu`);
+      // caret on desktop, chevron on mobile (switched in CSS)
+      const caret = createIcon('arrow_drop_down');
+      caret.classList.add('header-icon-caret');
+      const chevron = createIcon('expand_more');
+      chevron.classList.add('header-icon-chevron');
+      toggle.append(caret, chevron);
+      item.append(toggle);
+
+      const submenu = document.createElement('ul');
+      submenu.id = id;
+      submenu.className = 'header-submenu';
+      sub.querySelectorAll(':scope > li > a').forEach((sa) => {
+        const subItem = document.createElement('li');
+        subItem.className = 'header-submenu-item';
+        const subLink = document.createElement('a');
+        subLink.href = sa.href;
+        subLink.textContent = sa.textContent.trim();
+        subItem.append(subLink);
+        submenu.append(subItem);
+      });
+      item.append(submenu);
+
+      toggle.addEventListener('click', () => {
+        const open = item.getAttribute('aria-expanded') !== 'true';
+        if (DESKTOP.matches) closeAll(navList, item);
+        setOpen(item, open);
+      });
+      item.addEventListener('mouseenter', () => {
+        if (!DESKTOP.matches) return;
+        closeAll(navList, item);
+        setOpen(item, true);
+      });
+      item.addEventListener('mouseleave', () => {
+        if (DESKTOP.matches) setOpen(item, false);
+      });
+      item.addEventListener('focusout', (e) => {
+        if (DESKTOP.matches && !item.contains(e.relatedTarget)) setOpen(item, false);
+      });
     }
+    navList.append(item);
+  });
 
-    navbar.appendChild(logoDiv);
-  }
+  navList.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    const open = navList.querySelector('.header-nav-item[aria-expanded="true"]');
+    if (open) {
+      setOpen(open, false);
+      open.querySelector('.header-nav-toggle').focus();
+    }
+  });
+  return navList;
+}
 
-  // Create mobile menu button
+/**
+ * Decorates the nav fragment into the header structure.
+ * @param {Element} block header block
+ * @param {Element} fragment nav fragment container
+ */
+function decorateNav(block, fragment) {
+  const [brandSection, navSection, toolsSection] = fragment.querySelectorAll(':scope > div');
+
+  const headerEl = block.closest('header');
+  if (headerEl) headerEl.classList.add('header-tdot');
+
+  // Row 1: agency bar
+  const agency = document.createElement('div');
+  agency.className = 'header-agency';
+  const agencyInner = document.createElement('div');
+  agencyInner.className = 'header-agency-inner';
+  const brand = buildBrand(brandSection, agency);
+  const { tools, print, menuLabel } = buildTools(toolsSection);
+
+  agencyInner.append(brand, tools);
+  agency.append(agencyInner);
+
+  // Row 2: primary nav (mobile: menu toggle + collapsible list)
+  const nav = document.createElement('nav');
+  nav.className = 'header-nav';
+  nav.setAttribute('aria-label', 'Primary navigation');
+  const navInner = document.createElement('div');
+  navInner.className = 'header-nav-inner';
+  const navList = buildNavList(navSection);
+  navList.id = 'header-nav-list';
+
   const menuBtn = document.createElement('button');
   menuBtn.type = 'button';
-  menuBtn.className = 'usa-menu-btn';
-  menuBtn.textContent = 'Menu';
-  navbar.appendChild(menuBtn);
+  menuBtn.className = 'header-menu-btn';
+  menuBtn.setAttribute('aria-expanded', 'false');
+  menuBtn.setAttribute('aria-controls', navList.id);
+  const bars = document.createElement('span');
+  bars.className = 'header-menu-icon';
+  bars.setAttribute('aria-hidden', 'true');
+  bars.append(document.createElement('span'), document.createElement('span'), document.createElement('span'));
+  const label = document.createElement('span');
+  label.className = 'header-menu-label';
+  label.textContent = menuLabel.open;
+  menuBtn.append(bars, label);
 
-  // Create nav container
-  const nav = document.createElement('nav');
-  nav.className = 'usa-nav';
+  navInner.append(menuBtn, navList);
+  if (print) navInner.append(print);
 
-  // Create close button for mobile
-  const closeBtn = document.createElement('button');
-  closeBtn.type = 'button';
-  closeBtn.className = 'usa-nav__close';
-  const closeImg = document.createElement('img');
-  closeImg.src = '/icons/usa-icons-bg/close--white.svg';
-  closeImg.alt = 'Close';
-  closeBtn.appendChild(closeImg);
+  // Sticky bar search shortcut: back to the top and into the search box
+  const searchInput = tools.querySelector('.header-search-input');
+  if (searchInput) {
+    const searchBtn = document.createElement('button');
+    searchBtn.type = 'button';
+    searchBtn.className = 'header-search-jump';
+    searchBtn.setAttribute('aria-label', searchInput.placeholder);
+    searchBtn.append(createIcon('search'));
+    searchBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0 });
+      searchInput.focus();
+    });
+    navInner.append(searchBtn);
+  }
+  nav.append(navInner);
 
-  // Create primary navigation
-  const primaryNav = document.createElement('ul');
-  primaryNav.className = 'usa-nav__primary usa-accordion';
+  // Compact state mark shown in the sticky mobile bar (reuses the brand's state mark)
+  const stateMark = brand.querySelector('.header-brand-mark');
+  if (stateMark) {
+    const mark = stateMark.cloneNode(true);
+    mark.className = 'header-nav-mark';
+    navInner.prepend(mark);
+  }
 
-  if (navSection) {
-    const navList = navSection.querySelector('ul');
-    if (navList) {
-      const navItems = navList.querySelectorAll(':scope > li');
-      navItems.forEach((item, index) => {
-        const li = document.createElement('li');
-        li.className = 'usa-nav__primary-item';
+  // Page overlay behind the open mobile menu (tap to close)
+  const overlay = document.createElement('div');
+  overlay.className = 'header-overlay';
 
-        // Check if item has submenu (nested ul) or is a simple link
-        const submenu = item.querySelector('ul');
-        const link = item.querySelector(':scope > p > a');
+  const lockScroll = () => {
+    const lock = block.classList.contains('header-sticky') && block.classList.contains('header-menu-open');
+    document.body.classList.toggle('header-scroll-lock', lock);
+  };
 
-        if (submenu && !link) {
-          // This is an accordion item with submenu
-          const title = item.querySelector(':scope > p');
-          const button = document.createElement('button');
-          button.type = 'button';
-          button.className = 'usa-accordion__button usa-nav__link';
-          button.setAttribute('aria-expanded', 'false');
-          button.setAttribute('aria-controls', `nav-section-${index}`);
+  const toggleMenu = (open) => {
+    block.classList.toggle('header-menu-open', open);
+    menuBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    label.textContent = open ? menuLabel.close : menuLabel.open;
+    lockScroll();
+  };
+  menuBtn.addEventListener('click', () => toggleMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+  overlay.addEventListener('click', () => toggleMenu(false));
 
-          const span = document.createElement('span');
-          span.textContent = title ? title.textContent : 'Section';
-          button.appendChild(span);
-
-          const submenuUl = document.createElement('ul');
-          submenuUl.id = `nav-section-${index}`;
-          submenuUl.className = 'usa-nav__submenu';
-          submenuUl.setAttribute('hidden', '');
-
-          const submenuItems = submenu.querySelectorAll(':scope > li');
-          submenuItems.forEach((subitem) => {
-            const subLi = document.createElement('li');
-            subLi.className = 'usa-nav__submenu-item';
-            const subLink = subitem.querySelector('a');
-            if (subLink) {
-              const newLink = document.createElement('a');
-              newLink.href = subLink.href;
-              const linkSpan = document.createElement('span');
-              linkSpan.textContent = subLink.textContent;
-              newLink.appendChild(linkSpan);
-              subLi.appendChild(newLink);
-            }
-            submenuUl.appendChild(subLi);
-          });
-
-          li.appendChild(button);
-          li.appendChild(submenuUl);
-
-          // Note: USWDS JavaScript handles accordion interactions automatically
-        } else if (link) {
-          // Simple link item
-          const navLink = document.createElement('a');
-          navLink.href = link.href;
-          navLink.className = 'usa-nav__link';
-          const linkSpan = document.createElement('span');
-          linkSpan.textContent = link.textContent;
-          navLink.appendChild(linkSpan);
-          li.appendChild(navLink);
-        }
-
-        primaryNav.appendChild(li);
-      });
+  // The nav row pins to the top once the whole header has scrolled away,
+  // and returns to the flow when the page scrolls back above the agency bar.
+  let ticking = false;
+  const updateSticky = () => {
+    ticking = false;
+    const stuck = block.classList.contains('header-sticky');
+    const agencyHeight = agency.offsetHeight;
+    const navHeight = nav.offsetHeight;
+    if (!stuck && window.scrollY >= agencyHeight + navHeight) {
+      block.style.setProperty('--header-nav-height', `${navHeight}px`);
+      block.classList.add('header-sticky');
+    } else if (stuck && window.scrollY <= agencyHeight) {
+      block.classList.remove('header-sticky');
     }
-  }
-
-  // For extended variant, add secondary nav section
-  let secondaryNav;
-  if (variant === 'extended') {
-    secondaryNav = document.createElement('div');
-    secondaryNav.className = 'usa-nav__secondary';
-
-    // Process secondary links from tools section
-    const secondaryLinks = document.createElement('ul');
-    secondaryLinks.className = 'usa-nav__secondary-links';
-
-    if (toolsSection) {
-      // Find all links in tools section that are NOT in the search block
-      const links = toolsSection.querySelectorAll('a');
-      links.forEach((link) => {
-        // Skip if this link is inside the search block
-        if (!link.closest('.search')) {
-          const li = document.createElement('li');
-          li.className = 'usa-nav__secondary-item';
-          const newLink = document.createElement('a');
-          newLink.href = link.href;
-          newLink.textContent = link.textContent;
-          li.appendChild(newLink);
-          secondaryLinks.appendChild(li);
-        }
-      });
+    lockScroll();
+  };
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      ticking = true;
+      window.requestAnimationFrame(updateSticky);
     }
+  }, { passive: true });
 
-    secondaryNav.appendChild(secondaryLinks);
-  }
+  // Reset menu/dropdown state when crossing the desktop breakpoint
+  DESKTOP.addEventListener('change', () => {
+    toggleMenu(false);
+    closeAll(navList);
+    block.classList.remove('header-sticky'); // re-measure the in-flow nav height
+    updateSticky();
+  });
 
-  // Add search block if present in tools section
-  if (toolsSection) {
-    const searchBlock = toolsSection.querySelector('.search');
-    if (searchBlock) {
-      // Decorate and load the search block
-      decorateBlock(searchBlock);
-      await loadBlock(searchBlock);
-
-      // Wrap search in a section with aria-label
-      const searchSection = document.createElement('section');
-      searchSection.setAttribute('aria-label', 'Search component');
-      searchSection.appendChild(searchBlock);
-
-      // For extended variant, add search to secondary nav; otherwise add directly to nav
-      if (secondaryNav) {
-        secondaryNav.appendChild(searchSection);
-      } else {
-        nav.appendChild(searchSection);
-      }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !DESKTOP.matches && menuBtn.getAttribute('aria-expanded') === 'true') {
+      toggleMenu(false);
+      menuBtn.focus();
     }
-  }
+  });
 
-  // Assemble nav structure based on variant
-  if (navInner) {
-    // Extended variant: wrap primary nav and secondary nav in nav__inner
-    navInner.appendChild(closeBtn);
-    navInner.appendChild(primaryNav);
-    if (secondaryNav) {
-      navInner.appendChild(secondaryNav);
-    }
-    nav.appendChild(navInner);
-  } else {
-    // Basic variant: add elements directly to nav
-    nav.appendChild(closeBtn);
-    nav.appendChild(primaryNav);
-  }
-
-  // Note: USWDS JavaScript handles all menu interactions automatically
-  // including: mobile menu toggle, accordion dropdowns, click-outside,
-  // escape key, and keyboard navigation
-
-  // Clear the block content (EDS adds a default wrapper)
-  header.textContent = '';
-
-  // Assemble final header structure
-  if (navContainer) {
-    // Basic/megamenu variants: use nav-container wrapper
-    navContainer.appendChild(navbar);
-    navContainer.appendChild(nav);
-    header.appendChild(navContainer);
-  } else {
-    // Extended variant: add navbar and nav directly to block
-    header.appendChild(navbar);
-    header.appendChild(nav);
-  }
+  block.textContent = '';
+  block.append(agency, nav, overlay);
+  updateSticky();
 }
 
 /**
@@ -283,24 +426,17 @@ async function decorateNav(header, fragment) {
  * @param {Element} block The header block element
  */
 export default async function decorate(block) {
-  // Automatically add banner above header (USWDS pattern)
-  // The banner should be a sibling to the <header> element, not inside it
-  const headerElement = block.parentElement; // This is the <header> tag
-  const bannerBlock = document.createElement('div');
-  bannerBlock.className = 'banner block';
-  bannerBlock.setAttribute('data-block-name', 'banner');
+  // The USWDS federal "official website" banner is opt-in (page metadata `usa-banner: true`)
+  if (getMetadata('usa-banner') === 'true') {
+    const headerElement = block.parentElement;
+    const bannerBlock = document.createElement('div');
+    bannerBlock.className = 'banner block';
+    bannerBlock.setAttribute('data-block-name', 'banner');
+    headerElement.parentElement.insertBefore(bannerBlock, headerElement);
+    decorateBlock(bannerBlock);
+    await loadBlock(bannerBlock);
+  }
 
-  // Insert banner before the <header> element in the DOM
-  headerElement.parentElement.insertBefore(bannerBlock, headerElement);
-
-  // Now decorate and load the banner block
-  decorateBlock(bannerBlock);
-  await loadBlock(bannerBlock);
-
-  // Load the nav content from fragment
-  const navPath = getMetadata('nav') || '/nav/header';
-  const fragment = await loadFragment(navPath);
-
-  // Decorate the fragment into USWDS structure
-  await decorateNav(block, fragment);
+  const fragment = await fetchNav();
+  if (fragment) decorateNav(block, fragment);
 }
