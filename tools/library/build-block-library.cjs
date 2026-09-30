@@ -59,7 +59,7 @@ const LIBRARY = [
     { classes: 'summary-box panel', name: 'Summary Box (panel)', description: 'White notice panel with a soft shadow. A leading fully-bold paragraph shows as a red warning line; a heading mid-panel is a large call-out (e.g. a hotline number).' },
   ] },
   { block: 'tabs', entries: [
-    { classes: 'tabs', name: 'Tabs', description: 'One row per tab: label | content. Accordion on phones. In a tab: image paragraph + YouTube link paragraph = video; H3 + list of links = links panel.', trimTabs: true },
+    { classes: 'tabs', name: 'Tabs', description: 'One row per tab: label | content. Accordion on phones. In a tab: image paragraph + YouTube link paragraph = video; H2 + list of links = links panel.', trimTabs: true },
   ] },
   { block: 'video', entries: [
     { classes: 'video', name: 'Video', description: 'Poster image with a play label; loads the YouTube, Vimeo or .mp4 video on click.', html: '<div class="video"><div><div><p><picture><img src="./images/placeholder-16x9.png" alt="Video poster"></picture></p><p><a href="https://www.youtube.com/watch?v=DfLGZzxtrrc">Watch video</a></p></div></div></div>' },
@@ -134,11 +134,11 @@ const walk = (dir) => fs.readdirSync(dir, { withFileTypes: true }).flatMap((d) =
                 if (firstPic >= 0) keepIdx.add(firstPic);
                 kids.forEach((k, j) => {
                   if (k.querySelector('a[href*="youtube"]')) { keepIdx.add(j); keepIdx.add(j - 1); }
-                  if (k.tagName === 'H3') { keepIdx.add(j); keepIdx.add(j + 1); }
+                  if (/^H[23]$/.test(k.tagName) && kids[j + 1]?.tagName === 'UL') { keepIdx.add(j); keepIdx.add(j + 1); }
                 });
               }
               kids.forEach((k, j) => { if (!keepIdx.has(j)) k.remove(); });
-              cell.querySelectorAll('h3 + ul').forEach((ul) => [...ul.children].slice(4).forEach((li) => li.remove()));
+              cell.querySelectorAll('h2 + ul, h3 + ul').forEach((ul) => [...ul.children].slice(4).forEach((li) => li.remove()));
             });
           }
           return { html: el.outerHTML, from: page };

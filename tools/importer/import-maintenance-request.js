@@ -66,6 +66,11 @@ export default {
       if (part.classList.contains('tn-panel')) {
         const rte = part.querySelector('.tn-rte') || part;
         const cell = el(document, 'div', {}, cleanRte(document, rte));
+        // call-out headings (e.g. the hotline number) directly under the page H1 -> H2
+        cell.querySelectorAll('h3, h4, h5, h6').forEach((h) => {
+          const h2 = el(document, 'h2', {}, [...h.childNodes]);
+          h.replaceWith(h2);
+        });
         main.append(WebImporter.Blocks.createBlock(document, { name: 'Summary Box', variants: ['panel'], cells: [[cell]] }));
       } else if (part.classList.contains('tn-formstack')) {
         main.append(buildForm(document));

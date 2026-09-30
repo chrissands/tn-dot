@@ -1,1 +1,5 @@
-
+{
+  "project": "TDOT",
+  "editUrlLabel": "Document Authoring",
+  "editUrlPattern": "https://da.live/edit#/{{org}}/{{site}}{{pathname}}"
+}

@@ -11,7 +11,7 @@
  *   - Section 2: H1, intro text, Tabs block – one row per tab: label | content.
  *     Tab content keeps the source order: rich text, centered images, the video as a
  *     poster image followed by a YouTube link ("Watch video"; tabs.js turns the pair
- *     into a Video block), and Related Links as an H3 + list of links (tabs.js shows
+ *     into a Video block), and Related Links as an H2 + list of links (tabs.js shows
  *     it as the gray-headed links panel).
  *   - Metadata: title, description, template
  */
@@ -45,7 +45,7 @@ function tabContent(document, pane) {
       if (poster) out.push(el(document, 'p', {}, [el(document, 'img', { src: poster, alt: '' })]));
       out.push(el(document, 'p', {}, [el(document, 'a', { href: youtubeUrl(link.getAttribute('href')) }, [clean(link.textContent) || 'Watch video'])]));
     } else if (part.classList.contains('tn-relatedcontent')) {
-      out.push(el(document, 'h3', {}, [clean((part.querySelector('.title') || {}).textContent) || 'Related Links']));
+      out.push(el(document, 'h2', {}, [clean((part.querySelector('.title') || {}).textContent) || 'Related Links']));
       const ul = el(document, 'ul');
       part.querySelectorAll('li a[href]').forEach((a) => {
         ul.append(el(document, 'li', {}, [el(document, 'a', { href: href(a.getAttribute('href')) }, [clean(a.textContent)])]));

@@ -11,7 +11,7 @@ import {
  * Content enhancements inside panels (nested blocks can't be authored in a tab cell):
  *   - a picture paragraph followed by a paragraph with only a YouTube/Vimeo link becomes
  *     a Video block (picture = poster, link text = play label, e.g. "Watch video")
- *   - an H3 directly followed by a list of links becomes a links panel (tn.gov
+ *   - an H2 or H3 directly followed by a list of links becomes a links panel (tn.gov
  *     "Related Links": gray title bar, divided links)
  */
 
@@ -38,7 +38,7 @@ async function decorateVideos(panel) {
 }
 
 function decorateLinkPanels(panel) {
-  panel.querySelectorAll('h3').forEach((heading) => {
+  panel.querySelectorAll('h2, h3').forEach((heading) => {
     const list = heading.nextElementSibling;
     if (!list || list.tagName !== 'UL') return;
     const items = [...list.children];

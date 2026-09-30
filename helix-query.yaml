@@ -30,3 +30,35 @@ indices:
       lastModified:
         select: none
         value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+
+  # Site index: every published page (drives the sitemap). Shared documents
+  # (nav, footer, fragments, library) are excluded; robots feeds the sitemap's
+  # noindex filtering (set per folder in the bulk metadata sheet).
+  site:
+    include:
+      - '/**'
+    exclude:
+      - '/nav'
+      - '/footer'
+      - '/fragments/**'
+      - '/library/**'
+    target: /query-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      image:
+        select: head > meta[property="og:image"]
+        value: match(attribute(el, "content"), "https:\/\/[^/]+(\/.*)")
+      template:
+        select: head > meta[name="template"]
+        value: attribute(el, "content")
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")

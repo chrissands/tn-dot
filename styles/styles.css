@@ -10,9 +10,8 @@
  * governing permissions and limitations under the License.
  */
 
-@import url('brand.css');
-
-/* colors, fonts, body and heading sizes are defined in brand.css */
+/* colors, fonts, body and heading sizes are defined in brand.css
+   (linked from head.html ahead of this file, instead of an @import chain) */
 :root {
   /* header heights (TDOT header: agency bar + nav row); USWDS banner is opt-in, so 0 by default */
   --banner-height: 0px;
@@ -178,6 +177,12 @@ main .usa-prose > h6 {
 /* Section intro headings (H2 + optional H4 subheading + small link) are centered */
 main .default-content-wrapper:has(> h2) {
   text-align: center;
+}
+
+/* Section intro subtitle: an H3 directly under the H2 (an H4 on the source) keeps the H4 size */
+body:not(.left-nav, .newsroom, .news-article, .full-width) main .default-content-wrapper > h2 + h3 {
+  font-size: var(--heading-font-size-m);
+  line-height: 1.2;
 }
 
 main .default-content-wrapper > p:has(> a:only-child) {

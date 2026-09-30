@@ -105,6 +105,15 @@ export default function transform(hookName, element, payload) {
       if (!h.textContent.replace(/ /g, ' ').trim() && !h.querySelector('img, picture')) h.remove();
     });
 
+    // Section subtitles: the source puts an H4 directly under an H2 (skipping H3).
+    // Keep the heading outline in order: H2 + H4 -> H2 + H3 (styled as the subtitle).
+    element.querySelectorAll('h2 + h4').forEach((h4) => {
+      if (h4.closest('table')) return;
+      const h3 = h4.ownerDocument.createElement('h3');
+      h3.append(...h4.childNodes);
+      h4.replaceWith(h3);
+    });
+
     // Site-relative links point at tn.gov; make them absolute so they keep working
     // (/content/tn/tdot/... and /content/tn//tdot/... both resolve as /tdot/...).
     element.querySelectorAll('a[href^="/"]').forEach((a) => {

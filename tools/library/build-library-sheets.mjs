@@ -5,6 +5,7 @@
  *   content/library/templates.json             – templates sheet (key | value)
  *   content/library/icons.json                 – icons sheet (key | value | icon)
  *   content/placeholders.json                  – placeholders sheet (key | text), site root
+ *   content/metadata.json                      – bulk metadata sheet (URL | template | robots)
  *   content/library/da-library-config.json     – "library" tab rows for the project config
  *
  * node tools/library/build-library-sheets.mjs
@@ -163,6 +164,17 @@ const PLACEHOLDERS = [
 ];
 const placeholders = PLACEHOLDERS.map(([key, text, usage]) => ({ key, text, usage }));
 fs.writeFileSync(path.join(CONTENT, 'placeholders.json'), `${JSON.stringify(sheet(placeholders), null, 2)}\n`);
+
+// ---------- bulk metadata (site root /metadata): folder-level defaults ----------
+// Page metadata wins over these rows, so /news (template: newsroom) keeps its own template.
+const BULK = [
+  { URL: '/news/**', template: 'news-article', robots: '' },
+  { URL: '/nav', template: '', robots: 'noindex' },
+  { URL: '/footer', template: '', robots: 'noindex' },
+  { URL: '/fragments/**', template: '', robots: 'noindex' },
+  { URL: '/library/**', template: '', robots: 'noindex' },
+];
+fs.writeFileSync(path.join(CONTENT, 'metadata.json'), `${JSON.stringify(sheet(BULK), null, 2)}\n`);
 
 // ---------- project config: library tab ----------
 const library = [

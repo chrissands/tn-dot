@@ -253,6 +253,24 @@ function buildHeroBlock(main) {
 }
 
 /**
+ * Loads the full USWDS stylesheet after first render. head.html only loads
+ * uswds-critical.css (the rules the pages use at first render, built by
+ * tools/perf/build-uswds-critical.cjs); the full sheet adds interaction states
+ * (open menus, form errors, …). It is inserted before the subset, so rule order –
+ * and therefore the cascade – is the same as with the single original stylesheet.
+ */
+function loadFullUswds() {
+  const href = `${window.hlx.codeBasePath}/styles/uswds-core.css`;
+  if (document.querySelector(`link[href="${href}"]`)) return;
+  const critical = document.querySelector('link[href$="/styles/uswds-critical.css"]');
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  if (critical) critical.before(link);
+  else document.head.prepend(link);
+}
+
+/**
  * load fonts.css and set a session storage flag
  */
 async function loadFonts() {
@@ -510,6 +528,7 @@ async function loadLazy(doc) {
   loadHeader(doc.querySelector('header'));
   loadFooter(doc.querySelector('footer'));
 
+  loadFullUswds();
   loadCSS(`${window.hlx.codeBasePath}/styles/lazy-styles.css`);
   loadFonts();
 
