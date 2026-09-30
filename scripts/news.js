@@ -4,13 +4,15 @@
  */
 
 import { toClassName } from './aem.js';
+import { fetchContent, isLocalPreview } from './content-fetch.js';
 
 const DEFAULT_INDEX = '/news/query-index.json';
 const cache = {};
 
 /**
  * Fetches the news index, sorted newest first.
- * Tries the local-preview copy (/content/...) first, then the published index.
+ * Published index on the published site, the /content/... copy in local preview
+ * (each falling back to the other, see fetchContent).
  * @param {string} [source] index path
  * @returns {Promise<Array<object>>}
  */
@@ -18,8 +20,7 @@ export async function fetchNewsIndex(source = DEFAULT_INDEX) {
   const path = new URL(source, window.location.origin).pathname;
   if (!cache[path]) {
     cache[path] = (async () => {
-      let resp = await fetch(`/content${path}`);
-      if (!resp.ok) resp = await fetch(path);
+      const resp = await fetchContent(path);
       if (!resp.ok) return [];
       const json = await resp.json();
       return (json.data || [])
@@ -65,5 +66,5 @@ export function formatNewsDate(iso) {
  * @param {string} path index path, e.g. /news/2026/9/28/slug
  */
 export function newsHref(path) {
-  return window.location.pathname.startsWith('/content/') ? `/content${path}` : path;
+  return isLocalPreview() ? `/content${path}` : path;
 }

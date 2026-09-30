@@ -15,18 +15,19 @@
  */
 
 import { getMetadata, decorateBlock, loadBlock } from '../../scripts/aem.js';
+import { fetchContent } from '../../scripts/content-fetch.js';
 
 const DESKTOP = window.matchMedia('(width >= 900px)');
 let idCounter = 0;
 
 /**
- * Fetches the nav fragment. Metadata-independent dual fetch:
- * /content/nav.plain.html (local preview) then /nav.plain.html (DA/EDS).
+ * Fetches the nav fragment. Metadata-independent dual fetch (fetchContent):
+ * /nav.plain.html on the published site, /content/nav.plain.html in local preview,
+ * each falling back to the other.
  * @returns {Promise<Element|null>} container with the fragment sections
  */
 async function fetchNav() {
-  let resp = await fetch('/content/nav.plain.html');
-  if (!resp.ok) resp = await fetch('/nav.plain.html');
+  const resp = await fetchContent('/nav.plain.html');
   if (!resp.ok) return null;
   const html = await resp.text();
   const container = document.createElement('div');

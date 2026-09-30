@@ -13,6 +13,8 @@
  * side-nav content (shared sidebars, e.g. the newsroom category filters).
  */
 
+import { fetchContent, isLocalPreview } from '../../scripts/content-fetch.js';
+
 /**
  * Loads a fragment's side-nav content.
  * Local preview serves documents under /content, published pages at the root.
@@ -20,8 +22,7 @@
  * @returns {Promise<Element|null>}
  */
 async function loadFragmentNav(path) {
-  let resp = await fetch(`/content${path}.plain.html`);
-  if (!resp.ok) resp = await fetch(`${path}.plain.html`);
+  const resp = await fetchContent(`${path}.plain.html`);
   if (!resp.ok) return null;
   const container = document.createElement('div');
   container.innerHTML = await resp.text();
@@ -33,7 +34,7 @@ async function loadFragmentNav(path) {
 function localHref(href) {
   const url = new URL(href, window.location.origin);
   if (url.origin !== window.location.origin) return url.href;
-  if (window.location.pathname.startsWith('/content/') && !url.pathname.startsWith('/content/')) {
+  if (isLocalPreview() && !url.pathname.startsWith('/content/')) {
     url.pathname = `/content${url.pathname}`;
   }
   return url.pathname + url.search;

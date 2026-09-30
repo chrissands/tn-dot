@@ -18,6 +18,8 @@
  * @see https://designsystem.digital.gov/components/footer/
  */
 
+import { fetchContent } from '../../scripts/content-fetch.js';
+
 const FONT_SIZES = ['small', 'normal', 'large'];
 const FONT_SIZE_KEY = 'footer-font-size';
 const SHOW_BACK_TO_TOP_AFTER = 150;
@@ -47,13 +49,13 @@ function mergeSplitLinks(root) {
 }
 
 /**
- * Fetches the footer fragment. Metadata-independent dual fetch:
- * /content/footer.plain.html (local preview) then /footer.plain.html (DA/EDS).
+ * Fetches the footer fragment. Metadata-independent dual fetch (fetchContent):
+ * /footer.plain.html on the published site, /content/footer.plain.html in local
+ * preview, each falling back to the other.
  * @returns {Promise<Element|null>}
  */
 async function fetchFooter() {
-  let resp = await fetch('/content/footer.plain.html');
-  if (!resp.ok) resp = await fetch('/footer.plain.html');
+  const resp = await fetchContent('/footer.plain.html');
   if (!resp.ok) return null;
   const container = document.createElement('div');
   container.innerHTML = await resp.text();
