@@ -330,6 +330,22 @@ function buildAutoBlocks(main) {
 }
 
 /**
+ * Published images come as optimized media URLs sized for content (?width=750);
+ * full-bleed section backgrounds need the wide rendition.
+ * @param {string} src image URL
+ * @returns {string}
+ */
+function fullWidthImage(src) {
+  try {
+    const url = new URL(src, window.location.href);
+    if (url.searchParams.has('width')) url.searchParams.set('width', '2000');
+    return url.href;
+  } catch (e) {
+    return src;
+  }
+}
+
+/**
  * Decorates all sections in a container element.
  * @param {Element} main The container element
  */
@@ -376,13 +392,17 @@ function decorateSections(main) {
           section.dataset[toCamelCase(key)] = meta[key];
         }
       });
-      // Section Metadata "background" image → section background
-      if (meta.background) {
-        const bg = Array.isArray(meta.background) ? meta.background[0] : meta.background;
-        section.style.backgroundImage = `url("${bg}")`;
-        section.classList.add('has-background');
-      }
       sectionMeta.parentNode.remove();
+    }
+
+    // Section Metadata "background" image → section background. Local preview keeps
+    // the section-metadata table (read above); published pages deliver it as a
+    // data-background attribute on the section.
+    const bgValue = section.dataset.background;
+    if (bgValue) {
+      const bg = Array.isArray(bgValue) ? bgValue[0] : bgValue;
+      section.style.backgroundImage = `url("${fullWidthImage(bg)}")`;
+      section.classList.add('has-background');
     }
   });
 }
