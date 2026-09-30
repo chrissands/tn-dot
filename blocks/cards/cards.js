@@ -9,7 +9,7 @@
  * untouched (CSS only), as before.
  */
 
-import { createOptimizedPicture } from '../../scripts/aem.js';
+import { createOptimizedPicture, readBlockConfig } from '../../scripts/aem.js';
 import { fetchNewsIndex, newsHref } from '../../scripts/news.js';
 
 const CARD_GROUP_OPTIONS = ['news', 'people', 'tiles', 'media'];
@@ -26,29 +26,47 @@ function indexPicture(src, alt) {
   return createOptimizedPicture(src, alt, false, [{ width: '750' }]);
 }
 
+/** Stand-in media for articles without a photo: navy tile with the TN mark + TDOT wordmark. */
+function newsPlaceholder() {
+  const tile = document.createElement('div');
+  tile.className = 'news-card-placeholder';
+  [['tn-logo.png', 'news-card-placeholder-mark'], ['tdot-logo-white.png', 'news-card-placeholder-wordmark']]
+    .forEach(([file, className]) => {
+      const img = document.createElement('img');
+      img.src = `${window.hlx.codeBasePath}/images/${file}`;
+      img.alt = '';
+      img.className = className;
+      img.loading = 'lazy';
+      tile.append(img);
+    });
+  return tile;
+}
+
 /**
- * "latest" option: replaces the authored rows with the newest news index entries
- * (one per authored row). An authored row's image fills in when the article has none;
- * its link text ("Read more") is reused. Authored rows stay when the index is unavailable.
+ * "latest" option: cards built from the news index (newest first). The block holds
+ * settings rows instead of cards:
+ *   | Source    | /news/query-index.json |  (optional, default)
+ *   | Count     | 3                      |
+ *   | Link Text | Read more              |
+ * Each card: the article's image (or a TDOT placeholder tile), title, description and
+ * a link to the article. The block is removed when the index has no entries.
  * @param {Element} block The cards block
  */
 async function applyLatestNews(block) {
-  const rows = [...block.children];
+  const config = readBlockConfig(block);
+  const count = Math.max(1, parseInt(config.count, 10) || 3);
+  const linkText = config['link-text'] || 'Read more';
   let entries = [];
   try {
-    entries = (await fetchNewsIndex()).slice(0, rows.length);
+    entries = (await fetchNewsIndex(config.source || undefined)).slice(0, count);
   } catch (e) {
-    return;
+    entries = [];
   }
-  entries.forEach((entry, i) => {
-    const authored = rows[i];
-    const media = [...authored.children].find((cell) => cell.querySelector('picture, img') && !cell.textContent.trim());
-    const authoredLink = authored.querySelector('p > a:only-child');
-
+  block.textContent = '';
+  entries.forEach((entry) => {
     const row = document.createElement('div');
     const mediaCell = document.createElement('div');
-    if (entry.image) mediaCell.append(indexPicture(entry.image, entry.title));
-    else if (media) mediaCell.append(...media.childNodes);
+    mediaCell.append(entry.image ? indexPicture(entry.image, entry.title) : newsPlaceholder());
 
     const text = document.createElement('div');
     const heading = document.createElement('h3');
@@ -59,18 +77,19 @@ async function applyLatestNews(block) {
       desc.textContent = entry.description;
       text.append(desc);
     }
-    // clone the authored (already button-decorated) link so the CTA keeps its styling
-    const linkPara = authoredLink ? authoredLink.parentElement.cloneNode(true) : document.createElement('p');
-    const link = linkPara.querySelector('a') || linkPara.appendChild(document.createElement('a'));
+    // same markup decorateButtons gives an authored "Read more" link
+    const linkPara = document.createElement('p');
+    linkPara.className = 'button-container';
+    const link = document.createElement('a');
+    link.className = 'usa-button';
     link.href = newsHref(entry.path);
-    link.removeAttribute('title');
-    if (authoredLink) link.setAttribute('aria-label', `${link.textContent.trim()}: ${entry.title}`);
-    else link.textContent = entry.title;
+    link.textContent = linkText;
+    link.setAttribute('aria-label', `${linkText}: ${entry.title}`);
+    linkPara.append(link);
     text.append(linkPara);
 
-    if (mediaCell.childNodes.length) row.append(mediaCell);
-    row.append(text);
-    authored.replaceWith(row);
+    row.append(mediaCell, text);
+    block.append(row);
   });
 }
 
@@ -147,7 +166,13 @@ export default async function decorate(block) {
   // Component is styled with CSS only
   // Add any EDS-specific enhancements here if needed
   if (!block || !CARD_GROUP_OPTIONS.some((cls) => block.classList.contains(cls))) return;
-  if (block.classList.contains('latest')) await applyLatestNews(block);
+  if (block.classList.contains('latest')) {
+    await applyLatestNews(block);
+    if (!block.children.length) {
+      block.closest('.cards-wrapper')?.remove();
+      return;
+    }
+  }
 
   const group = document.createElement('ul');
   group.className = 'usa-card-group';

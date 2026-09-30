@@ -111,6 +111,34 @@
   object-fit: cover;
 }
 
+/* index-driven card without an article photo: navy TDOT tile, same shape as a photo */
+.cards.news.latest .news-card-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4%;
+  box-sizing: border-box;
+  width: 100%;
+  aspect-ratio: 327 / 167;
+  padding: 0 12%;
+  background-color: #1b365d;
+}
+
+.cards.news.latest .news-card-placeholder img {
+  width: auto;
+  aspect-ratio: auto;
+  object-fit: contain;
+}
+
+.cards.news.latest .news-card-placeholder .news-card-placeholder-mark {
+  height: 32%;
+}
+
+.cards.news.latest .news-card-placeholder .news-card-placeholder-wordmark {
+  height: 30%;
+  max-width: 70%;
+}
+
 /* ---------- news: gray "Read more" text link with circled arrow ---------- */
 main .cards.news a.usa-button:any-link,
 main .cards.news a.usa-button:hover,
