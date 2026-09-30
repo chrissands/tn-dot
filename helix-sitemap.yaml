@@ -1,7 +1,10 @@
 # Sitemap of every published page, from the site index (helix-query.yaml "site").
 # Pages with robots: noindex (bulk metadata) are left out.
+# origin: no production domain (cdn.prod.host) is configured yet – at go-live, set
+# cdn.prod.host in the site config and change or remove this origin.
 sitemaps:
   default:
+    origin: https://main--tn-dot--chrissands.aem.live
     source: /query-index.json
     destination: /sitemap.xml
     lastmod: YYYY-MM-DD
