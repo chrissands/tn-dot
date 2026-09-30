@@ -26,6 +26,9 @@ export async function fetchNewsIndex(source = DEFAULT_INDEX) {
         .filter((item) => item.path && item.title)
         .map((item) => ({
           ...item,
+          // pages without an image get EDS's default og:image placeholder in the
+          // published index; treat it as "no image" so callers can fall back
+          image: /default-meta-image/.test(item.image || '') ? '' : item.image,
           categories: (item.category || '').split(',').map((c) => c.trim()).filter(Boolean),
         }))
         .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
