@@ -12,18 +12,20 @@ import { mapSitePath } from './lib/tn-common.js';
  *   3. Tools:  "Go to TN.gov" link, search placeholder + results link,
  *              mobile menu labels (plain text: open, close), print link
  *
- * Images reference the copies uploaded to Document Authoring /images/ by absolute
- * content.da.live URL (content/images/ locally; header/footer.js map it in local preview).
+ * Icons (home, print) are :name: notation (served from /icons/ in the code); the logos and
+ * header photo live in the document's own media folder (.nav) in Document Authoring
+ * (content/images/ locally; header.js maps them in local preview).
  */
 
 const ORIGIN = 'https://www.tn.gov';
-const DA_IMAGES = 'https://content.da.live/chrissands/tn-dot/images';
+// Real images live in the document's own media folder (.nav) – where Document Authoring
+// keeps a document's images, so editing never relocates them. Small UI icons are :name:
+// text, served from /icons/<name>.svg in the code.
+const DA_MEDIA = 'https://content.da.live/chrissands/tn-dot/.nav';
 const IMAGES = {
-  tnLogo: `${DA_IMAGES}/tn-logo.png`,
-  logo: `${DA_IMAGES}/tdot-logo.png`,
-  background: `${DA_IMAGES}/header-background.jpg`,
-  home: `${DA_IMAGES}/home.svg`,
-  print: `${DA_IMAGES}/print.svg`,
+  tnLogo: `${DA_MEDIA}/tn-logo.png`,
+  logo: `${DA_MEDIA}/tdot-logo.png`,
+  background: `${DA_MEDIA}/header-background.jpg`,
 };
 
 function toSite(href) {
@@ -85,7 +87,7 @@ function buildNav(document) {
       const hidden = a.querySelector('.visually-hidden');
       const label = (hidden && hidden.textContent.trim()) || a.getAttribute('aria-label') || 'Home';
       // icon + label text (label is rendered screen-reader-only by header.js)
-      const home = link(document, a.getAttribute('href'), img(document, IMAGES.home, ''));
+      const home = link(document, a.getAttribute('href'), document.createTextNode(':home:'));
       home.append(label);
       item.append(home);
     } else {
@@ -125,7 +127,7 @@ function buildTools(document) {
   const print = document.querySelector('#nav a.icon-print');
   if (print) {
     const label = (print.textContent || 'Print This Page').replace(/\s+/g, ' ').trim() || 'Print This Page';
-    const a = el(document, 'a', { href: '#print' }, [img(document, IMAGES.print, ''), label]);
+    const a = el(document, 'a', { href: '#print' }, [document.createTextNode(':print:'), label]);
     section.append(el(document, 'p', {}, [a]));
   }
   return section;

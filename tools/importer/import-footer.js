@@ -15,28 +15,32 @@ import { mapSitePath } from './lib/tn-common.js';
  *   5. Bottom:   left and right lists of TN.gov links
  *   6. Back to top: link whose text is the button's accessible label
  *
- * Images reference the copies uploaded to Document Authoring /images/ by absolute
- * content.da.live URL (content/images/ locally; header/footer.js map it in local preview).
+ * Icons are :name: notation (served from /icons/ in the code); the seal and emblem images
+ * live in the document's own media folder (.footer) in Document Authoring
+ * (content/images/ locally; footer.js maps them in local preview).
  */
 
 const ORIGIN = 'https://www.tn.gov';
-const DA_IMAGES = 'https://content.da.live/chrissands/tn-dot/images';
+// Real images live in the document's own media folder (.footer) – where Document Authoring
+// keeps a document's images, so editing never relocates them. Small UI icons are :name:
+// text, served from /icons/<name>.svg in the code.
+const DA_MEDIA = 'https://content.da.live/chrissands/tn-dot/.footer';
 const SOCIAL_ICONS = {
-  facebook: `${DA_IMAGES}/icon-facebook.svg`,
-  twitter: `${DA_IMAGES}/icon-twitter.svg`,
-  youtube: `${DA_IMAGES}/icon-youtube.svg`,
-  instagram: `${DA_IMAGES}/icon-instagram.svg`,
-  linkedin: `${DA_IMAGES}/icon-linkedin.svg`,
+  facebook: 'facebook',
+  twitter: 'twitter',
+  youtube: 'youtube',
+  instagram: 'instagram',
+  linkedin: 'linkedin',
 };
 const UTILITY_ICONS = {
-  'icon-flag': `${DA_IMAGES}/icon-flag.svg`,
-  'icon-chat': `${DA_IMAGES}/icon-chat.svg`,
-  'icon-help-circled': `${DA_IMAGES}/icon-help.svg`,
-  'icon-book': `${DA_IMAGES}/icon-translate.svg`,
+  'icon-flag': 'flag',
+  'icon-chat': 'chat',
+  'icon-help-circled': 'help',
+  'icon-book': 'translate',
 };
-const FONT_SIZE_ICON = `${DA_IMAGES}/icon-font-size.svg`;
-const SEAL = `${DA_IMAGES}/tn-seal.png`;
-const EMBLEM = `${DA_IMAGES}/footer-starball.png`;
+const FONT_SIZE_ICON = 'font-size';
+const SEAL = `${DA_MEDIA}/tn-seal.png`;
+const EMBLEM = `${DA_MEDIA}/footer-starball.png`;
 const CHAT_URL = 'https://help.tn.gov/sn_customerservice_tn_chat_selector.do';
 
 const clean = (t) => (t || '').replace(/\s+/g, ' ').trim();
@@ -65,6 +69,8 @@ function el(document, tag, attrs = {}, children = []) {
 }
 
 const img = (document, src, alt = '') => el(document, 'img', { src, alt });
+/** :name: icon notation (rendered from /icons/<name>.svg) */
+const icon = (document, name) => document.createTextNode(`:${name}:`);
 const link = (document, href, ...content) => el(document, 'a', { href: abs(href) }, content);
 
 function buildSocial(document) {
@@ -77,7 +83,7 @@ function buildSocial(document) {
   bar.querySelectorAll('a[href]').forEach((a) => {
     const network = [...a.classList].map((c) => c.replace(/^icon-/, '')).find((c) => SOCIAL_ICONS[c]);
     const label = clean(a.textContent) || network || a.getAttribute('href');
-    const content = network ? [img(document, SOCIAL_ICONS[network]), label] : [label];
+    const content = network ? [icon(document, SOCIAL_ICONS[network]), label] : [label];
     list.append(el(document, 'li', {}, [link(document, a.getAttribute('href'), ...content)]));
   });
   nodes.push(list);
@@ -139,14 +145,14 @@ function utilityItem(document, li) {
   const a = li.querySelector(':scope > a');
   if (!a) return null;
   const label = clean(a.textContent);
-  const icon = [...a.classList].map((c) => UTILITY_ICONS[c]).find(Boolean);
+  const iconKey = [...a.classList].map((c) => UTILITY_ICONS[c]).find(Boolean);
   let href = a.getAttribute('href');
   if (a.classList.contains('icon-chat')) href = CHAT_URL;
   if (li.id === 'footer-translate') href = '#translate';
   if (li.id === 'footer-fontsize') href = '#font-size';
   const content = [];
-  if (li.id === 'footer-fontsize') content.push(img(document, FONT_SIZE_ICON));
-  else if (icon) content.push(img(document, icon));
+  if (li.id === 'footer-fontsize') content.push(icon(document, FONT_SIZE_ICON));
+  else if (iconKey) content.push(icon(document, iconKey));
   content.push(label);
   const item = el(document, 'li', {}, [link(document, href, ...content)]);
   // font size options become a nested list of labels

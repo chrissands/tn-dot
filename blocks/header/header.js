@@ -16,16 +16,23 @@
 
 import { getMetadata, decorateBlock, loadBlock } from '../../scripts/aem.js';
 import { fetchContent, isLocalPreview } from '../../scripts/content-fetch.js';
+import normalizeIcons, { iconName } from '../../scripts/fragment-icons.js';
 import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 const DESKTOP = window.matchMedia('(width >= 900px)');
 let idCounter = 0;
 
-/** Local preview has no access to content.da.live: use the /content copy of DA images. */
+/**
+ * Local preview has no access to content.da.live: use the local copy of DA images
+ * (/content/<path>; images kept in a document's .nav / .footer media folder -> /content/images/).
+ */
 function localImage(src) {
   const m = isLocalPreview() && src.match(/^https:\/\/content\.da\.live\/[^/]+\/[^/]+(\/.*)$/);
-  return m ? `/content${m[1]}` : src;
+  if (!m) return src;
+  const media = m[1].match(/^\/\.[a-z-]+\/([^/]+)$/);
+  return media ? `/content/images/${media[1]}` : `/content${m[1]}`;
 }
+
 /**
  * Fetches the nav fragment. Metadata-independent dual fetch (fetchContent):
  * /nav.plain.html on the published site, /content/nav.plain.html in local preview,
@@ -43,6 +50,7 @@ async function fetchNav() {
     if (el.hasAttribute('src')) el.src = localImage(new URL(el.getAttribute('src'), resp.url).href);
     if (el.hasAttribute('srcset')) el.srcset = localImage(new URL(el.getAttribute('srcset').split(' ')[0], resp.url).href);
   });
+  normalizeIcons(container);
   return container;
 }
 
@@ -150,7 +158,8 @@ function buildTools(section) {
   section.querySelectorAll('a').forEach((a) => {
     const href = a.getAttribute('href') || '';
     const img = a.querySelector('img');
-    if (href === '#print') {
+    // the print link is recognized by its :print: icon (editing can rewrite '#print')
+    if (href === '#print' || iconName(a) === 'print') {
       // icon link; its text is the screen-reader label
       const label = a.textContent.trim() || (img && img.alt) || 'Print this page';
       print = document.createElement('a');

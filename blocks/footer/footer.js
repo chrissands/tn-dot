@@ -10,7 +10,7 @@
  *   1 social  – label paragraph + list of links (icon image + network name)
  *   2 links   – repeated bold heading paragraph + list
  *   3 contact – paragraphs (name, address, email) + image (seal)
- *   4 utility – lists of links (icon + label; "#translate" and "#font-size" become panels,
+ *   4 utility – lists of links (:icon: + label; :translate: / :font-size: links become panels,
  *               a nested list under "#font-size" holds its option labels) + emblem image
  *   5 bottom  – lists of links
  *   6 back to top – link whose text is the floating button's accessible label
@@ -19,6 +19,7 @@
  */
 
 import { fetchContent, isLocalPreview } from '../../scripts/content-fetch.js';
+import normalizeIcons, { iconName } from '../../scripts/fragment-icons.js';
 import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 const FONT_SIZES = ['small', 'normal', 'large'];
@@ -26,11 +27,17 @@ const FONT_SIZE_KEY = 'footer-font-size';
 const SHOW_BACK_TO_TOP_AFTER = 150;
 let idCounter = 0;
 
-/** Local preview has no access to content.da.live: use the /content copy of DA images. */
+/**
+ * Local preview has no access to content.da.live: use the local copy of DA images
+ * (/content/<path>; images kept in a document's .nav / .footer media folder -> /content/images/).
+ */
 function localImage(src) {
   const m = isLocalPreview() && src.match(/^https:\/\/content\.da\.live\/[^/]+\/[^/]+(\/.*)$/);
-  return m ? `/content${m[1]}` : src;
+  if (!m) return src;
+  const media = m[1].match(/^\/\.[a-z-]+\/([^/]+)$/);
+  return media ? `/content/images/${media[1]}` : `/content${m[1]}`;
 }
+
 /**
  * Publishing splits a link holding an image and text into two links (image link +
  * text link, each in its own paragraph). Rejoin links with the same href inside a
@@ -68,6 +75,7 @@ async function fetchFooter() {
   container.querySelectorAll('img[src]').forEach((img) => {
     img.src = localImage(new URL(img.getAttribute('src'), resp.url).href);
   });
+  normalizeIcons(container);
   mergeSplitLinks(container);
   return container;
 }
@@ -309,9 +317,12 @@ function buildUtility(section) {
         link.append(document.createTextNode(a.textContent.trim()));
         item.append(link);
         const href = a.getAttribute('href') || '';
-        if (href === '#translate') {
+        // panels are recognized by their :translate: / :font-size: icon
+        // (editing in Document Authoring can rewrite the '#translate' / '#font-size' links)
+        const icon = iconName(a);
+        if (href === '#translate' || icon === 'translate') {
           buildPanel(item, link, 'translate', []);
-        } else if (href === '#font-size') {
+        } else if (href === '#font-size' || icon === 'font-size') {
           const options = [...srcLi.querySelectorAll('ul > li')].map((li) => li.textContent.trim());
           buildPanel(item, link, 'font-size', options);
         } else if (/chat/i.test(href)) {
