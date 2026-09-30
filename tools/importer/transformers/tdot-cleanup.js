@@ -108,6 +108,8 @@ export default function transform(hookName, element, payload) {
     // Site-relative links point at tn.gov; make them absolute so they keep working
     // (/content/tn/tdot/... and /content/tn//tdot/... both resolve as /tdot/...).
     element.querySelectorAll('a[href^="/"]').forEach((a) => {
+      // site-hosted media (e.g. the hero video published as /media/*.mp4) stays local
+      if (a.getAttribute('href').startsWith('/media/')) return;
       const path = a.getAttribute('href').replace(/^\/content\/tn\/+/, '/');
       a.setAttribute('href', `https://www.tn.gov${path}`);
     });

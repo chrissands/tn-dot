@@ -49,7 +49,12 @@ export default function parse(element, { document }) {
   if (poster) contentCell.push(poster);
 
   if (rawVideoSrc) {
-    const href = absolutize(rawVideoSrc);
+    // The MP4 is served from the site's Media Bus: content/media/<name>.mp4 is uploaded,
+    // previewed and published as /media/<name>.mp4 (a tn.gov /content/dam/... link would
+    // be rewritten to a page path by Document Authoring).
+    const name = decodeURIComponent(new URL(absolutize(rawVideoSrc)).pathname.split('/').pop())
+      .toLowerCase().replace(/[^a-z0-9.]+/g, '-');
+    const href = `/media/${name}`;
     const p = document.createElement('p');
     const a = document.createElement('a');
     a.href = href;

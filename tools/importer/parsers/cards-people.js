@@ -46,12 +46,16 @@ export default function parse(element, { document }) {
         const a = document.createElement('a');
         a.href = src.getAttribute('href');
         a.textContent = clean(src.textContent);
-        // Source button colors map to USWDS button authoring conventions:
-        // gray story buttons = strikethrough (base), blue careers button = bold (primary)
-        const wrap = document.createElement(src.classList.contains('gray') ? 's' : 'strong');
-        wrap.append(a);
+        // gray story buttons = plain links (cards.css styles them gray; strikethrough
+        // can't be kept by Document Authoring), blue careers button = bold (primary)
         const p = document.createElement('p');
-        p.append(wrap);
+        if (src.classList.contains('gray')) {
+          p.append(a);
+        } else {
+          const wrap = document.createElement('strong');
+          wrap.append(a);
+          p.append(wrap);
+        }
         text.push(p);
       });
 

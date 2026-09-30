@@ -190,6 +190,18 @@ main .cards.people .usa-card__footer a.usa-button {
   margin: 0 0 3px;
 }
 
+/* story links on the portrait cards: gray (USWDS base) buttons, as on the source */
+main .cards.people .usa-card:not(.usa-card--no-media) .usa-card__footer a.usa-button:any-link {
+  background-color: #71767a;
+  color: #fff;
+}
+
+main .cards.people .usa-card:not(.usa-card--no-media) .usa-card__footer a.usa-button:hover,
+main .cards.people .usa-card:not(.usa-card--no-media) .usa-card__footer a.usa-button:focus {
+  background-color: #565c65;
+  color: #fff;
+}
+
 /* careers panel (image-less card): white box with soft shadow, content height */
 .cards.people .usa-card--no-media {
   align-self: start;

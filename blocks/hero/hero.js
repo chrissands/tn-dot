@@ -5,6 +5,8 @@
  * @see https://designsystem.digital.gov/components/hero/
  */
 
+import { isLocalPreview } from '../../scripts/content-fetch.js';
+
 /**
  * Decorates the hero block into USWDS hero component
  * @param {Element} block The hero block element
@@ -21,6 +23,11 @@ export default function decorate(block) {
     block.classList.add('video');
     if (videoLink) {
       videoSrc = videoLink.href;
+      // local preview serves site files (e.g. /media/*.mp4) under /content
+      const videoPath = videoLink.getAttribute('href');
+      if (isLocalPreview() && videoPath.startsWith('/') && !videoPath.startsWith('/content/')) {
+        videoSrc = `/content${videoPath}`;
+      }
       const linkParent = videoLink.parentElement;
       videoLink.remove();
       if (linkParent && linkParent.tagName === 'P' && !linkParent.textContent.trim()
