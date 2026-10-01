@@ -1,0 +1,22 @@
+{
+  "variantName": "accordion",
+  "baseBlock": "accordion",
+  "version": "1.0.0",
+  "created": "2026-10-01T14:21:45.364Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "expandable-sections",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "one row per item: title | content",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "pagesUsing": [
+    "civil-rights/small-business-development-program"
+  ],
+  "reuseCount": 1,
+  "lastUsed": "2026-10-01T14:21:45.364Z"
+}

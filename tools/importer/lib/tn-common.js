@@ -6,6 +6,8 @@
  * Bundled into each import script by aem-import-bundle.sh.
  */
 import NEWS from '../news-articles.json';
+// PDFs over the Edge Delivery Services limit (20 MB), found by download-media.mjs
+import LARGE_DOCUMENTS from '../large-documents.json';
 
 export const ORIGIN = 'https://www.tn.gov';
 
@@ -233,7 +235,8 @@ export function localizeImages(root, sitePath) {
  * <page path>/<file name slug>.pdf (e.g. /civil-rights/small-business-development-program/
  * bdp-application.pdf), linked by site path. tools/importer/download-media.mjs downloads
  * each into content/<site path> (from the import report); the deploy upload stores and
- * publishes it.
+ * publishes it. PDFs over 20 MB (the Edge Delivery Services limit, listed in
+ * large-documents.json by download-media.mjs) stay linked on tn.gov.
  * @param {Element} root page content
  * @param {string} sitePath document path, e.g. '/traffic-operations-division/yellow-dot-program'
  * @returns {string} JSON [[source URL, site path], ...] for the import report ("documents")
@@ -241,11 +244,16 @@ export function localizeImages(root, sitePath) {
 export function localizeDocuments(root, sitePath) {
   const docs = new Map();
   const used = new Set();
+  const tooLarge = new Set(LARGE_DOCUMENTS.documents || []);
   root.querySelectorAll('a[href]').forEach((a) => {
     let url;
     try { url = new URL(a.getAttribute('href'), ORIGIN); } catch (e) { return; }
     if (!/(^|\.)tn\.gov$/.test(url.hostname) || !/\.pdf$/i.test(url.pathname)) return;
     const source = `${url.origin}${url.pathname}`;
+    if (tooLarge.has(source)) {
+      a.setAttribute('href', source);
+      return;
+    }
     if (!docs.has(source)) {
       const name = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.pdf$/i, '')
         .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'document';

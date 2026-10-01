@@ -20,6 +20,9 @@ const DA = 'https://content.da.live/chrissands/tn-dot';
 // `from` = page to take the sample from (default: first page using those classes);
 // `html` = synthesized sample when no page uses the block directly.
 const LIBRARY = [
+  { block: 'accordion', entries: [
+    { classes: 'accordion', name: 'Accordion', description: 'Expandable sections, one row per item: title | content (text, lists, links). Titles become headings one level below the heading before the block. Styles: multiselectable (several open at once), open (first item open).' },
+  ] },
   { block: 'alert', entries: [
     { classes: 'alert info slim no-icon', name: 'Alert (info, slim)', description: 'Slim yellow notice bar with bold lead-in text and a link, e.g. a project update under the homepage video.' },
     { classes: 'alert info slim inline', name: 'Alert (info, inline)', description: 'Blue notice within the page width (not edge to edge), e.g. the sample-data notice above the traffic feed. Other types: warning, error, success.' },
