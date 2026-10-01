@@ -16,15 +16,16 @@ import { mapSitePath } from './lib/tn-common.js';
  *   6. Back to top: link whose text is the button's accessible label
  *
  * Icons are :name: notation (served from /icons/ in the code); the seal and emblem images
- * live in the document's own media folder (.footer) in Document Authoring
+ * are served from the site code (/images/, public)
  * (content/images/ locally; footer.js maps them in local preview).
  */
 
 const ORIGIN = 'https://www.tn.gov';
-// Real images live in the document's own media folder (.footer) – where Document Authoring
-// keeps a document's images, so editing never relocates them. Small UI icons are :name:
-// text, served from /icons/<name>.svg in the code.
-const DA_MEDIA = 'https://content.da.live/chrissands/tn-dot/.footer';
+// Brand images are served publicly from the site code (/images/ in the repo). Re-saving a
+// document copies its images by downloading them anonymously; Document Authoring-hosted
+// (content.da.live) images need a login, so those copies failed and the images broke.
+// Small UI icons are :name: text, served from /icons/<name>.svg in the code.
+const DA_MEDIA = 'https://main--tn-dot--chrissands.aem.live/images';
 const SOCIAL_ICONS = {
   facebook: 'facebook',
   twitter: 'twitter',
