@@ -1,0 +1,16 @@
+# Cloudflare Worker: Content AI search proxy for the Content AI Search block (see README.md)
+name = "tdot-content-ai-search"
+main = "worker.js"
+compatibility_date = "2026-09-01"
+
+[vars]
+# AEM as a Cloud Service environment that hosts Content AI
+CONTENT_AI_ENVIRONMENT = "author-p194952-e2312587"
+# Content AI content source to search (must be set before deploying)
+CONTENT_SOURCE = ""
+CONTENT_SOURCE_TYPE = "ACQUISITION"
+# Site origins allowed to call the proxy (preview, live, local preview; add the production domain)
+ALLOWED_ORIGINS = "https://main--tn-dot--chrissands.aem.live,https://main--tn-dot--chrissands.aem.page,http://localhost:3000"
+
+# The API key is a secret, never stored here:
+#   npx wrangler secret put CONTENT_AI_API_KEY

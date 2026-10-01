@@ -8,12 +8,14 @@
  * the block for per-page display settings. Names (sheet keys or block rows):
  *   Config         | (block only) other configuration sheet path, e.g. /config/other-search
  *   Environment    | AEM environment ("bucket"), e.g. author-p12345-e67890
- *   Endpoint       | optional full API base URL (overrides Environment)
+ *   Endpoint       | search proxy URL (tools/content-ai-proxy), which holds the API key and the
+ *                    content source: Content AI does not accept browser (CORS) requests, so
+ *                    this is how the live site connects. Overrides Environment.
  *   Content Source | name of the Content AI content source to search
  *   Source Type    | ACQUISITION (default), AEM_PUBLISH, AEM_AUTHOR or CUSTOM
- *   API Key        | Content AI API key with read-only access to public content sources
- *                    (sent as X-Api-Key; the published sheet and the page are public, so
- *                    use a public, read-only key and mark the content source public)
+ *   API Key        | only without a proxy: Content AI API key with read-only access to public
+ *                    content sources (sent as X-Api-Key; the published sheet is public). Leave
+ *                    empty with a proxy, which keeps the key secret.
  *   Mode           | hybrid (default: semantic + keyword), semantic or keyword
  *   Answer         | on: also show a generated answer (Generative Search API) with sources
  *   Results        | results per page (default 10, maximum 50)
@@ -80,7 +82,7 @@ async function readConfig(block) {
   Object.entries(settings).forEach(([name, value]) => {
     switch (name) {
       case 'environment': config.environment = value.replace(/^https?:\/\//, '').replace(/\..*$/, ''); break;
-      case 'endpoint': config.endpoint = value.replace(/\/+$/, ''); break;
+      case 'endpoint': config.endpoint = value.replace(/\/+$/, ''); config.proxy = true; break;
       case 'content-source': config.source = value; break;
       case 'source-type': config.type = value.toUpperCase().replace(/[^A-Z_]/g, '_') || 'ACQUISITION'; break;
       case 'api-key': config.key = value; break;
@@ -107,7 +109,8 @@ function buildQuery(text, mode) {
 async function post(config, path, body) {
   const resp = await fetch(`${config.endpoint}${path}`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-Api-Key': config.key },
+    // the proxy adds the key; direct calls send it
+    headers: { 'Content-Type': 'application/json', ...(config.key ? { 'X-Api-Key': config.key } : {}) },
     body: JSON.stringify(body),
   });
   if (!resp.ok) {
@@ -227,7 +230,8 @@ export default async function decorate(block) {
     notice.querySelector('.usa-alert__text').textContent = text;
     notice.hidden = !text;
   };
-  const configured = config.endpoint && config.source && config.key;
+  // a proxy holds the key and the content source; direct calls need both here
+  const configured = config.endpoint && (config.proxy || (config.source && config.key));
   if (!configured) {
     showNotice(t('content-ai-search-not-configured', 'Search is not set up yet. Please check back soon.'));
     input.disabled = true;
@@ -291,8 +295,10 @@ export default async function decorate(block) {
         query, cursor: json.cursor || '', results: append ? [...current.results, ...results] : results, total: json.totalResults || 0,
       };
       list.append(...results.map(resultItem));
+      const countKey = current.total === 1 ? 'content-ai-search-count-one' : 'content-ai-search-count';
+      const countText = current.total === 1 ? '1 result for “{query}”' : '{total} results for “{query}”';
       status.textContent = current.results.length
-        ? t('content-ai-search-count', '{total} results for “{query}”', { total: current.total.toLocaleString('en-US'), query })
+        ? t(countKey, countText, { total: current.total.toLocaleString('en-US'), query })
         : t('content-ai-search-none', 'No results for “{query}”. Try different or fewer words.', { query });
       more.hidden = !(current.cursor && current.results.length < current.total);
       if (append && results.length) list.children[current.results.length - results.length]?.querySelector('a, h3')?.focus?.();

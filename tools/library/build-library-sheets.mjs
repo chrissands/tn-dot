@@ -185,6 +185,7 @@ const PLACEHOLDERS = [
   ['content-ai-search-button', 'Search', 'Content AI search: search button'],
   ['content-ai-search-searching', 'Searching…', 'Content AI search: while searching'],
   ['content-ai-search-count', '{total} results for “{query}”', 'Content AI search: result count'],
+  ['content-ai-search-count-one', '1 result for “{query}”', 'Content AI search: result count (one result)'],
   ['content-ai-search-none', 'No results for “{query}”. Try different or fewer words.', 'Content AI search: no results'],
   ['content-ai-search-more', 'More results', 'Content AI search: next page button'],
   ['content-ai-search-results', 'Search results', 'Content AI search: results list heading (screen readers)'],

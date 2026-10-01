@@ -15,11 +15,11 @@ const SOURCE = 'https://admin.da.live/source/chrissands/tn-dot';
 const PATH = '/config/content-ai-search.json';
 
 const ROWS = [
-  ['environment', 'author-p194952-e2065314', 'AEM as a Cloud Service environment that hosts Content AI (author-p…-e…).'],
-  ['content-source', '', 'Name of the Content AI content source to search (it must have public access).'],
-  ['source-type', 'ACQUISITION', 'Type of the content source: ACQUISITION, AEM_PUBLISH, AEM_AUTHOR or CUSTOM.'],
-  ['api-key', '', 'Content AI API key with read-only access to public content sources. Published with this sheet, so visible to anyone: never use a key or token with more access.'],
-  ['endpoint', '', 'Optional: full Content AI API URL, if not https://<environment>.adobeaemcloud.com/adobe/experimental/aemcontentai-expires-20261231/contentAI.'],
+  ['endpoint', '', 'URL of the search proxy (tools/content-ai-proxy, a Cloudflare Worker that holds the API key). Content AI does not accept browser requests, so the live site needs it.'],
+  ['environment', 'author-p194952-e2312587', 'Only without a proxy: AEM as a Cloud Service environment that hosts Content AI.'],
+  ['content-source', '', 'Only without a proxy: Content AI content source to search (the proxy has its own).'],
+  ['source-type', 'ACQUISITION', 'Only without a proxy: ACQUISITION, AEM_PUBLISH, AEM_AUTHOR or CUSTOM.'],
+  ['api-key', '', 'Leave empty with a proxy (the key is a Worker secret). This sheet is published: anything here is public.'],
 ];
 
 const existing = await fetch(`${SOURCE}${PATH}`, { method: 'HEAD' });
