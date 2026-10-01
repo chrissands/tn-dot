@@ -9,16 +9,13 @@
  *
  * Output
  *   - H1, intro paragraph
- *   - Content AI Search block settings: Environment (AEM environment), Content Source,
- *     Source Type, API Key, Mode, Answer, Results. Content Source and API Key are left
- *     empty: authors fill them in Document Authoring (the block shows a "not set up yet"
- *     notice until then).
+ *   - Content AI Search block with the page's display settings: Mode, Answer, Results.
+ *     The connection settings and the API key are in the configuration sheet
+ *     /config/content-ai-search (tools/library/create-content-ai-config.mjs); the block
+ *     shows a "not set up yet" notice until its content source and key are filled in.
  *   - Metadata: title, description, template
  */
 import { el, metadata } from './lib/tn-common.js';
-
-// AEM as a Cloud Service environment ("bucket") that hosts Content AI for this site
-const ENVIRONMENT = 'author-p194952-e2065314';
 
 export default {
   transform: ({ document }) => {
@@ -29,10 +26,6 @@ export default {
       WebImporter.Blocks.createBlock(document, {
         name: 'Content AI Search',
         cells: [
-          ['Environment', ENVIRONMENT],
-          ['Content Source', ''],
-          ['Source Type', 'ACQUISITION'],
-          ['API Key', ''],
           ['Mode', 'hybrid'],
           ['Answer', 'on'],
           ['Results', '10'],

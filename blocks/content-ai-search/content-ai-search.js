@@ -2,14 +2,18 @@
  * Content AI Search block: site search powered by the AEM Content AI Search API
  * (https://developer.adobe.com/experience-cloud/experience-manager-apis/api/experimental/contentai/).
  *
- * Authoring – settings rows (first cell: name, second cell: value):
+ * Settings come from the configuration sheet /config/content-ai-search (columns: key | value),
+ * and from optional settings rows in the block (first cell: name, second cell: value), which
+ * override the sheet. The sheet is the place for the connection settings and the API key;
+ * the block for per-page display settings. Names (sheet keys or block rows):
+ *   Config         | (block only) other configuration sheet path, e.g. /config/other-search
  *   Environment    | AEM environment ("bucket"), e.g. author-p12345-e67890
  *   Endpoint       | optional full API base URL (overrides Environment)
  *   Content Source | name of the Content AI content source to search
  *   Source Type    | ACQUISITION (default), AEM_PUBLISH, AEM_AUTHOR or CUSTOM
  *   API Key        | Content AI API key with read-only access to public content sources
- *                    (sent as X-Api-Key; it is visible in the page, so use a public,
- *                    read-only key and mark the content source public)
+ *                    (sent as X-Api-Key; the published sheet and the page are public, so
+ *                    use a public, read-only key and mark the content source public)
  *   Mode           | hybrid (default: semantic + keyword), semantic or keyword
  *   Answer         | on: also show a generated answer (Generative Search API) with sources
  *   Results        | results per page (default 10, maximum 50)
@@ -19,10 +23,12 @@
  * Result and answer text is rendered as text (never as HTML).
  */
 import { toClassName } from '../../scripts/aem.js';
+import { fetchContent } from '../../scripts/content-fetch.js';
 import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
 const API_PATH = '/adobe/experimental/aemcontentai-expires-20261231/contentAI';
 const MAX_RESULTS = 50;
+const CONFIG_SHEET = '/config/content-ai-search';
 let idCounter = 0;
 
 function el(tag, attrs = {}, ...children) {
@@ -32,16 +38,47 @@ function el(tag, attrs = {}, ...children) {
   return node;
 }
 
-/** Settings rows -> config */
-function readConfig(block) {
-  const config = {
-    environment: '', endpoint: '', source: '', type: 'ACQUISITION', key: '', mode: 'hybrid', answer: false, limit: 10, placeholder: '',
-  };
+/** Block settings rows -> { name: value } (empty values are left out) */
+function blockSettings(block) {
+  const settings = {};
   [...block.children].forEach((row) => {
     const [keyCell, valueCell] = row.children;
     if (!keyCell || !valueCell) return;
     const value = (valueCell.querySelector('a[href]')?.getAttribute('href') || valueCell.textContent).trim();
-    switch (toClassName(keyCell.textContent)) {
+    if (value) settings[toClassName(keyCell.textContent)] = value;
+  });
+  return settings;
+}
+
+/** Configuration sheet (key | value) -> { name: value }; {} when missing */
+async function sheetSettings(path) {
+  try {
+    // site path of the sheet (a linked value arrives as a full URL)
+    const sheet = new URL(path, window.location.origin).pathname.replace(/^\/content(?=\/)/, '').replace(/\.json$/, '');
+    const resp = await fetchContent(`${sheet}.json`);
+    if (!resp.ok) return {};
+    const json = await resp.json();
+    const settings = {};
+    (json.data || []).forEach((row) => {
+      const key = row.key ?? row.Key;
+      const value = String(row.value ?? row.Value ?? '').trim();
+      if (key && value) settings[toClassName(key)] = value;
+    });
+    return settings;
+  } catch (e) {
+    return {};
+  }
+}
+
+/** Sheet settings, overridden by the block's own rows -> config */
+async function readConfig(block) {
+  const own = blockSettings(block);
+  const settings = { ...(await sheetSettings(own.config || CONFIG_SHEET)), ...own };
+  const config = {
+    environment: '', endpoint: '', source: '', type: 'ACQUISITION', key: '', mode: 'hybrid', answer: false, limit: 10, placeholder: '',
+  };
+  Object.entries(settings).forEach(([name, value]) => {
+    switch (name) {
       case 'environment': config.environment = value.replace(/^https?:\/\//, '').replace(/\..*$/, ''); break;
       case 'endpoint': config.endpoint = value.replace(/\/+$/, ''); break;
       case 'content-source': config.source = value; break;
@@ -158,8 +195,7 @@ function resultItem(result) {
 }
 
 export default async function decorate(block) {
-  const config = readConfig(block);
-  await loadPlaceholders();
+  const [config] = await Promise.all([readConfig(block), loadPlaceholders()]);
   idCounter += 1;
   const uid = `content-ai-search-${idCounter}`;
 
