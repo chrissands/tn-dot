@@ -35,6 +35,8 @@ export const MIGRATED = {
   '/tdot/business-how-do-i---/civil-rights-sbdp_rd.html': '/civil-rights/small-business-development-program',
   '/tdot/state-engineering-technical-training/production-support/standard-drawings-library/standard-roadway-drawings/standard-roadway-title-sheet--abbreviations-and-legends.html':
     '/state-engineering-technical-training/production-support/standard-drawings-library/standard-roadway-drawings/standard-roadway-title-sheet-abbreviations-and-legends',
+  '/tdot/state-engineering-technical-training/production-support/design-quality.html':
+    '/state-engineering-technical-training/production-support/design-quality',
 };
 
 export const clean = (t) => (t || '').replace(/ /g, ' ').replace(/\s+/g, ' ').trim();

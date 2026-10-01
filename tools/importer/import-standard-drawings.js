@@ -2,16 +2,18 @@
 /* global WebImporter */
 
 /**
- * Import script for TDOT standard drawings pages (tables of drawing PDFs), e.g.
+ * Import script for TDOT pages that list documents in tables (standard drawings, design
+ * quality, ...), e.g.
  * Source: https://www.tn.gov/tdot/state-engineering-technical-training/production-support/standard-drawings-library/standard-roadway-drawings/standard-roadway-title-sheet--abbreviations-and-legends.html
+ *         https://www.tn.gov/tdot/state-engineering-technical-training/production-support/design-quality.html
  * Target: same path without /tdot (sanitized), template: left-nav
  *
  * Output
  *   - Section 1: Side Nav (subnav)
  *   - Section 2: H1, "Revised" line, list of jump links (to the table headings)
- *   - per source table: H2 (the table's title row) + Table block (header row: Drawing |
- *     Related IB | Revision Date | Description; empty spacer rows dropped)
- *   - contact text (RTE)
+ *   - per source table: H2 (the table's title row, if any) + Table block (first row =
+ *     column headings, an empty first heading becomes "Document"; empty rows dropped)
+ *   - rich text (intro, table headings, contact) – heading levels never skip a level
  *   - Metadata: title, description, template
  * Drawing and bulletin PDFs are hosted next to the page (localizeDocuments).
  */
@@ -84,7 +86,7 @@ export default {
           .map((tr) => [...tr.children].map((c) => cellContent(document, c)))
           .filter((r) => r.some((c) => c));
         if (cells.length) {
-          cells[0] = cells[0].map((c) => (c ? titleCase(c.textContent) : ''));
+          cells[0] = cells[0].map((c, i) => (c ? titleCase(c.textContent) : (i === 0 ? 'Document' : '')));
           main.append(WebImporter.Blocks.createBlock(document, { name: 'Table', cells }));
         }
       } else {
@@ -100,7 +102,25 @@ export default {
       }
     });
 
-    const description = `TDOT standard drawings: ${title}. Drawing PDFs with related instructional bulletins and revision dates.`;
+    // heading levels never skip (e.g. an RTE h3 straight after the h1 becomes h2)
+    let level = 1;
+    [...main.querySelectorAll('h1, h2, h3, h4, h5, h6')].filter((h) => !h.closest('table, .side-nav')).forEach((h) => {
+      const n = Number(h.tagName[1]);
+      const fixed = Math.min(n, level + 1);
+      if (fixed !== n) h.replaceWith(el(document, `h${fixed}`, {}, [...h.childNodes]));
+      level = fixed;
+    });
+
+    // description: intro text above the first table (not the contact text below it)
+    // (every block is a table here: find the Table block by its name row)
+    const firstTable = [...main.querySelectorAll(':scope > table')]
+      .find((t) => clean((t.querySelector('th') || {}).textContent).toLowerCase() === 'table');
+    const intro = [...main.querySelectorAll(':scope > p')]
+      .filter((p) => !firstTable || (p.compareDocumentPosition(firstTable) & 4))
+      .map((p) => clean(p.textContent)).find((t) => t.length > 80 && !/^Revised/.test(t));
+    const description = intro
+      ? (intro.length > 160 ? `${intro.slice(0, 157).replace(/\s+\S*$/, '')}…` : intro)
+      : `TDOT standard drawings: ${title}. Drawing PDFs with related instructional bulletins and revision dates.`;
     main.append(el(document, 'hr'), metadata(document, { title, description, template: 'left-nav' }));
 
     const sourcePath = new URL(params.originalURL).pathname.replace(/^\/content\/tn\/+/, '/').replace(/^\/tdot\//, '/').replace(/\.html$/, '');
