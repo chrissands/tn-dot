@@ -16,7 +16,7 @@ import cardsTilesParser from "./parsers/cards-tiles.js";
 // TRANSFORMER IMPORTS
 import cleanupTransformer from "./transformers/tdot-cleanup.js";
 import sectionsTransformer from "./transformers/tdot-sections.js";
-import { localizeImages } from "./lib/tn-common.js";
+import { localizeImages, localizeDocuments } from "./lib/tn-common.js";
 
 // PARSER REGISTRY
 const parsers = {
@@ -315,6 +315,7 @@ export default {
 
     // 7. Images hosted in Document Authoring (downloaded locally from the report's media list)
     const media = localizeImages(main, path);
+    const documents = localizeDocuments(main, path);
 
     return [{
       element: main,
@@ -324,6 +325,7 @@ export default {
         template: PAGE_TEMPLATE.name,
         blocks: pageBlocks.map((b) => b.name),
         media,
+        documents,
       },
     }];
   },

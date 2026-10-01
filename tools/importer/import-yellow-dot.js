@@ -17,7 +17,7 @@
  */
 import {
   clean, el, href, buildSideNav, cleanRte, buildImage, imageSrc, youtubeUrl, mapSitePath, metadata,
-  localizeImages,
+  localizeImages, localizeDocuments,
 } from './lib/tn-common.js';
 
 /** poster image from the tn-video background-image style (\2f-escaped path) */
@@ -91,6 +91,7 @@ export default {
 
     const path = mapSitePath(new URL(params.originalURL).pathname);
     const media = localizeImages(main, path);
-    return [{ element: main, path, report: { title, media } }];
+    const documents = localizeDocuments(main, path);
+    return [{ element: main, path, report: { title, media, documents } }];
   },
 };

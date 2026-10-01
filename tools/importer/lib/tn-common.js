@@ -25,6 +25,12 @@ export const MIGRATED = {
   '/tdot/driver-how-do-i/enroll-in-yellow-dot-program.html': '/traffic-operations-division/yellow-dot-program',
   '/tdot/driver-how-do-i/look-at-or-order-state-maps.html': '/maps',
   '/tdot/maps.html': '/maps',
+  // redirects to the Scenic Byways page on tn.gov
+  '/tdot/driver-how-do-i/scenic-roadways---traveler.html':
+    '/local-programs-community-investments/community-investments-office/highway-beautification-office/beautification-national-scenic-byways',
+  '/tdot/civil-rights/small-business-development-program.html': '/civil-rights/small-business-development-program',
+  // redirects to the Small Business Development Program page on tn.gov
+  '/tdot/business-how-do-i---/civil-rights-sbdp_rd.html': '/civil-rights/small-business-development-program',
 };
 
 export const clean = (t) => (t || '').replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
@@ -196,7 +202,7 @@ export const DA_CONTENT = 'https://content.da.live/chrissands/tn-dot';
  * Images are hosted in Document Authoring, in the page's media folder
  * (<page dir>/.<page name>/), named like the workspace-to-DA content sync names them:
  * <file name slug>-<md5(source URL) first 8 hex>.<ext>. Each source image is downloaded into
- * content/images/<file> by tools/importer/download-images.mjs (from the import report)
+ * content/images/<file> by tools/importer/download-media.mjs (from the import report)
  * and uploaded to its media folder by the deploy upload.
  * @param {Element} root page content (after all other image rules have run)
  * @param {string} sitePath document path, e.g. '/index' or '/news/2026/9/14/slug'
@@ -220,4 +226,35 @@ export function localizeImages(root, sitePath) {
     if (el.hasAttribute('srcset')) el.setAttribute('srcset', localize(el.getAttribute('srcset').split(/\s/)[0]));
   });
   return JSON.stringify([...media]);
+}
+
+/**
+ * PDFs on tn.gov are hosted in Document Authoring next to the page that links them:
+ * <page path>/<file name slug>.pdf (e.g. /civil-rights/small-business-development-program/
+ * bdp-application.pdf), linked by site path. tools/importer/download-media.mjs downloads
+ * each into content/<site path> (from the import report); the deploy upload stores and
+ * publishes it.
+ * @param {Element} root page content
+ * @param {string} sitePath document path, e.g. '/traffic-operations-division/yellow-dot-program'
+ * @returns {string} JSON [[source URL, site path], ...] for the import report ("documents")
+ */
+export function localizeDocuments(root, sitePath) {
+  const docs = new Map();
+  const used = new Set();
+  root.querySelectorAll('a[href]').forEach((a) => {
+    let url;
+    try { url = new URL(a.getAttribute('href'), ORIGIN); } catch (e) { return; }
+    if (!/(^|\.)tn\.gov$/.test(url.hostname) || !/\.pdf$/i.test(url.pathname)) return;
+    const source = `${url.origin}${url.pathname}`;
+    if (!docs.has(source)) {
+      const name = decodeURIComponent(url.pathname.split('/').pop()).replace(/\.pdf$/i, '')
+        .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'document';
+      let file = `${name}.pdf`;
+      for (let n = 2; used.has(file); n += 1) file = `${name}-${n}.pdf`;
+      used.add(file);
+      docs.set(source, `${sitePath}/${file}`);
+    }
+    a.setAttribute('href', docs.get(source));
+  });
+  return JSON.stringify([...docs]);
 }

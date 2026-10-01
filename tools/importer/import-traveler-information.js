@@ -16,7 +16,7 @@
  */
 import {
   clean, el, href, cleanRte, imageSrc, mapSitePath, metadata,
-  localizeImages,
+  localizeImages, localizeDocuments,
 } from './lib/tn-common.js';
 
 function buildLinkList(document, list) {
@@ -90,6 +90,7 @@ export default {
 
     const path = mapSitePath(new URL(params.originalURL).pathname);
     const media = localizeImages(main, path);
-    return [{ element: main, path, report: { title, media } }];
+    const documents = localizeDocuments(main, path);
+    return [{ element: main, path, report: { title, media, documents } }];
   },
 };

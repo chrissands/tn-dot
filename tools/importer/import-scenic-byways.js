@@ -15,7 +15,7 @@
  */
 import {
   clean, el, href, buildSideNav, cleanRte, buildImage, imageSrc, mapSitePath, metadata,
-  localizeImages,
+  localizeImages, localizeDocuments,
 } from './lib/tn-common.js';
 
 /** 2-column text-and-image components, in visual (row-major) order. */
@@ -87,6 +87,7 @@ export default {
 
     const path = mapSitePath(new URL(params.originalURL).pathname);
     const media = localizeImages(main, path);
-    return [{ element: main, path, report: { title, media } }];
+    const documents = localizeDocuments(main, path);
+    return [{ element: main, path, report: { title, media, documents } }];
   },
 };

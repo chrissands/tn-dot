@@ -14,7 +14,7 @@
  *   - Metadata: title, description, template
  */
 import {
-  clean, el, href, cleanRte, mapSitePath, metadata, localizeImages,
+  clean, el, href, cleanRte, mapSitePath, metadata, localizeImages, localizeDocuments,
 } from './lib/tn-common.js';
 
 // TDOT_GIS "TDOT SmartWay Projects Map v1" (public ArcGIS Online web map)
@@ -58,6 +58,7 @@ export default {
 
     const path = mapSitePath(new URL(params.originalURL).pathname);
     const media = localizeImages(main, path);
-    return [{ element: main, path, report: { title, tiles: tiles.length, media } }];
+    const documents = localizeDocuments(main, path);
+    return [{ element: main, path, report: { title, tiles: tiles.length, media, documents } }];
   },
 };

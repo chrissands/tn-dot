@@ -1,5 +1,5 @@
 /* eslint-disable */
-import { mapSitePath } from './lib/tn-common.js';
+import { mapSitePath, localizeDocuments } from './lib/tn-common.js';
 /* global WebImporter */
 
 /**
@@ -211,10 +211,12 @@ export default {
       if (i > 0) main.append(document.createElement('hr'));
       main.append(...build(document));
     });
+    // PDFs (e.g. Mission, Vision and Values) hosted next to the footer document
+    const documents = localizeDocuments(main, '/footer');
     return [{
       element: main,
       path: '/footer',
-      report: { title: 'footer' },
+      report: { title: 'footer', documents },
     }];
   },
 };
