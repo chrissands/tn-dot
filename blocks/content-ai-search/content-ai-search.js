@@ -21,12 +21,18 @@
  *   Results        | results per page (default 10, maximum 50)
  *   Placeholder    | search box text
  *
- * The query is kept in the page URL (?q=), so searches can be shared and bookmarked.
+ *   Index          | keyword search index (default /search-index.json, see helix-query.yaml)
+ *
+ * Without a working Content AI connection (not configured, or the request fails) the block
+ * searches the site's own search index by keyword (keyword-search.js); the answer panel is
+ * Content AI only. The query is kept in the page URL (?q=), so searches can be shared and
+ * bookmarked.
  * Result and answer text is rendered as text (never as HTML).
  */
 import { toClassName } from '../../scripts/aem.js';
 import { fetchContent } from '../../scripts/content-fetch.js';
 import { loadPlaceholders, t } from '../../scripts/placeholders.js';
+import { keywordSearch, highlight } from './keyword-search.js';
 
 const API_PATH = '/adobe/experimental/aemcontentai-expires-20261231/contentAI';
 const MAX_RESULTS = 50;
@@ -77,7 +83,7 @@ async function readConfig(block) {
   const own = blockSettings(block);
   const settings = { ...(await sheetSettings(own.config || CONFIG_SHEET)), ...own };
   const config = {
-    environment: '', endpoint: '', source: '', type: 'ACQUISITION', key: '', mode: 'hybrid', answer: false, limit: 10, placeholder: '',
+    environment: '', endpoint: '', source: '', type: 'ACQUISITION', key: '', mode: 'hybrid', answer: false, limit: 10, placeholder: '', index: '/search-index.json',
   };
   Object.entries(settings).forEach(([name, value]) => {
     switch (name) {
@@ -90,6 +96,7 @@ async function readConfig(block) {
       case 'answer': config.answer = /^(on|yes|true)$/i.test(value); break;
       case 'results': config.limit = Math.min(MAX_RESULTS, Math.max(1, parseInt(value, 10) || 10)); break;
       case 'placeholder': config.placeholder = value; break;
+      case 'index': config.index = new URL(value, window.location.origin).pathname; break;
       default:
     }
   });
@@ -183,7 +190,7 @@ function answerNodes(text) {
   return nodes;
 }
 
-function resultItem(result) {
+function resultItem(result, terms = []) {
   const heading = el('h3', { class: 'usa-collection__heading' }, result.url
     ? el('a', { class: 'usa-link', href: result.url }, result.title)
     : result.title);
@@ -193,7 +200,7 @@ function resultItem(result) {
   return el(
     'li',
     { class: 'usa-collection__item content-ai-search-result' },
-    el('div', { class: 'usa-collection__body' }, heading, result.description ? el('p', { class: 'usa-collection__description' }, result.description) : '', meta),
+    el('div', { class: 'usa-collection__body' }, heading, result.description ? el('p', { class: 'usa-collection__description' }, ...highlight(result.description, terms)) : '', meta),
   );
 }
 
@@ -230,23 +237,15 @@ export default async function decorate(block) {
     notice.querySelector('.usa-alert__text').textContent = text;
     notice.hidden = !text;
   };
-  // a proxy holds the key and the content source; direct calls need both here
-  const configured = config.endpoint && (config.proxy || (config.source && config.key));
-  if (!configured) {
-    showNotice(t('content-ai-search-not-configured', 'Search is not set up yet. Please check back soon.'));
-    input.disabled = true;
-    submit.disabled = true;
-    return;
-  }
+  // Content AI when connected (a proxy holds the key and the content source; direct calls
+  // need both here), else - or after a failed request - keyword search of the site index
+  let useContentAi = Boolean(config.endpoint && (config.proxy || (config.source && config.key)));
+  block.dataset.engine = useContentAi ? 'content-ai' : 'keyword';
 
   let current = {
-    query: '', cursor: '', results: [], total: 0,
+    query: '', cursor: '', results: [], total: 0, all: [], terms: [],
   };
   let request = 0;
-
-  const failure = (error) => (error.status === 401 || error.status === 403
-    ? t('content-ai-search-unavailable', 'Search is not available right now.')
-    : t('content-ai-search-error', 'Something went wrong with the search. Please try again.'));
 
   const renderAnswer = (data) => {
     const text = (data && data.result) || '';
@@ -263,17 +262,20 @@ export default async function decorate(block) {
     answer.hidden = false;
   };
 
-  const runSearch = async (query, append = false) => {
-    request += 1;
-    const id = request;
-    showNotice('');
-    block.setAttribute('aria-busy', 'true');
-    more.hidden = true;
-    if (!append) {
-      list.replaceChildren();
-      answer.hidden = true;
-      status.textContent = t('content-ai-search-searching', 'Searching…');
-    }
+  const showResults = (query, results, append) => {
+    const first = list.children.length;
+    list.append(...results.map((r) => resultItem(r, current.terms)));
+    const countKey = current.total === 1 ? 'content-ai-search-count-one' : 'content-ai-search-count';
+    const countText = current.total === 1 ? '1 result for “{query}”' : '{total} results for “{query}”';
+    status.textContent = current.results.length
+      ? t(countKey, countText, { total: current.total.toLocaleString('en-US'), query })
+      : t('content-ai-search-none', 'No results for “{query}”. Try different or fewer words.', { query });
+    more.hidden = current.results.length >= current.total || (useContentAi && !current.cursor);
+    if (append && results.length) list.children[first]?.querySelector('a')?.focus();
+  };
+
+  /** Content AI page of results (+ answer); throws when Content AI fails */
+  const contentAiSearch = async (query, append, id) => {
     const body = {
       contentSource: { name: config.source, type: config.type },
       query: buildQuery(query, config.mode),
@@ -287,33 +289,67 @@ export default async function decorate(block) {
     const answerRequest = !append && config.answer && query.length >= 3
       ? post(config, '/content-sources/gensearch', { query, contentSource: { name: config.source, type: config.type } }).catch(() => null)
       : null;
-    try {
-      const json = await post(config, '/content-sources/search', body);
+    const json = await post(config, '/content-sources/search', body);
+    if (id !== request) return;
+    const results = (json.results || []).map(normalize);
+    current = {
+      ...current, query, cursor: json.cursor || '', results: append ? [...current.results, ...results] : results, total: json.totalResults || 0, terms: [],
+    };
+    showResults(query, results, append);
+    if (answerRequest) {
+      answer.replaceChildren(el('p', { class: 'content-ai-search-answer-loading' }, t('content-ai-search-answering', 'Generating an answer…')));
+      answer.hidden = false;
+      const data = await answerRequest;
+      if (id === request) renderAnswer(data);
+    }
+  };
+
+  /** Keyword page of results from the site index */
+  const indexSearch = async (query, append, id) => {
+    if (!append) {
+      const { results, terms } = await keywordSearch(query, config.index);
       if (id !== request) return;
-      const results = (json.results || []).map(normalize);
       current = {
-        query, cursor: json.cursor || '', results: append ? [...current.results, ...results] : results, total: json.totalResults || 0,
+        ...current, query, all: results, results: [], total: results.length, terms,
       };
-      list.append(...results.map(resultItem));
-      const countKey = current.total === 1 ? 'content-ai-search-count-one' : 'content-ai-search-count';
-      const countText = current.total === 1 ? '1 result for “{query}”' : '{total} results for “{query}”';
-      status.textContent = current.results.length
-        ? t(countKey, countText, { total: current.total.toLocaleString('en-US'), query })
-        : t('content-ai-search-none', 'No results for “{query}”. Try different or fewer words.', { query });
-      more.hidden = !(current.cursor && current.results.length < current.total);
-      if (append && results.length) list.children[current.results.length - results.length]?.querySelector('a, h3')?.focus?.();
-      if (answerRequest) {
-        if (config.answer) {
-          answer.replaceChildren(el('p', { class: 'content-ai-search-answer-loading' }, t('content-ai-search-answering', 'Generating an answer…')));
-          answer.hidden = false;
+    }
+    const next = current.all.slice(current.results.length, current.results.length + config.limit);
+    current.results = [...current.results, ...next];
+    showResults(query, next, append);
+  };
+
+  const runSearch = async (query, append = false) => {
+    request += 1;
+    const id = request;
+    showNotice('');
+    block.setAttribute('aria-busy', 'true');
+    more.hidden = true;
+    if (!append) {
+      list.replaceChildren();
+      answer.hidden = true;
+      status.textContent = t('content-ai-search-searching', 'Searching…');
+    }
+    try {
+      if (useContentAi) {
+        try {
+          await contentAiSearch(query, append, id);
+          return;
+        } catch (error) {
+          if (id !== request || append) throw error;
+          // Content AI unreachable or refused: keyword search for the rest of the visit
+          // eslint-disable-next-line no-console
+          console.warn('Content AI search failed, using keyword search', error);
+          useContentAi = false;
+          block.dataset.engine = 'keyword';
         }
-        const data = await answerRequest;
-        if (id === request) renderAnswer(data);
       }
+      await indexSearch(query, append, id);
     } catch (error) {
       if (id !== request) return;
       status.textContent = '';
-      showNotice(failure(error));
+      showNotice(error.status === 401 || error.status === 403
+        ? t('content-ai-search-unavailable', 'Search is not available right now.')
+        : t('content-ai-search-error', 'Something went wrong with the search. Please try again.'));
     } finally {
       if (id === request) block.removeAttribute('aria-busy');
     }

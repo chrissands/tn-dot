@@ -33,6 +33,8 @@
 }
 
 .content-ai-search .content-ai-search-submit {
+  flex: 0 0 auto;
+  width: auto;
   height: 3rem;
   margin: 0;
   border-radius: 0 0.25rem 0.25rem 0;
@@ -111,6 +113,12 @@
 .content-ai-search .content-ai-search-result .usa-collection__meta-item {
   overflow-wrap: anywhere;
   color: #2e8540;
+}
+
+.content-ai-search .content-ai-search-result mark {
+  padding: 0 0.1em;
+  background-color: #fee685;
+  color: inherit;
 }
 
 .content-ai-search .content-ai-search-more {

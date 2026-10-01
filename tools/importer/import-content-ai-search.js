@@ -22,7 +22,7 @@ export default {
     const main = el(document, 'div');
     main.append(
       el(document, 'h1', {}, ['Search TDOT']),
-      el(document, 'p', {}, ['Search the Tennessee Department of Transportation website. Results match what you mean, not only the exact words you type, and a short answer summarizes the best matches.']),
+      el(document, 'p', {}, ['Search the Tennessee Department of Transportation website for pages, news and documents.']),
       WebImporter.Blocks.createBlock(document, {
         name: 'Content AI Search',
         cells: [
@@ -34,7 +34,7 @@ export default {
       el(document, 'hr'),
       metadata(document, {
         title: 'Search | TDOT',
-        description: 'Search the TDOT website with AI-powered search: results by meaning and keywords, with a short generated answer.',
+        description: 'Search the Tennessee Department of Transportation website for pages, news and documents.',
         template: 'full-width',
       }),
     );
