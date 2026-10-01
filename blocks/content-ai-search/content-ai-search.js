@@ -151,10 +151,13 @@ function safeUrl(value) {
 /** Search result -> { id, title, description, url } */
 function normalize(result) {
   const data = result.data || {};
-  const url = safeUrl(pick(data, ['url', 'path', 'link', 'metadata.url', 'metadata.path', 'metadata.reference', 'metadata.sourceUrl']))
+  const url = safeUrl(pick(data, ['url', 'metadata.canonical_url', 'source', 'metadata.source', 'metadata.meta.url', 'path', 'link', 'metadata.url', 'metadata.path', 'metadata.reference', 'metadata.sourceUrl']))
     || (/^https?:\/\//.test(result.id) ? safeUrl(result.id) : '');
   const chunk = (result.chunks || []).map((c) => c.chunkData && c.chunkData.text).find(Boolean) || '';
-  const description = pick(data, ['description', 'metadata.description', 'summary', 'text', 'content']) || chunk;
+  // page text (acquisition sources: markdown) only as a last resort, without markup
+  const text = pick(data, ['text', 'content']).replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1').replace(/[#*_>`|]+/g, ' ').replace(/\s+/g, ' ')
+    .trim();
+  const description = pick(data, ['description', 'metadata.description', 'summary']) || chunk || text;
   return {
     id: result.id,
     title: pick(data, ['title', 'metadata.title', 'name', 'headline']) || url || result.id,
@@ -167,9 +170,19 @@ function normalize(result) {
 function answerNodes(text) {
   const inline = (line) => {
     const out = [];
-    line.split(/(\*\*[^*]+\*\*)/).forEach((part) => {
+    line.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)\s]+\))/).forEach((part) => {
+      const link = part.match(/^\[([^\]]+)\]\(([^)\s]+)\)$/);
       if (/^\*\*[^*]+\*\*$/.test(part)) out.push(el('strong', {}, part.slice(2, -2)));
-      else if (part) out.push(part);
+      else if (link && safeUrl(link[2])) out.push(el('a', { class: 'usa-link', href: safeUrl(link[2]) }, link[1]));
+      else if (link) out.push(link[1]);
+      else if (part) {
+        // bare web addresses become links too
+        part.split(/(https?:\/\/[^\s<>()]+[^\s<>().,;:!?])/).forEach((bit) => {
+          const href = /^https?:\/\//.test(bit) && safeUrl(bit);
+          if (href) out.push(el('a', { class: 'usa-link', href }, bit));
+          else if (bit) out.push(bit);
+        });
+      }
     });
     return out;
   };
@@ -251,7 +264,15 @@ export default async function decorate(block) {
     const text = (data && data.result) || '';
     if (!text.trim()) { answer.hidden = true; return; }
     const byId = new Map(current.results.map((r) => [r.id, r]));
-    const sources = (data.hits || []).map((h) => byId.get(h.id)).filter((r) => r && r.url);
+    const byUrl = new Map(current.results.map((r) => [r.url, r]));
+    const sources = [];
+    (data.hits || []).forEach((h) => {
+      const meta = h.metadata || {};
+      const url = safeUrl(meta.url || meta.canonical_url || meta.source);
+      const known = byId.get(h.id) || byUrl.get(url);
+      const source = known || (url && { url, title: url.replace(/^https?:\/\/[^/]+/, '').replace(/\/$/, '') || url });
+      if (source && source.url && !sources.some((x) => x.url === source.url)) sources.push(source);
+    });
     answer.replaceChildren(
       el('h2', { class: 'content-ai-search-answer-heading' }, t('content-ai-search-answer', 'Answer')),
       ...answerNodes(text),
