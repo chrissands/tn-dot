@@ -77,6 +77,15 @@ function buildBrand(document) {
   return section;
 }
 
+// Pages that exist only on this site, added to a source menu after a given item
+// (source paths without /content/tn). Migrated pages need no entry: their source
+// links are mapped to the site path (MIGRATED in lib/tn-common.js).
+const EXTRA_ITEMS = [
+  { menu: '/tdot/driver-how-do-i.html', after: '/tdot/driver-how-do-i/look--at-traffic-conditions.html', href: '/live-traffic', label: 'View live traffic' },
+];
+
+const sourcePath = (href) => (href || '').replace(/^https?:\/\/(www\.)?tn\.gov/, '').replace(/^\/content\/tn\/+/, '/');
+
 function buildNav(document) {
   const section = document.createElement('div');
   const list = document.createElement('ul');
@@ -97,9 +106,16 @@ function buildNav(document) {
       const sub = li.querySelector(':scope > ul');
       if (sub) {
         const subList = document.createElement('ul');
+        const extras = EXTRA_ITEMS.filter((x) => x.menu === sourcePath(a.getAttribute('href')));
         sub.querySelectorAll(':scope > li > a').forEach((sa) => {
           subList.append(el(document, 'li', {}, [link(document, sa.getAttribute('href'), sa.textContent.replace(/\s+/g, ' ').trim())]));
+          extras.filter((x) => x.after === sourcePath(sa.getAttribute('href'))).forEach((x) => {
+            subList.append(el(document, 'li', {}, [el(document, 'a', { href: x.href }, [x.label])]));
+            x.placed = true;
+          });
         });
+        // extras whose anchor item is gone from the source menu go last
+        extras.filter((x) => !x.placed).forEach((x) => subList.append(el(document, 'li', {}, [el(document, 'a', { href: x.href }, [x.label])])));
         item.append(subList);
       }
     }
