@@ -1,0 +1,57 @@
+/* ==========================================================================
+ * Map: ArcGIS embed (custom block). Taller frame on small screens so the map
+ * and its legend panel stay usable; 16:9 (or 4:3 for "tall") from 900px.
+ * ========================================================================== */
+
+.map {
+  margin: 1.5rem 0;
+}
+
+.map .map-figure {
+  margin: 0;
+}
+
+.map .map-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  min-height: 420px;
+  max-height: 85vh;
+  border: 1px solid #dfe1e2;
+  background: #f0f0f0;
+}
+
+.map .map-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.map .map-caption {
+  margin-top: 0.5rem;
+  font-size: var(--body-font-size-s);
+  color: #565c65;
+}
+
+.map .map-open {
+  margin: 0.5rem 0 0;
+  font-size: var(--body-font-size-s);
+}
+
+@media (width >= 600px) {
+  .map .map-frame {
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (width >= 900px) {
+  .map .map-frame {
+    aspect-ratio: 16 / 9;
+  }
+
+  .map.tall .map-frame {
+    aspect-ratio: 4 / 3;
+  }
+}

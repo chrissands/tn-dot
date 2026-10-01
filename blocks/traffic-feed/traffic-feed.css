@@ -1,0 +1,213 @@
+/* ==========================================================================
+ * Traffic feed (custom block): filters + status toolbar, USWDS cards per event.
+ * One column on small screens, two from 900px, three from 1200px.
+ * ========================================================================== */
+
+.traffic-feed {
+  margin: 1.5rem 0;
+}
+
+.traffic-feed .traffic-feed-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f0f0f0;
+  border-top: 4px solid var(--tdot-navy);
+}
+
+.traffic-feed .traffic-feed-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.traffic-feed .traffic-feed-filter {
+  margin: 0;
+}
+
+.traffic-feed .traffic-feed-filter .usa-label {
+  margin-top: 0;
+}
+
+.traffic-feed .traffic-feed-filter .usa-select {
+  max-width: none;
+}
+
+.traffic-feed .traffic-feed-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+}
+
+.traffic-feed .traffic-feed-status {
+  flex: 1 1 14rem;
+  margin: 0;
+  font-size: var(--body-font-size-s);
+}
+
+.traffic-feed .traffic-feed-refresh {
+  margin: 0;
+}
+
+.traffic-feed .traffic-feed-alert {
+  margin-top: 1rem;
+}
+
+.traffic-feed .traffic-feed-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.traffic-feed .traffic-feed-event {
+  width: auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.traffic-feed .traffic-feed-event .usa-card__container {
+  height: 100%;
+  margin: 0;
+  border-left: 6px solid var(--tdot-navy);
+}
+
+.traffic-feed .traffic-feed-event--incident .usa-card__container,
+.traffic-feed .traffic-feed-event--crash .usa-card__container {
+  border-left-color: var(--tdot-red);
+}
+
+.traffic-feed .traffic-feed-event--construction .usa-card__container,
+.traffic-feed .traffic-feed-event--maintenance .usa-card__container {
+  border-left-color: #8c4a00;
+}
+
+.traffic-feed .traffic-feed-event--closure .usa-card__container,
+.traffic-feed .traffic-feed-event--road-closure .usa-card__container {
+  border-left-color: #1b1b1b;
+}
+
+.traffic-feed .traffic-feed-tag {
+  display: inline-block;
+  margin-bottom: 0.5rem;
+  background: var(--tdot-navy);
+  color: #fff;
+}
+
+.traffic-feed .traffic-feed-tag--incident,
+.traffic-feed .traffic-feed-tag--crash {
+  background: var(--tdot-red);
+}
+
+.traffic-feed .traffic-feed-tag--construction,
+.traffic-feed .traffic-feed-tag--maintenance {
+  background: #8c4a00;
+}
+
+.traffic-feed .traffic-feed-tag--closure,
+.traffic-feed .traffic-feed-tag--road-closure {
+  background: #1b1b1b;
+}
+
+.traffic-feed .usa-card__heading {
+  margin: 0;
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size-xs);
+}
+
+.traffic-feed .traffic-feed-place {
+  margin: 0.25rem 0 0;
+  font-size: var(--body-font-size-s);
+  color: #565c65;
+}
+
+.traffic-feed .usa-card__body p {
+  margin: 0 0 0.75rem;
+}
+
+.traffic-feed .traffic-feed-meta {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 0.25rem 0.75rem;
+  margin: 0;
+  font-size: var(--body-font-size-s);
+}
+
+.traffic-feed .traffic-feed-meta > div {
+  display: contents;
+}
+
+.traffic-feed .traffic-feed-meta dt {
+  font-weight: 700;
+}
+
+.traffic-feed .traffic-feed-meta dd {
+  margin: 0;
+}
+
+.traffic-feed .traffic-feed-time {
+  margin: 0;
+  font-size: var(--body-font-size-xs);
+  color: #565c65;
+}
+
+.traffic-feed .traffic-feed-empty {
+  margin: 1rem 0 0;
+  padding: 1rem;
+  border: 1px solid #dfe1e2;
+}
+
+.traffic-feed .traffic-feed-more {
+  margin: 1rem 0 0;
+}
+
+.traffic-feed[aria-busy='true'] .traffic-feed-refresh {
+  cursor: progress;
+}
+
+@media (width >= 600px) {
+  .traffic-feed .traffic-feed-filters {
+    flex-direction: row;
+  }
+
+  .traffic-feed .traffic-feed-filter {
+    flex: 1 1 0;
+  }
+}
+
+@media (width >= 900px) {
+  .traffic-feed .traffic-feed-toolbar {
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+
+  .traffic-feed .traffic-feed-filters {
+    flex: 0 1 36rem;
+  }
+
+  .traffic-feed .traffic-feed-actions {
+    flex: 0 1 auto;
+    justify-content: flex-end;
+  }
+
+  .traffic-feed .traffic-feed-status {
+    flex: 0 1 auto;
+    text-align: right;
+  }
+
+  .traffic-feed .traffic-feed-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (width >= 1200px) {
+  .traffic-feed .traffic-feed-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

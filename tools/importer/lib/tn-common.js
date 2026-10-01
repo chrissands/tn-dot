@@ -23,6 +23,8 @@ export const MIGRATED = {
   '/tdot/traffic-operations-division/yellow-dot-program.html': '/traffic-operations-division/yellow-dot-program',
   // redirects to the Yellow DOT Program page on tn.gov
   '/tdot/driver-how-do-i/enroll-in-yellow-dot-program.html': '/traffic-operations-division/yellow-dot-program',
+  '/tdot/driver-how-do-i/look-at-or-order-state-maps.html': '/maps',
+  '/tdot/maps.html': '/maps',
 };
 
 export const clean = (t) => (t || '').replace(/ /g, ' ').replace(/\s+/g, ' ').trim();

@@ -161,6 +161,25 @@ const PLACEHOLDERS = [
   ['required', 'required', 'Form: required-field marker'],
   ['field-must-match', '{field} must match {other}.', 'Form: confirmation field error'],
   ['play-video', 'Play', 'Video: play button'],
+  ['map-title', 'Map', 'Map: accessible name when the block has no caption'],
+  ['map-open', 'Open the map in a new window', 'Map: link below the map'],
+  ['traffic-feed-type', 'Event type', 'Traffic feed: type filter label'],
+  ['traffic-feed-all-types', 'All event types', 'Traffic feed: type filter, no filter'],
+  ['traffic-feed-region', 'Region', 'Traffic feed: region filter label'],
+  ['traffic-feed-all-regions', 'All regions', 'Traffic feed: region filter, no filter'],
+  ['traffic-feed-refresh', 'Refresh', 'Traffic feed: refresh button'],
+  ['traffic-feed-status', '{count} of {total} events · Updated {time}', 'Traffic feed: status line'],
+  ['traffic-feed-no-match', 'No traffic events match the selected filters.', 'Traffic feed: nothing matches the filters'],
+  ['traffic-feed-none', 'No traffic events are currently reported.', 'Traffic feed: empty feed'],
+  ['traffic-feed-stale', 'Traffic information could not be updated. Showing information from {time}.', 'Traffic feed: update failed'],
+  ['traffic-feed-error', 'Traffic information is not available right now. Please try again later.', 'Traffic feed: first load failed'],
+  ['traffic-feed-no-feed', 'No traffic feed is configured.', 'Traffic feed: block has no Feed row'],
+  ['traffic-feed-event', 'Traffic event', 'Traffic feed: heading of an event without title or route'],
+  ['traffic-feed-route', 'Route', 'Traffic feed: event detail label'],
+  ['traffic-feed-lanes', 'Lanes', 'Traffic feed: event detail label'],
+  ['traffic-feed-start', 'Started', 'Traffic feed: event detail label'],
+  ['traffic-feed-end', 'Expected to end', 'Traffic feed: event detail label'],
+  ['traffic-feed-event-updated', 'Updated {time}', 'Traffic feed: event footer'],
 ];
 const placeholders = PLACEHOLDERS.map(([key, text, usage]) => ({ key, text, usage }));
 fs.writeFileSync(path.join(CONTENT, 'placeholders.json'), `${JSON.stringify(sheet(placeholders), null, 2)}\n`);
@@ -183,7 +202,11 @@ const library = [
   { title: 'Icons', path: `${DA}/library/icons.json`, format: ':<content>:' },
   { title: 'Placeholders', path: `${DA}/placeholders.json`, format: '{{<content>}}' },
 ];
-fs.writeFileSync(path.join(LIB, 'da-library-config.json'), `${JSON.stringify({ library: sheet(library) }, null, 2)}\n`);
+// keep the config's other tabs (e.g. "data": aem.repositoryId for the Assets picker)
+const configFile = path.join(LIB, 'da-library-config.json');
+const config = fs.existsSync(configFile) ? JSON.parse(fs.readFileSync(configFile, 'utf8')) : {};
+config.library = sheet(library);
+fs.writeFileSync(configFile, `${JSON.stringify(config, null, 2)}\n`);
 
 console.log(`templates: ${templates.map((t) => t.key).join(', ')}`);
 console.log(`icons: ${icons.map((i) => i.key).join(', ')}`);

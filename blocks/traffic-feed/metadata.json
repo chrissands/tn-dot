@@ -1,0 +1,22 @@
+{
+  "variantName": "traffic-feed",
+  "baseBlock": "traffic-feed",
+  "version": "1.0.0",
+  "created": "2026-10-01T03:23:03.325Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "live-data-list",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "settings rows: Feed | JSON URL, Refresh | seconds, Link | optional link; rendered as filterable USWDS cards",
+    "buttonCount": 1,
+    "imageCount": 0
+  },
+  "pagesUsing": [
+    "live-traffic"
+  ],
+  "reuseCount": 1,
+  "lastUsed": "2026-10-01T03:23:03.325Z"
+}

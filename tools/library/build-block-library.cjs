@@ -22,6 +22,7 @@ const DA = 'https://content.da.live/chrissands/tn-dot';
 const LIBRARY = [
   { block: 'alert', entries: [
     { classes: 'alert info slim no-icon', name: 'Alert (info, slim)', description: 'Slim yellow notice bar with bold lead-in text and a link, e.g. a project update under the homepage video.' },
+    { classes: 'alert info slim inline', name: 'Alert (info, inline)', description: 'Blue notice within the page width (not edge to edge), e.g. the sample-data notice above the traffic feed. Other types: warning, error, success.' },
   ] },
   { block: 'cards', entries: [
     { classes: 'cards news latest', name: 'Cards (latest news)', description: 'The newest articles from the news index. Settings rows: Source (index), Count, Link Text. No stories to author – new articles appear automatically.' },
@@ -51,6 +52,9 @@ const LIBRARY = [
     { classes: 'hero video', name: 'Hero (video)', description: 'Full-bleed background video (/media/*.mp4 link) with poster image, logo, H1 and tagline.' },
     { classes: 'hero banner', name: 'Hero (banner)', description: 'Full-bleed photo banner with a heading and tagline over a bottom gradient. Put it in its own section, below the page H1.' },
   ] },
+  { block: 'map', entries: [
+    { classes: 'map', name: 'Map (ArcGIS)', description: 'Embedded ArcGIS Online map. Row 1: link to an ArcGIS web map (item page or Map Viewer link) or app; the link text is the map name. Row 2 (optional): caption. Loads when scrolled into view; "tall" style = 4:3.' },
+  ] },
   { block: 'side-nav', entries: [
     { classes: 'side-nav subnav', name: 'Side Nav (section)', description: 'Section sidebar: heading link, "Section Menu" label for mobile, links with collapsible sub-menus. Put it in its own first section of a left-nav page.' },
     { classes: 'side-nav newsroom', name: 'Side Nav (newsroom)', description: 'Newsroom category sidebar (All News + category filters). Newsroom pages load it automatically from /fragments/news-sidebar.' },
@@ -60,6 +64,9 @@ const LIBRARY = [
   ] },
   { block: 'tabs', entries: [
     { classes: 'tabs', name: 'Tabs', description: 'One row per tab: label | content. Accordion on phones. In a tab: image paragraph + YouTube link paragraph = video; H2 + list of links = links panel.', trimTabs: true },
+  ] },
+  { block: 'traffic-feed', entries: [
+    { classes: 'traffic-feed', name: 'Traffic Feed', description: 'Live list of traffic events from a JSON feed with type and region filters. Settings rows: Feed (JSON URL – a sheet, ArcGIS or GeoJSON feed), Refresh (seconds, 0 = off), Link (optional link below the list).' },
   ] },
   { block: 'video', entries: [
     { classes: 'video', name: 'Video', description: 'Poster image with a play label; loads the YouTube, Vimeo or .mp4 video on click.', html: '<div class="video"><div><div><p><picture><img src="./images/placeholder-16x9.png" alt="Video poster"></picture></p><p><a href="https://www.youtube.com/watch?v=DfLGZzxtrrc">Watch video</a></p></div></div></div>' },

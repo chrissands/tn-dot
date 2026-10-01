@@ -16,6 +16,12 @@
   margin-right: calc(50% - 50vw) !important;
 }
 
+/* "inline" variant: alert within the content width (e.g. a notice above a block) */
+.alert.inline.block .usa-alert {
+  width: auto !important;
+  margin: 1.5rem 0 !important;
+}
+
 /* ==========================================================================
  * CUSTOM OVERRIDE: TDOT "Project Update" strip (alert info slim no-icon)
  * Values from https://www.tn.gov/tdot.html (see migration-work/alert-extracted.css)

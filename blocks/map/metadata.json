@@ -1,0 +1,22 @@
+{
+  "variantName": "map",
+  "baseBlock": "map",
+  "version": "1.0.0",
+  "created": "2026-10-01T03:23:03.325Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "minimal",
+    "purpose": "map-embed",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "row 1: link to an ArcGIS web map or app (link text = map name); row 2 (optional): caption",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "pagesUsing": [
+    "maps"
+  ],
+  "reuseCount": 1,
+  "lastUsed": "2026-10-01T03:23:03.325Z"
+}
