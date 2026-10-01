@@ -156,3 +156,66 @@ export function buildImage(document, component) {
 export function metadata(document, meta) {
   return WebImporter.Blocks.getMetadataBlock(document, meta);
 }
+
+/** MD5 hex digest of an ASCII/UTF-8 string (the import runs in a page: no Node crypto). */
+export function md5(str) {
+  const bytes = new TextEncoder().encode(str);
+  const len = bytes.length;
+  const words = new Uint32Array((((len + 8) >>> 6) + 1) * 16);
+  for (let i = 0; i < len; i += 1) words[i >> 2] |= bytes[i] << ((i % 4) * 8);
+  words[len >> 2] |= 0x80 << ((len % 4) * 8);
+  words[words.length - 2] = len * 8;
+  const S = [7, 12, 17, 22, 5, 9, 14, 20, 4, 11, 16, 23, 6, 10, 15, 21];
+  const K = Array.from({ length: 64 }, (_, i) => Math.floor(Math.abs(Math.sin(i + 1)) * 2 ** 32) >>> 0);
+  let [a0, b0, c0, d0] = [0x67452301, 0xefcdab89, 0x98badcfe, 0x10325476];
+  for (let chunk = 0; chunk < words.length; chunk += 16) {
+    let [a, b, c, d] = [a0, b0, c0, d0];
+    for (let i = 0; i < 64; i += 1) {
+      const round = i >> 4;
+      let f;
+      let g;
+      if (round === 0) { f = (b & c) | (~b & d); g = i; }
+      else if (round === 1) { f = (d & b) | (~d & c); g = (5 * i + 1) % 16; }
+      else if (round === 2) { f = b ^ c ^ d; g = (3 * i + 5) % 16; }
+      else { f = c ^ (b | ~d); g = (7 * i) % 16; }
+      const sum = (a + f + K[i] + words[chunk + g]) >>> 0;
+      const s = S[round * 4 + (i % 4)];
+      [a, d, c] = [d, c, b];
+      b = (b + ((sum << s) | (sum >>> (32 - s)))) >>> 0;
+    }
+    [a0, b0, c0, d0] = [(a0 + a) >>> 0, (b0 + b) >>> 0, (c0 + c) >>> 0, (d0 + d) >>> 0];
+  }
+  return [a0, b0, c0, d0].map((w) => [0, 8, 16, 24].map((sh) => ((w >>> sh) & 0xff).toString(16).padStart(2, '0')).join('')).join('');
+}
+
+export const DA_CONTENT = 'https://content.da.live/chrissands/tn-dot';
+
+/**
+ * Images are hosted in Document Authoring, in the page's media folder
+ * (<page dir>/.<page name>/), named like the workspace-to-DA content sync names them:
+ * <file name slug>-<md5(source URL) first 8 hex>.<ext>. Each source image is downloaded into
+ * content/images/<file> by tools/importer/download-images.mjs (from the import report)
+ * and uploaded to its media folder by the deploy upload.
+ * @param {Element} root page content (after all other image rules have run)
+ * @param {string} sitePath document path, e.g. '/index' or '/news/2026/9/14/slug'
+ * @returns {string} JSON [[source URL, DA path], ...] for the import report ("media")
+ */
+export function localizeImages(root, sitePath) {
+  const folder = sitePath.replace(/\/([^/]+)$/, '/.$1');
+  const media = new Map();
+  const localize = (src) => {
+    if (!/^https?:\/\//.test(src) || src.startsWith(`${DA_CONTENT}/`)) return src;
+    const last = decodeURIComponent(new URL(src).pathname.split('/').pop());
+    const dot = last.lastIndexOf('.');
+    const ext = dot > 0 ? last.slice(dot + 1).toLowerCase() : 'png';
+    const base = (dot > 0 ? last.slice(0, dot) : last).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    const file = `${folder}/${base}-${md5(src).slice(0, 8)}.${ext}`;
+    media.set(src, file);
+    return `${DA_CONTENT}${file}`;
+  };
+  root.querySelectorAll('img[src], source[srcset]').forEach((el) => {
+    if (el.hasAttribute('src')) el.setAttribute('src', localize(el.getAttribute('src')));
+    if (el.hasAttribute('srcset')) el.setAttribute('srcset', localize(el.getAttribute('srcset').split(/\s/)[0]));
+  });
+  return JSON.stringify([...media]);
+}

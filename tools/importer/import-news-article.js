@@ -17,6 +17,7 @@
  * migrated articles.
  */
 import NEWS from './news-articles.json';
+import { localizeImages } from './lib/tn-common.js';
 
 const ORIGIN = 'https://www.tn.gov';
 const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
@@ -150,10 +151,11 @@ export default {
     // metadata in its own section
     main.append(document.createElement('hr'), WebImporter.Blocks.getMetadataBlock(document, meta));
 
+    const media = localizeImages(main, path);
     return [{
       element: main,
       path,
-      report: { title, date: meta['publication-date'], categories: meta.category, images: main.querySelectorAll('img').length },
+      report: { title, date: meta['publication-date'], categories: meta.category, images: main.querySelectorAll('img').length, media },
     }];
   },
 };

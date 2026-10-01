@@ -18,6 +18,7 @@ import {
 } from './aem.js';
 import { replacePlaceholderTokens } from './placeholders.js';
 import { formatNewsDate } from './news.js';
+import { localizeMedia } from './content-fetch.js';
 
 /**
  * Auto-generates a side nav from page headings and prepends it as the first section.
@@ -463,6 +464,8 @@ function convertIconNotation(main) {
  */
 // eslint-disable-next-line import/prefer-default-export
 export function decorateMain(main) {
+  // local preview: Document Authoring-hosted images from their local copies
+  localizeMedia(main);
   // hopefully forward compatible button decoration
   decorateButtons(main);
   convertIconNotation(main);

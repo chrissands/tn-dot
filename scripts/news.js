@@ -4,7 +4,7 @@
  */
 
 import { toClassName } from './aem.js';
-import { fetchContent, isLocalPreview } from './content-fetch.js';
+import { fetchContent, isLocalPreview, localMediaUrl } from './content-fetch.js';
 
 const DEFAULT_INDEX = '/news/query-index.json';
 const cache = {};
@@ -29,7 +29,7 @@ export async function fetchNewsIndex(source = DEFAULT_INDEX) {
           ...item,
           // pages without an image get EDS's default og:image placeholder in the
           // published index; treat it as "no image" so callers can fall back
-          image: /default-meta-image/.test(item.image || '') ? '' : item.image,
+          image: /default-meta-image/.test(item.image || '') ? '' : localMediaUrl(item.image || ''),
           categories: (item.category || '').split(',').map((c) => c.trim()).filter(Boolean),
         }))
         .sort((a, b) => (b.date || '').localeCompare(a.date || ''));

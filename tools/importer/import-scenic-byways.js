@@ -15,6 +15,7 @@
  */
 import {
   clean, el, href, buildSideNav, cleanRte, buildImage, imageSrc, mapSitePath, metadata,
+  localizeImages,
 } from './lib/tn-common.js';
 
 /** 2-column text-and-image components, in visual (row-major) order. */
@@ -84,7 +85,8 @@ export default {
       || (firstText.length > 160 ? `${firstText.slice(0, 157).replace(/\s+\S*$/, '')}…` : firstText);
     main.append(el(document, 'hr'), metadata(document, { title, description, template: 'left-nav' }));
 
-    const sourcePath = new URL(params.originalURL).pathname;
-    return [{ element: main, path: mapSitePath(sourcePath), report: { title } }];
+    const path = mapSitePath(new URL(params.originalURL).pathname);
+    const media = localizeImages(main, path);
+    return [{ element: main, path, report: { title, media } }];
   },
 };

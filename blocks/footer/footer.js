@@ -18,7 +18,7 @@
  * @see https://designsystem.digital.gov/components/footer/
  */
 
-import { fetchContent, isLocalPreview } from '../../scripts/content-fetch.js';
+import { fetchContent, localMediaUrl } from '../../scripts/content-fetch.js';
 import normalizeIcons, { iconName } from '../../scripts/fragment-icons.js';
 import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
@@ -26,17 +26,6 @@ const FONT_SIZES = ['small', 'normal', 'large'];
 const FONT_SIZE_KEY = 'footer-font-size';
 const SHOW_BACK_TO_TOP_AFTER = 150;
 let idCounter = 0;
-
-/**
- * Local preview has no access to content.da.live: use the local copy of DA images
- * (/content/<path>; images kept in a document's .nav / .footer media folder -> /content/images/).
- */
-function localImage(src) {
-  const m = isLocalPreview() && src.match(/^https:\/\/content\.da\.live\/[^/]+\/[^/]+(\/.*)$/);
-  if (!m) return src;
-  const media = m[1].match(/^\/\.[a-z-]+\/([^/]+)$/);
-  return media ? `/content/images/${media[1]}` : `/content${m[1]}`;
-}
 
 /**
  * Publishing splits a link holding an image and text into two links (image link +
@@ -73,7 +62,7 @@ async function fetchFooter() {
   const container = document.createElement('div');
   container.innerHTML = await resp.text();
   container.querySelectorAll('img[src]').forEach((img) => {
-    img.src = localImage(new URL(img.getAttribute('src'), resp.url).href);
+    img.src = localMediaUrl(new URL(img.getAttribute('src'), resp.url).href);
   });
   normalizeIcons(container);
   mergeSplitLinks(container);

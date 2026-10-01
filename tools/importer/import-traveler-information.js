@@ -16,6 +16,7 @@
  */
 import {
   clean, el, href, cleanRte, imageSrc, mapSitePath, metadata,
+  localizeImages,
 } from './lib/tn-common.js';
 
 function buildLinkList(document, list) {
@@ -87,7 +88,8 @@ export default {
     const pageTitle = clean(document.title) || title;
     main.append(el(document, 'hr'), metadata(document, { title: pageTitle, description, template: 'full-width' }));
 
-    const sourcePath = new URL(params.originalURL).pathname;
-    return [{ element: main, path: mapSitePath(sourcePath), report: { title } }];
+    const path = mapSitePath(new URL(params.originalURL).pathname);
+    const media = localizeImages(main, path);
+    return [{ element: main, path, report: { title, media } }];
   },
 };
