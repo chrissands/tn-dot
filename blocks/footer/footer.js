@@ -18,7 +18,7 @@
  * @see https://designsystem.digital.gov/components/footer/
  */
 
-import { fetchContent, localMediaUrl } from '../../scripts/content-fetch.js';
+import { fetchContent, localMediaUrl, localizeMedia } from '../../scripts/content-fetch.js';
 import normalizeIcons, { iconName } from '../../scripts/fragment-icons.js';
 import { loadPlaceholders, t } from '../../scripts/placeholders.js';
 
@@ -64,6 +64,7 @@ async function fetchFooter() {
   container.querySelectorAll('img[src]').forEach((img) => {
     img.src = localMediaUrl(new URL(img.getAttribute('src'), resp.url).href);
   });
+  localizeMedia(container);
   normalizeIcons(container);
   mergeSplitLinks(container);
   return container;

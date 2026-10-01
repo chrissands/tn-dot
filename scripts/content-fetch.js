@@ -25,7 +25,8 @@ export function localMediaUrl(src) {
 }
 
 /**
- * Local preview: points the Document Authoring images in a container at their local copies.
+ * Local preview: points the Document Authoring images in a container at their local copies,
+ * and site PDFs (/<page>/<file>.pdf) at /content/<page>/<file>.pdf.
  * @param {Element} root container
  */
 export function localizeMedia(root) {
@@ -33,6 +34,10 @@ export function localizeMedia(root) {
   root.querySelectorAll('img[src], source[srcset]').forEach((el) => {
     if (el.hasAttribute('src')) el.src = localMediaUrl(el.getAttribute('src'));
     if (el.hasAttribute('srcset')) el.srcset = localMediaUrl(el.getAttribute('srcset').split(/\s/)[0]);
+  });
+  root.querySelectorAll('a[href$=".pdf"]').forEach((a) => {
+    const href = a.getAttribute('href');
+    if (href.startsWith('/') && !href.startsWith('/content/')) a.setAttribute('href', `/content${href}`);
   });
 }
 

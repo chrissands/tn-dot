@@ -1,3 +1,62 @@
+/* ==========================================================================
+ * CUSTOM OVERRIDES (keep at top; accordion.css is in .buildignore).
+ * TDOT accordion as on tn.gov: transparent rows with a rule between items,
+ * navy title text with a chevron on the left that turns down when open.
+ * ========================================================================== */
+
+.accordion .usa-accordion__heading {
+  margin: 0;
+  border-bottom: 1px solid #dfe1e2;
+  font-size: var(--heading-font-size-s);
+}
+
+.accordion .usa-accordion__button,
+.accordion .usa-accordion__button[aria-expanded='false'] {
+  position: relative;
+  padding: 0.625rem 0.5rem 0.625rem 2.5rem;
+  background: transparent;
+  color: var(--heading-color);
+  font-family: var(--heading-font-family);
+  font-size: inherit;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.accordion .usa-accordion__button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0.5rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-top: -0.75rem;
+  background-color: currentcolor;
+  mask: url('/icons/usa-icons/navigate_next.svg') center / contain no-repeat;
+  transition: transform 0.15s ease-in-out;
+}
+
+.accordion .usa-accordion__button[aria-expanded='true']::before {
+  transform: rotate(90deg);
+}
+
+.accordion .usa-accordion__button:hover,
+.accordion .usa-accordion__button[aria-expanded='true'] {
+  background: #f0f0f0;
+  color: var(--heading-color);
+}
+
+.accordion .usa-accordion__content {
+  padding: 1rem 0.5rem 1.25rem 2.5rem;
+  background: transparent;
+  border-bottom: 1px solid #dfe1e2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .accordion .usa-accordion__button::before {
+    transition: none;
+  }
+}
+
 /*
 * * * * * ==============================
 * * * * * ==============================

@@ -28,3 +28,4 @@ blocks/side-nav/side-nav.css
 blocks/form/form.css
 blocks/tabs/tabs.css
 blocks/columns/columns.css
+blocks/accordion/accordion.css
