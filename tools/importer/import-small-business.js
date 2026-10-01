@@ -39,13 +39,35 @@ function rte(document, part) {
   return cleanRte(document, part).map((node) => (/^[-–—_\s]{10,}$/.test(node.textContent) ? 'RULE' : node));
 }
 
+/**
+ * Consecutive paragraphs that each start with a link (a link list written as paragraphs)
+ * become one paragraph with line breaks: a link alone in a paragraph would be a button.
+ */
+function joinLinkParagraphs(document, nodes) {
+  const isLinkLine = (n) => n.tagName === 'P' && n.firstElementChild && n.firstElementChild.tagName === 'A'
+    && !(n.firstChild.nodeType === 3 && clean(n.firstChild.textContent));
+  const out = [];
+  nodes.forEach((n) => {
+    const prev = out[out.length - 1];
+    if (isLinkLine(n) && prev && prev.dataset && prev.dataset.links) {
+      prev.append(el(document, 'br'), ...n.childNodes);
+    } else if (isLinkLine(n)) {
+      const p = el(document, 'p', {}, [...n.childNodes]);
+      p.dataset.links = 'true';
+      out.push(p);
+    } else out.push(n);
+  });
+  out.forEach((n) => { if (n.dataset) delete n.dataset.links; });
+  return out;
+}
+
 function panel(document, part) {
   const nodes = cleanRte(document, part.querySelector('.tn-rte') || part).map((node) => {
     if (!/^H[1-6]$/.test(node.tagName)) return node;
     return el(document, 'h3', {}, [clean(node.textContent)]);
   });
   if (!nodes.length) return null;
-  return WebImporter.Blocks.createBlock(document, { name: 'Summary Box', variants: ['panel'], cells: [[el(document, 'div', {}, nodes)]] });
+  return WebImporter.Blocks.createBlock(document, { name: 'Summary Box', variants: ['panel'], cells: [[el(document, 'div', {}, joinLinkParagraphs(document, nodes))]] });
 }
 
 export default {

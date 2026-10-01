@@ -52,7 +52,9 @@ export default function decorate(block) {
     content.hidden = true;
     if (contentCell) content.append(...contentCell.childNodes);
 
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (e) => {
+      // handled here: keep the USWDS script (delayed.js) from toggling it a second time
+      e.stopPropagation();
       const open = button.getAttribute('aria-expanded') !== 'true';
       if (open && !multi) {
         buttons.filter((b) => b !== button).forEach((b) => {
