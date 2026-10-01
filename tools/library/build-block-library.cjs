@@ -65,6 +65,9 @@ const LIBRARY = [
   { block: 'summary-box', entries: [
     { classes: 'summary-box panel', name: 'Summary Box (panel)', description: 'White notice panel with a soft shadow. A leading fully-bold paragraph shows as a red warning line; a heading mid-panel is a large call-out (e.g. a hotline number).' },
   ] },
+  { block: 'table', entries: [
+    { classes: 'table', name: 'Table', description: 'Data table. First row = column headings; one row per table row. Stacks into labeled rows on phones. Styles: striped, borderless, compact, no-header, scrollable (scrolls sideways instead of stacking).' },
+  ] },
   { block: 'tabs', entries: [
     { classes: 'tabs', name: 'Tabs', description: 'One row per tab: label | content. Accordion on phones. In a tab: image paragraph + YouTube link paragraph = video; H2 + list of links = links panel.', trimTabs: true },
   ] },

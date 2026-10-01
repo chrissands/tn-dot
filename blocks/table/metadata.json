@@ -1,0 +1,22 @@
+{
+  "variantName": "table",
+  "baseBlock": "table",
+  "version": "1.0.0",
+  "created": "2026-10-01T14:32:01.775Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "dense",
+    "purpose": "data-table",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "first row: column headings; one row per table row (links, text)",
+    "buttonCount": 0,
+    "imageCount": 0
+  },
+  "pagesUsing": [
+    "state-engineering-technical-training/production-support/standard-drawings-library/standard-roadway-drawings/standard-roadway-title-sheet-abbreviations-and-legends"
+  ],
+  "reuseCount": 1,
+  "lastUsed": "2026-10-01T14:32:01.775Z"
+}
