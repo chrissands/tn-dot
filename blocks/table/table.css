@@ -1,3 +1,24 @@
+/* ==========================================================================
+ * CUSTOM OVERRIDES (keep at top; table.css is in .buildignore).
+ * Full-width tables in the site font; header row in the TDOT navy rule style.
+ * ========================================================================== */
+
+.table .usa-table {
+  width: 100%;
+  font-family: var(--body-font-family);
+  font-size: var(--body-font-size-s);
+}
+
+.table .usa-table thead th {
+  border-bottom: 3px solid var(--tdot-navy);
+  background: #f0f0f0;
+  color: var(--heading-color);
+}
+
+.table .usa-table td a {
+  word-break: normal;
+}
+
 /*
 * * * * * ==============================
 * * * * * ==============================

@@ -33,6 +33,8 @@ export const MIGRATED = {
   '/tdot/civil-rights/small-business-development-program.html': '/civil-rights/small-business-development-program',
   // redirects to the Small Business Development Program page on tn.gov
   '/tdot/business-how-do-i---/civil-rights-sbdp_rd.html': '/civil-rights/small-business-development-program',
+  '/tdot/state-engineering-technical-training/production-support/standard-drawings-library/standard-roadway-drawings/standard-roadway-title-sheet--abbreviations-and-legends.html':
+    '/state-engineering-technical-training/production-support/standard-drawings-library/standard-roadway-drawings/standard-roadway-title-sheet-abbreviations-and-legends',
 };
 
 export const clean = (t) => (t || '').replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
