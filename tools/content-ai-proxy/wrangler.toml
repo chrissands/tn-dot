@@ -7,7 +7,7 @@ compatibility_date = "2026-09-01"
 # AEM as a Cloud Service environment that hosts Content AI
 CONTENT_AI_ENVIRONMENT = "author-p194952-e2312587"
 # Content AI content source to search (must be set before deploying)
-CONTENT_SOURCE = ""
+CONTENT_SOURCE = "tndotedssitemainbranch"
 CONTENT_SOURCE_TYPE = "ACQUISITION"
 # Site origins allowed to call the proxy (preview, live, local preview; add the production domain)
 ALLOWED_ORIGINS = "https://main--tn-dot--chrissands.aem.live,https://main--tn-dot--chrissands.aem.page,http://localhost:3000"
