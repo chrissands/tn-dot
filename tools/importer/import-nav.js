@@ -13,19 +13,19 @@ import { mapSitePath } from './lib/tn-common.js';
  *              mobile menu labels (plain text: open, close), print link
  *
  * Icons (home, print) are :name: notation (served from /icons/ in the code); the logos and
- * header photo are served from the site code (/images/, public)
+ * header photo are hosted in Document Authoring, in the document's media folder (.nav)
  * (content/images/ locally; header.js maps them in local preview).
  */
 
 const ORIGIN = 'https://www.tn.gov';
-// Brand images are served publicly from the site code (/images/ in the repo). Re-saving a
-// document copies its images by downloading them anonymously; Document Authoring-hosted
-// (content.da.live) images need a login, so those copies failed and the images broke.
+// Brand images are hosted in Document Authoring, in the document's own media folder
+// (.nav). The workspace-to-DA content sync relinks every image to
+// .nav/<name>-<md5(original URL) first 8 hex>.<ext>; upload-da.mjs uploads both names.
 // Small UI icons are :name: text, served from /icons/<name>.svg in the code.
-const DA_MEDIA = 'https://main--tn-dot--chrissands.aem.live/images';
+const DA_MEDIA = 'https://content.da.live/chrissands/tn-dot/.nav';
 const IMAGES = {
   tnLogo: `${DA_MEDIA}/tn-logo.png`,
-  logo: `${DA_MEDIA}/tdot-logo-white.png`,
+  logo: `${DA_MEDIA}/tdot-logo.png`,
   background: `${DA_MEDIA}/header-background.jpg`,
 };
 
