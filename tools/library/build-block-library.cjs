@@ -48,6 +48,9 @@ const LIBRARY = [
   { block: 'form', entries: [
     { classes: 'form', name: 'Form', description: 'Native form. Header row, then one row per field (Type, Name, Label, Options, Required, Show If, Style) and settings rows: action (endpoint URL), captcha (reCAPTCHA site key), success, error.', trimForm: true },
   ] },
+  { block: 'content-ai-search', entries: [
+    { classes: 'content-ai-search', name: 'Content AI Search', description: 'Site search with Adobe Content AI (semantic + keyword) and an optional generated answer. Settings rows: Environment (AEM environment, e.g. author-p123-e456), Content Source, Source Type (ACQUISITION, AEM_PUBLISH, ...), API Key (public read-only key - it is visible in the page), Mode (hybrid, semantic, keyword), Answer (on/off), Results (per page, max 50), Placeholder.' },
+  ] },
   { block: 'fragment', entries: [
     { classes: 'fragment', name: 'Fragment', description: 'Includes a shared document from /fragments/ (e.g. the newsroom category sidebar).', html: '<div class="fragment"><div><div><p><a href="/fragments/news-sidebar">/fragments/news-sidebar</a></p></div></div></div>' },
   ] },

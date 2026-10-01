@@ -1,0 +1,118 @@
+/* ==========================================================================
+ * Content AI Search (custom block): USWDS-style search box, generated answer
+ * panel and a USWDS collection of results.
+ * ========================================================================== */
+
+.content-ai-search {
+  margin: 1.5rem 0;
+}
+
+.content-ai-search .content-ai-search-form {
+  display: flex;
+  max-width: 48rem;
+}
+
+.content-ai-search .content-ai-search-input {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 3rem;
+  margin: 0;
+  padding: 0 1rem;
+  border: 1px solid #565c65;
+  border-right: 0;
+  border-radius: 0.25rem 0 0 0.25rem;
+  font-family: var(--body-font-family);
+  font-size: 1.06rem;
+  color: #1b1b1b;
+  background: #fff;
+}
+
+.content-ai-search .content-ai-search-input:focus {
+  outline: 0.25rem solid #2491ff;
+  outline-offset: 0;
+}
+
+.content-ai-search .content-ai-search-submit {
+  height: 3rem;
+  margin: 0;
+  border-radius: 0 0.25rem 0.25rem 0;
+  background-color: var(--tdot-navy);
+}
+
+.content-ai-search .content-ai-search-submit:hover {
+  background-color: var(--tdot-blue);
+}
+
+.content-ai-search .content-ai-search-input:disabled,
+.content-ai-search .content-ai-search-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.content-ai-search .content-ai-search-notice {
+  max-width: 48rem;
+  margin-top: 1rem;
+}
+
+.content-ai-search .content-ai-search-status {
+  margin: 1.25rem 0 0.5rem;
+  font-weight: 700;
+}
+
+.content-ai-search .content-ai-search-status:empty {
+  display: none;
+}
+
+.content-ai-search .content-ai-search-answer {
+  max-width: 48rem;
+  margin: 1rem 0 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-left: 0.5rem solid var(--tdot-navy);
+  background: #eef3fb;
+}
+
+.content-ai-search .content-ai-search-answer-heading {
+  margin: 0 0 0.75rem;
+  font-size: var(--heading-font-size-s);
+}
+
+.content-ai-search .content-ai-search-answer p,
+.content-ai-search .content-ai-search-answer ul {
+  margin: 0 0 0.75rem;
+}
+
+.content-ai-search .content-ai-search-sources-label {
+  margin-bottom: 0.25rem;
+  font-weight: 700;
+}
+
+.content-ai-search .content-ai-search-disclaimer,
+.content-ai-search .content-ai-search-answer-loading {
+  margin: 0;
+  font-size: var(--body-font-size-xs);
+  color: #565c65;
+}
+
+.content-ai-search .content-ai-search-results {
+  max-width: 48rem;
+  margin: 0;
+  padding: 0;
+}
+
+.content-ai-search .content-ai-search-result {
+  max-width: none;
+}
+
+.content-ai-search .content-ai-search-result .usa-collection__heading {
+  font-family: var(--heading-font-family);
+  font-size: var(--heading-font-size-xs);
+}
+
+.content-ai-search .content-ai-search-result .usa-collection__meta-item {
+  overflow-wrap: anywhere;
+  color: #2e8540;
+}
+
+.content-ai-search .content-ai-search-more {
+  margin-top: 1.25rem;
+}

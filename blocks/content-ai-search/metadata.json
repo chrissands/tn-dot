@@ -1,0 +1,22 @@
+{
+  "variantName": "content-ai-search",
+  "baseBlock": "content-ai-search",
+  "version": "1.0.0",
+  "created": "2026-10-01T14:52:03.166Z",
+  "visualCharacteristics": {
+    "colorScheme": "light",
+    "density": "moderate",
+    "purpose": "site-search",
+    "imagePattern": "noimg"
+  },
+  "contentPattern": {
+    "structure": "settings rows: Environment, Content Source, Source Type, API Key, Mode, Answer, Results, Placeholder",
+    "buttonCount": 2,
+    "imageCount": 0
+  },
+  "pagesUsing": [
+    "content-ai-search"
+  ],
+  "reuseCount": 1,
+  "lastUsed": "2026-10-01T14:52:03.166Z"
+}
