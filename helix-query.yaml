@@ -62,3 +62,33 @@ indices:
       lastModified:
         select: none
         value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
+
+  # Search index: page text for the keyword search of the Content AI Search block
+  # (used until / unless Content AI is connected). Same pages as the site index.
+  search:
+    include:
+      - '/**'
+    exclude:
+      - '/nav'
+      - '/footer'
+      - '/fragments/**'
+      - '/library/**'
+      - '/config/**'
+      - '/content-ai-search'
+    target: /search-index.json
+    properties:
+      title:
+        select: head > meta[property="og:title"]
+        value: attribute(el, "content")
+      description:
+        select: head > meta[name="description"]
+        value: attribute(el, "content")
+      content:
+        select: main
+        value: words(textContent(el), 0, 300)
+      robots:
+        select: head > meta[name="robots"]
+        value: attribute(el, "content")
+      lastModified:
+        select: none
+        value: parseTimestamp(headers["last-modified"], "ddd, DD MMM YYYY hh:mm:ss GMT")
