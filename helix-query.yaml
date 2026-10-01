@@ -83,8 +83,9 @@ indices:
       description:
         select: head > meta[name="description"]
         value: attribute(el, "content")
+      # page text without the section sidebar (side-nav)
       content:
-        select: main
+        select: main > div:not(:has(> .side-nav))
         value: words(textContent(el), 0, 300)
       robots:
         select: head > meta[name="robots"]
